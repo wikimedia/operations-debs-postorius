@@ -1,0 +1,5 @@
+mailman3-postorius (1.0.1-1) unstable; urgency=low
+
+  * Initial release (Closes: #799285)
+
+ -- Pierre-Elliott Bécue <becue@crans.org>  Sun, 06 Mar 2016 13:23:17 +0100
