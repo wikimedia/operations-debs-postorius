@@ -1,0 +1,15 @@
+{% extends postorius_base_template %}
+{% load url from future %}
+{% load i18n %}
+
+{% block subtitle %}
+{% trans "Create List" as page_title %}{{ page_title }}
+{% endblock %}
+
+{% block main %}
+    <h1>{% trans "Create a new List" %} {{ block.super }}</h1> 
+    <form action="{% url 'list_new' %}" method="post" class="well"> {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-success" type="submit">{% trans "Create List" %}</button>
+    </form>
+{% endblock %}

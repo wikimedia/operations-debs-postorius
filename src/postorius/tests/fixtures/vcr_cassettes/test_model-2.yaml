@@ -1,0 +1,18 @@
+interactions:
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+      !!python/unicode 'authorization': [!!python/unicode 'Basic cmVzdGFkbWluOnJlc3RwYXNz']
+      !!python/unicode 'user-agent': [!!python/unicode 'GNU Mailman REST client v1.0.0b2']
+    method: !!python/unicode 'GET'
+    uri: http://localhost:9001/3.0/users/test@example.com
+  response:
+    body: {string: !!python/unicode '404 Not Found'}
+    headers:
+      content-length: ['13']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 17 Apr 2015 21:49:44 GMT']
+      server: [WSGIServer/0.2 CPython/3.4.2]
+    status: {code: 404, message: Not Found}
+version: 1

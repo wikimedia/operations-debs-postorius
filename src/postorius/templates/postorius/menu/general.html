@@ -1,0 +1,113 @@
+{% load url from future %}
+{% load i18n %}
+
+{% block menu_general %}
+    {% trans "General" %}
+    <div id="menu_general"><ul>
+    
+        <li {% if selected == "notifications" %}id="selected"{% endif %}>
+            <a href="{% url 'domains' %}">
+                {% trans "Notifications" %} Link:TODO
+            </a>
+            <div><ul>
+                <li {% if selected == "admin_immend_notify" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}{% endcomment %}">
+                        {% trans "admin_immend_notify" %} Link:TODO
+                    </a>
+                </li>
+                <li {% if selected == "admin_notify_mchanges" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}{% endcomment %}">
+                        {% trans "admin_notify_mchanges" %} Link:TODO
+                    </a>
+                </li>                              
+            </ul></div>
+        </li>
+        <li {% if selected == "formatting" %}id="selected"{% endif %}>
+            <a href="{% url 'list_new' %}">
+                {% trans "Formatting" %} Link:TODO
+            </a>
+            <div><ul>
+                <li {% if selected == "include_list_post_header" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}{% endcomment %}">
+                        {% trans "include_list_post_header" %} Link:TODO
+                    </a>
+                </li>
+                <li {% if selected == "include_rfc2369_headers" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}{% endcomment %}">
+                        {% trans "include_rfc2369_headers" %} Link:TODO
+                    </a>
+                </li>         
+                <li {% if selected == "convert_html_to_plaintext" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}{% endcomment %}">
+                        {% trans "convert_html_to_plaintext" %} Link:TODO
+                    </a>
+                </li>                                         
+            </ul></div>            
+        </li>
+        <li {% if selected == "gateways" %}id="selected"{% endif %}>
+            <a href="{% comment %}{% url 'list_delete' list.fqdn_listname %}TODO add List{% endcomment %}">
+                {% trans "Gateways" %} Link:TODO
+            </a>
+        </li>
+        <li{% if selected == "language" %}id="selected"{% endif %}>
+            <a href="{% comment %}{% url 'list_settings' list.fqdn_listname %}TODO add List{% endcomment %}">
+                {% trans "Language" %} Link:TODO
+            </a>
+        </li>
+        <li{% if selected == "subscription_rules" %}id="selected"{% endif %}>
+            <a href="{% comment %}{% url 'list_settings' list.fqdn_listname %}TODO add List{% endcomment %}">
+                {% trans "Subscription rules" %} Link:TODO
+            </a>
+            <div><ul>
+                <li {% if selected == "send_welcome_message" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}{% endcomment %}">
+                        {% trans "send_welcome_message" %} Link:TODO
+                    </a>
+                </li>
+                <li {% if selected == "advertised" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}{% endcomment %}">
+                        {% trans "advertised" %} Link:TODO
+                    </a>
+                </li>         
+                <li {% if selected == "anonymous_list" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}{% endcomment %}">
+                        {% trans "anonymous_list" %} Link:TODO
+                    </a>
+                </li>                                         
+            </ul></div>     
+        </li>
+        <li{% if selected == "bounces" %}id="selected"{% endif %}>
+            <a href="{% comment %}{% url 'list_settings' list.fqdn_listname %}TODO add List{% endcomment %}">
+                {% trans "Bounces" %} Link:TODO
+            </a>
+        </li>
+        <li{% if selected == "digest" %}id="selected"{% endif %}>
+            <a href="{% comment %}{% url 'list_settings' list.fqdn_listname %}TODO add List{% endcomment %}">
+                {% trans "Digest" %} Link:TODO
+            </a>
+            <div><ul>
+                <li {% if selected == "next_digest_number" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}{% endcomment %}">
+                        {% trans "next_digest_number" %} Link:TODO
+                    </a>
+                </li>
+                <li {% if selected == "digest_size_threshold" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}{% endcomment %}">
+                        {% trans "digest_size_threshold" %} Link:TODO
+                    </a>
+                </li>         
+                <li {% if selected == "digest_last_send_at" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}{% endcomment %}">
+                        {% trans "digest_last_send_at" %} Link:TODO
+                    </a>
+                </li>                                         
+            </ul> </div>               
+        </li>  
+        <li{% if selected == "description" %}id="selected"{% endif %}>
+            <a href="{% comment %}{% url 'list_settings' list.fqdn_listname %}TODO add List{% endcomment %}">
+                {% trans "List Description" %} Link:TODO
+            </a>
+        </li>              
+    
+    </ul></div>
+{% endblock%}

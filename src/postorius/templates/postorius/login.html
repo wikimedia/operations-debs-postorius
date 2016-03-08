@@ -1,0 +1,48 @@
+{% extends postorius_base_template %}
+{% load url from future %}
+{% load i18n %}
+{% load staticfiles %}
+{% load browserid %}
+
+{% block subtitle %}
+{% trans "Login" as page_title %}{{ page_title }}
+{% endblock %}
+
+{% block main %}
+
+{% browserid_info %}
+<div id="container">
+    <p><strong>{% trans "Login with username and password or with Mozilla Persona" %}</strong></p>
+
+  <div class="mm_login">
+
+    <form action="" method="post" class="login mm_clear well"> {% csrf_token %}
+      {{ form.as_p }}
+      <div class="field">
+       <button class="btn btn-primary" type="submit">{% trans "Log in" %}</button>
+      </div>
+    </form>
+
+  </div>
+  <div class="mm_login_b">
+
+    <a rel="nofollow" class="browserid-login persona-button" id="browserid" href="#">
+      <img src="{% static 'postorius/img/sign_in_blue.png' %}"
+           alt="{% trans 'Login using BrowserID' %}" />
+    </a>
+    <p>{% trans "Mozilla Persona is an easy way to sign into multiple websites, while still controlling your personal data. For more information <a href='http://www.mozilla.org/en-US/persona'>see the Mozilla website</a>" %}.
+    </p>
+    <noscript>
+      <p class="text-error">
+        {% trans "Mozilla Persona requires the use of JavaScript." %}
+      </p>
+    </noscript>
+  </div>
+<div style="clear:both">
+</div>
+</div>
+{% endblock %}
+
+{% block additionaljs %}
+    {% browserid_js %}
+{% endblock additionaljs %}

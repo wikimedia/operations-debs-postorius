@@ -1,0 +1,36 @@
+{% extends postorius_base_template %}
+
+{% load url from future %}
+{% load i18n %}
+
+{% block subtitle %}
+{% trans "Subscriptions | " as page_title %}{{ page_title|add:user.username }}
+{% endblock %}
+
+{% block main %}
+    {% include 'postorius/menu/user_nav.html' %}
+    <h1>{% trans "List Subscriptions" %} <span></span></h1>
+
+    <p>{% trans "You are subscribed to the following mailing lists:" %}</p>
+
+    <table class="table table-bordered table-striped">
+        <thead>
+    		<tr>
+    			<th>{% trans 'List Name' %}</th>
+    			<th>{% trans 'Subscription Address' %}</th>
+    			<th>{% trans 'Role' %}</th>
+    			<th>{% trans 'Delivery Mode' %}</th>
+    		</tr>
+        </thead>
+    	<tbody>
+            {% for subscription in memberships %}
+    		<tr>
+    			<td>{{ subscription.mlist }}</td>
+    			<td>{{ subscription.address }}</td>
+    			<td>{{ subscription.role }}</td>
+    			<td>{{ subscription.preferences.delivery_mode }}</td>
+    		</tr>
+            {% endfor %}
+    	</tbody>
+    </table>
+{% endblock main %}

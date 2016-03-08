@@ -1,0 +1,112 @@
+{% extends postorius_base_template %}
+{% load url from future %}
+{% load i18n %}
+
+{% block subtitle %}
+{% trans "Members | " as page_title %}{{ page_title|add:list.fqdn_listname}}
+{% endblock %}
+
+{% load nav_helpers %}
+
+{% block main %}
+    {% list_nav 'list_members' "List Members" %}
+    <h2>{% trans "Owners" %}</h2>
+
+    {{ owner_form.email.errors }}
+    <form action="{% url 'list_members' list.fqdn_listname %}" method="POST" class="form-inline">{% csrf_token %}
+        <label for="id_email">{% trans 'Email Address' %}</label>
+        {{ owner_form.owner_email }}
+        <button type="submit" class="btn">{% trans 'Add Owner' %}</button>
+    </form>
+    <table class="table table-bordered table-striped">
+        <thead>
+    		<tr>
+    			<th>{% trans 'Address' %}</th>
+                <th>&nbsp;</th>
+    		</tr>
+        </thead>
+    	<tbody>
+            {% for member in list.owners %}
+                <tr>
+                    <td>{{ member }}</td>
+                    <td>
+                      <a href="{% url 'remove_role' list.fqdn_listname 'owner' member %}" class="btn btn-mini btn-danger">{% trans 'Delete' %}</a>
+                    </td>
+                </tr>
+            {% endfor %}
+    	</tbody>
+    </table>
+
+    <h2>{% trans "Moderators" %}</h2>
+    {{ moderator_form.email.errors }}
+    <form action="{% url 'list_members' list.fqdn_listname %}" method="POST" class="form-inline">{% csrf_token %}
+        <label for="bla">{% trans 'Email Address' %}</label>
+        {{ moderator_form.moderator_email }}
+        <button type="submit" class="btn">{% trans 'Add Moderator' %}</button>
+    </form>
+
+    <table class="table table-bordered table-striped">
+        <thead>
+    		<tr>
+    			<th>{% trans 'Address' %}</th>
+                <th>&nbsp;</th>
+    		</tr>
+        </thead>
+    	<tbody>
+            {% for member in list.moderators %}
+                <tr>
+                    <td>{{ member }}</td>
+                    <td>
+                      <a href="{% url 'remove_role' list.fqdn_listname 'moderator' member %}" class="btn btn-mini btn-danger">{% trans 'Delete' %}</a>
+                    </td>
+                </tr>
+            {% endfor %}
+    	</tbody>
+    </table>
+
+    <h2>{% trans "Members" %}</h2>
+    <table class="table table-bordered table-striped">
+        <thead>
+    		<tr>
+    			<th>{% trans 'Address' %}</th>
+    			<th>{% trans 'Role' %}</th>
+                <th>&nbsp;</th>
+    		</tr>
+        </thead>
+    	<tbody>
+	    <form action="{% url 'csv_view' list.list_id %}" method="post" class="well"> {% csrf_token %}
+		     <button type="submit" class="btn">{% trans 'CSV Export' %}</button>
+	    </form>
+
+            {% for member in list.member_page %}
+                <tr>
+                    <td> <a href="{% url 'list_member_options' list.fqdn_listname member.email %}">
+                        {{ member.email }}</a></td>
+                    <td>{% trans member.role %}</td>
+                    <td>
+                        <a href="{% url 'list_unsubscribe' list.fqdn_listname member.email %}" class="btn btn-mini btn-danger">{% trans 'Unsubscribe' %}</a>
+                    </td>
+                </tr>
+            {% endfor %}
+    	</tbody>
+    </table>
+
+    <div class="pagination pagination-centered">
+        <ul>
+            {% if list.member_page_nr > 1 %}
+                <li><a href="{% url 'list_members_paged' list.fqdn_listname list.member_page_previous_nr %}">&laquo;</a></li> 
+            {% else %}
+                <li class="disabled"><span>&laquo;</span></li> 
+            {% endif %}
+
+        	<li><span>{{ list.member_page_nr }}</span></li>
+
+            {% if list.member_page_show_next %}
+                <li><a href="{% url 'list_members_paged' list.fqdn_listname list.member_page_next_nr %}">&raquo;</a></li> 
+            {% else %}
+                <li class="disabled"><a href="#">&raquo;</a></li> 
+            {% endif %}
+        </ul>
+    </div>
+
+{% endblock main %}

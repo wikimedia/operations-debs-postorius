@@ -1,0 +1,10 @@
+{% load url from future %}
+{% load i18n %}
+
+{% block main %}
+
+    <h1>{% trans "More Info" %} : {{helpid}}</h1>
+    <p>
+		{{help_text}}	
+    </p>
+{% endblock main %}

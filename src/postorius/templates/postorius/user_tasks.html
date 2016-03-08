@@ -1,0 +1,12 @@
+{% extends postorius_base_template %}
+{% load url from future %}
+{% load i18n %}
+
+{% block subtitle %}
+{% trans "To Do" as page_title %}{{ page_title }}
+{% endblock %}
+
+{% block main %}
+    <h1>{% trans "To Do" %}</h1>
+    <p>{% trans "There are no pending tasks at the present time." %}</p>
+{% endblock main %}

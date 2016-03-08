@@ -1,0 +1,50 @@
+{% extends postorius_base_template %}
+{% load url from future %}
+{% load i18n %}
+
+{% block subtitle %}
+{% trans "Settings | " as page_title %}{{ page_title|add:list.fqdn_listname}}
+{% endblock %}
+
+{% load nav_helpers %}
+
+{% block main %}
+    {% if message %}<p class="alert">{{ message }}</p>{% endif %}
+    {% list_nav 'list_settings' 'Settings' %}
+    <ul class="nav nav-tabs">
+        {% for section in section_names %}
+        <li {% if section.0 == visible_section %}class="active"{% endif %}><a href="{% url 'list_settings' list_id=list.list_id visible_section=section.0 %}">{{section.1}}</a></li>
+        {% endfor %}
+    </ul>
+
+    <form action="{% url 'list_settings' list_id=list.list_id visible_section=visible_section %}" method="post" class="well form-horizontal list_settings">{% csrf_token %}
+        
+        {% for field in form %}
+
+            {% if field.errors %}
+                <div class="field-errors">{{ field.errors }}</div>
+            {% endif %}
+
+            <div class="control-group">
+
+                <div class="control-label">
+                    {{ field.label_tag }}
+                    <span class="more_info">[<a>?</a><span>{{ field.help_text }}</span>]</span>
+                </div>
+
+                <div class="controls">
+                    {{ field }}
+                </div>
+            </div>
+
+        {% endfor %}
+
+        <div class="form-actions">
+        
+            <button class="btn btn-primary btn-success" type="submit">{% trans "Save changes" %}</button>
+
+        </div>
+
+    </form>
+
+{% endblock %}

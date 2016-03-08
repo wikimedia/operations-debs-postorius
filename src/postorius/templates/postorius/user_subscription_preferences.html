@@ -1,0 +1,55 @@
+{% extends postorius_base_template %}
+{% load url from future %}
+{% load i18n %}
+
+{% block subtitle %}
+{% trans "Subscription Preferences | " as page_title %}{{ page_title|add:user.username }}
+{% endblock %}
+
+{% block main %}
+{% include 'postorius/menu/user_nav.html' %}
+<ul class="nav nav-tabs">
+   <li> <a href="{% url 'user_mailmansettings' %}">{% trans "Global Mailman Preferences" %}</a></li>
+   <li> <a href="{% url 'user_address_preferences' %}">{% trans "Address Based Preferences" %}</a></li>
+   <li class="active"><a href="#">{% trans "Subscription Based Preferences" %}</a></li>
+</ul>
+{% if nolists %}
+    <div class="mm_subHeader" >
+       <h1>{% trans "No Preferences Available" %}</h1>
+    </div>
+    <p>{% trans 'You are not yet subscribed to any lists, so you have no Mailman preferences.' %}</p>
+{% else %}
+    <form class="well" action = "{% url 'user_subscription_preferences' %}" method = "post" id = "subscriptions_formset" >
+       {% csrf_token %}
+       {{formset.management_form}}
+       {{formset.non_form_errors.as_ul}}
+       <table class="well" border="1" width="100%">
+          {% for form,subscription in zipped_data %}
+          {% if forloop.first %}
+          <thead>
+             <tr>
+                <th> {% trans 'Subscription' %} </th>
+                {% for field in form.visible_fields %}
+                <th>{{field.label}} <p><span class="more_info">[<a href="#" target="_blank">{% trans 'More info' %}</a><span>{{ field.help_text }}
+                    </span>]</span></p></th>
+                {% endfor %}
+             </tr >
+          </thead >
+          {% endif %}
+          {% endfor %}
+          <tr class = "{% cycle row1,row2 %}" >
+          {% for form,subscription in zipped_data %}
+             <td style="width:10%">{{subscription.list_id}}</td>
+             <td style="width:14%">{{form.delivery_status}}</td>
+             <td style="width:20%">{{form.delivery_mode}}</td>
+             <td style="width:14%">{{form.receive_own_postings}}</td>
+             <td style="width:14%">{{form.acknowledge_posts}}</td>
+             <td style="width:14%">{{form.hide_address}}</td>
+             <td style="width:14%">{{form.receive_list_copy}}</td>
+          </tr>
+          {% endfor %}
+       </table>
+       <center><button class="btn btn-success" type="submit"> {% trans "Save" %}</button></center>
+    </form>
+{% endif %}
+{% endblock main %}

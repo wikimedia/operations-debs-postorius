@@ -1,0 +1,9 @@
+{% load url from future %}
+{% load i18n %}
+{% load nav_helpers %}
+<div class="mm_subHeader">
+    <ul class="mm_nav">
+        <li class="mm_nav_item"><a class="{% nav_active_class current 'user_summary' %}" href="{% url 'user_summary' mm_user.user_id %}">{% trans "User Info" %}</a></li>
+        <li class="mm_nav_item"><a class="{% nav_active_class current 'user_delete' %}" href="">{% trans "Delete User" %}</a></li>
+    </ul>
+</div>

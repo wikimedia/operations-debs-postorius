@@ -1,0 +1,55 @@
+.mm_actionButtons li a
+    {
+    background-color: transparent;
+    background-position: left center;
+    background-repeat: no-repeat;
+    background-size: auto 100%;
+    }
+
+/** List **/
+.mm_list_summary a
+    {background: url(../img/tango/emblems/all-per-page.svg)}
+    
+.mm_list_new a
+    {background-image: url(../img/tango/actions/document-new_list.svg);}
+
+.mm_delete_list a
+    {background-image: url(../img/tango/categories/document-denied.svg);}    
+
+.mm_subscribe a
+    {background-image: url(../img/tango/actions/add-participant.svg);}
+
+.mm_archives a
+    {background-image: url(../img/tango/emblems/address-book.svg);}    
+
+.mm_options a
+    {background-image: url(../img/tango/actions/document-settings.svg);}            
+
+.mm_unsubscribe a
+    {background-image: url(../img/tango/actions/remove-participant.svg);}
+    
+.mm_mass_subscribe a
+    {background-image: url(../img/tango/actions/list-all-participants.svg);}
+    
+.mm_membership a
+    {background-image: url(../img/tango/categories/user-edit.svg);}
+
+/**  Domain **/
+.mm_new_domain a
+    {background-image: url(../img/tango/emblems/account-new.svg);}
+    
+.mm_edit_domain a
+    {background-image: url(../img/tango/emblems/account-edit.svg);}
+
+.mm_delete_domain a
+    {background-image: url(../img/tango/emblems/account-delete.svg);} 
+    
+/** Settings **/
+
+/** user_settings - membership_settings **/
+
+.mm_user_settings a
+    {background-image: url(../img/tango/TODO-blueuser_with_editPen);} 
+    
+.mm_user_subscriptions a
+    {background-image: url(../img/tango/TODO-blueuser_with_editlist_icon);} 

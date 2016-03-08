@@ -1,0 +1,13 @@
+{% load url from future %}
+{% load i18n %}
+
+{% block menu_user_options %}
+    {% trans "User Options" %}
+    <div><ul class="menu">
+         <li{% if selected == "description" %}id="selected"{% endif %}>
+            <a href="{% comment %}{% url ... %}TODO add List{% endcomment %}">
+                {% trans "Description" %} Link:TODO
+            </a>
+         </li>
+     </ul> </div>
+{% endblock %}     

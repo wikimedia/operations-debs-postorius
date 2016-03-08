@@ -1,0 +1,34 @@
+{% extends postorius_base_template %}
+{% load url from future %}
+{% load i18n %}
+{% load nav_helpers %}
+
+{% block main %}
+    {% if message %}<p class="alert">{{ message }}</p>{% endif %}
+    {% list_nav 'list_settings' 'Settings' %}
+    <ul class="nav nav-tabs">
+        {% for section in section_names %}
+        <li {% if section.0 == visible_section %}class="active"{% endif %}><a href="{% url 'list_settings' list_id=list.list_id visible_section=section.0 %}">{{section.1}}</a></li>
+        {% endfor %}
+    </ul>
+
+    {% if visible_section %}
+
+        <table class="well">
+        <form class="well" action="{% url 'list_settings' list_id=list.list_id visible_section=visible_section %}" method="post" class="list_settings"> {% csrf_token %}
+			{% for field in form %}
+            <tr><td>
+                {{ field.errors }}
+                {{ field.label_tag }} <br />
+                [<span class="more_info"><a href="{% url 'more_info_tab'  formid='list_settings' helpid=field.name %}" target="_blank">{% trans "More info" %}</a><span>{{ field.help_text }}
+                </span></span>]
+            </td><td>{{ field }}</td></tr>
+        {% endfor %}
+        <tr><td colspan="2">
+	         <button class="btn btn-primary" type="submit">{% trans "Save changes" %}</button>
+        </td></tr>
+        </form>
+        </table>
+    {% endif %}
+
+{% endblock %}

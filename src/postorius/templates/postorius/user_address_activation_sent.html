@@ -1,0 +1,14 @@
+{% extends postorius_base_template %}
+{% load url from future %}
+{% load i18n %}
+
+{% block subtitle %}
+{% trans "Confirmation Sent" as page_title %}{{ page_title }}
+{% endblock %}
+
+{% block main %}
+{% include 'postorius/menu/user_nav.html' %}
+
+    <h1>{% trans 'Email address activation sent' %}</h1>
+    <p>{% trans "A confirmation link has been sent to the email address you submitted. Please check your email account and click on the confirmation link to add this address for your account." %}</p>
+{% endblock main %}

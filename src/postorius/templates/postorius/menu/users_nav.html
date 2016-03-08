@@ -1,0 +1,11 @@
+{% load url from future %}
+{% load i18n %}
+{% load nav_helpers %}
+<div class="mm_subHeader">
+    <span class="mm_context"><a href="{% url 'user_index' %}">{% trans 'Users' %}</a> &raquo; {{ title }}</span>
+    <ul class="mm_nav">
+        <li class="mm_nav_item"><a class="{% nav_active_class current 'user_index' %}" href="{% url 'user_index' %}">{% trans "Mailman Users" %}</a></li>
+        <li class="mm_nav_item"><a class="{% nav_active_class current 'web_user_index' %}" href="{% url 'user_index' %}">{% trans "Web Users" %}</a></li>
+        <li class="mm_new_user mm_action"><a class="btn btn-mini btn-success" href="{% url 'user_new' %}">{% trans "Create User" %}</a></li>
+    </ul>
+</div>

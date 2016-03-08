@@ -1,0 +1,6 @@
+Please click the link below to add your email address to your mailing list 
+profile at {{ host_url }}:
+
+{{ activation_link }}
+
+Thanks!

@@ -1,0 +1,24 @@
+interactions:
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+      !!python/unicode 'authorization': [!!python/unicode 'Basic cmVzdGFkbWluOnJlc3RwYXNz']
+      !!python/unicode 'user-agent': [!!python/unicode 'GNU Mailman REST client v1.0.0b2']
+    method: !!python/unicode 'GET'
+    uri: http://localhost:9001/3.0/lists/foo.example.com/roster/moderator
+  response:
+    body: {string: !!python/unicode '{"total_size": 1, "start": 0, "entries": [{"role":
+        "moderator", "list_id": "foo.example.com", "delivery_mode": "regular", "address":
+        "http://localhost:9001/3.0/addresses/newmod@example.com", "user": "http://localhost:9001/3.0/users/132323735783051238959108775541333078032",
+        "http_etag": "\"4c3e3aa74124d0a32fd975ee77a56823786d8f11\"", "member_id":
+        329829655011474511559429401860720729232, "email": "newmod@example.com", "self_link":
+        "http://localhost:9001/3.0/members/329829655011474511559429401860720729232"}],
+        "http_etag": "\"8ff8a8d1797518c87870e4a93547a0e6391ef752\""}'}
+    headers:
+      content-length: ['572']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 17 Apr 2015 21:49:32 GMT']
+      server: [WSGIServer/0.2 CPython/3.4.2]
+    status: {code: 200, message: OK}
+version: 1

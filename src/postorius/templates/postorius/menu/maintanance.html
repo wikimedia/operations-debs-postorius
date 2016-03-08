@@ -1,0 +1,84 @@
+{% load url from future %}
+{% load i18n %}
+
+{% block menu_maintanance %}
+{% if fqdn_listname %}
+    {% trans "Maintanance" %}
+    <div><ul class="menu">
+        <li {% if selected == "archive" %}id="selected"{% endif %}>
+            <a href="{% url 'domains' %}">
+                {% trans "Archive" %} #TODO link
+            </a>
+        </li>
+        <li {% if selected == "auto_responder" %}id="selected"{% endif %}>
+            <a href="{% url 'list_settings' fqdn_listname=fqdn_listname visible_section='Automatic Responses' visible_option=None %}">
+                {% trans "Auto Responder" %}
+            </a>
+            <div><ul>
+                <li {% if selected == "autorespond_postings" %}id="selected"{% endif %}>
+                    <a href="{% url 'list_settings' fqdn_listname=fqdn_listname visible_section='Automatic Responses' visible_option='autorespond_postings' %}">
+                        {% trans "Postings" %}
+                    </a>
+                </li>
+                <li {% if selected == "autorespond_requests" %}id="selected"{% endif %}>
+                    <a href="{% url 'list_settings' fqdn_listname=fqdn_listname visible_section='Automatic Responses' visible_option='autorespond_requests' %}">
+                        {% trans "Requests" %}
+                    </a>
+                </li>
+                <li {% if selected == "autorespond_owner" %}id="selected"{% endif %}>
+                    <a href="{% url 'list_settings' fqdn_listname=fqdn_listname visible_section='Automatic Responses' visible_option='autorespond_owner' %}">
+                        {% trans "Owner" %}
+                    </a>
+                </li>                                
+            </ul></div>
+        </li>
+        </li>
+        <li {% if selected == "filter" %}id="selected"{% endif %}>
+            <a href="{% comment %}{% url ... %}TODO add List{% endcomment %}">
+                {% trans "Filter" %} Link:TODO
+            </a>
+            <div><ul>
+                <li {% if selected == "filter_content" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}{% endcomment %}">
+                        {% trans "Filter content" %} Link:TODO
+                    </a>
+                </li>
+                <li {% if selected == "filter_sender" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}{% endcomment %}">
+                        {% trans "Sender" %} Link:TODO
+                    </a>
+                </li>
+                <li {% if selected == "filter_message" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}{% endcomment %}">
+                        {% trans "Message" %} Link:TODO
+                    </a>
+                </li>
+                <li {% if selected == "filter_recipient" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}{% endcomment %}">
+                        {% trans "Recipient" %} Link:TODO
+                    </a>
+                </li>
+                <li {% if selected == "filter_spam" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}{% endcomment %}">
+                        {% trans "Spam" %} Link:TODO
+                    </a>
+                </li>
+                <li {% if selected == "filter_topics" %}id="selected"{% endif %}>
+                    <a href="{% comment %}{% url ... %}{% endcomment %}">
+                        {% trans "Topics" %} Link:TODO
+                    </a>
+                </li>                   
+            </ul></div>
+        </li>
+        {% comment %} {% if user in list.admin %}{% endcomment %}
+        ACL:TODO
+        <li{% if selected == "requests" %}id="selected"{% endif %}>
+            <a href="{% comment %}{% url ... %}TODO add List{% endcomment %}">
+                {% trans "Requests" %} Link:TODO
+            </a>
+        </li>
+        {% comment %}{% endif %}{% endcomment %}
+        
+    </ul></div>
+{% endif %}
+{% endblock%}

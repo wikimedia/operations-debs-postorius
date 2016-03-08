@@ -1,0 +1,18 @@
+{% extends postorius_base_template %}
+{% load url from future %}
+{% load i18n %}
+
+{% block subtitle %}
+{% trans "Mass Subscribe | "%}{{ page_title|add:list.fqdn_listname}}
+{% endblock %}
+
+{% load nav_helpers %}
+
+{% block main %}
+    {% list_nav 'mass_subscribe' "Mass Subscription" %}
+
+    <form action="{% url 'mass_subscribe' list.fqdn_listname %}" method="post" class="well"> {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-primary" type="submit">{% trans "Subscribe users" %}</button>
+    </form>
+{% endblock main %}

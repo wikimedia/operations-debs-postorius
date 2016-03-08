@@ -1,0 +1,13 @@
+{% load url from future %}
+{% load i18n %}
+<div class="mm_subHeader">
+    <div class="mm_subHeader">
+        <h1>{% trans "Settings" %}</h1>
+    </div>
+    <ul class="mm_nav">
+        <li class="mm_nav_item"><a href="{% url 'user_profile' %}">{% trans "Profile" %}</a></li>
+        <li class="mm_nav_item"><a href="{% url 'user_mailmansettings' %}">{% trans "Subscription Settings" %}</a></li>
+        <li class="mm_nav_item"><a href="{% url 'user_subscriptions' %}">{% trans "Subscriptions" %}</a></li>
+        <li class="mm_nav_item"><a href="{% url 'address_activation' %}">{% trans "Add Email Address" %}</a></li>
+    </ul>    
+</div>

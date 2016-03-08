@@ -1,0 +1,25 @@
+{% extends postorius_base_template %}
+{% load url from future %}
+{% load i18n %}
+
+{% block subtitle %}
+{% trans "Profile | " as page_title %}{{ page_title|add:user.username }}
+{% endblock %}
+
+{% block main %}
+    {% include 'postorius/menu/user_nav.html' %}
+    <h1>{% trans "User Profile" %} <span>- {{ user }}</span></h1>
+
+    <table class="table table-bordered table-striped mm_userData">
+    	<tbody>
+    		<tr>
+    			<td>{% trans 'Mailman display name' %}</td>
+    			<td>{{ mm_user.display_name}}</td>
+    		</tr>
+    		<tr>
+    			<td>{% trans 'User name' %}</td>
+    			<td>{{ user.username}}</td>
+    		</tr>
+    	</tbody>
+    </table>
+{% endblock main %}

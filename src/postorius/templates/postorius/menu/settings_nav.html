@@ -1,0 +1,9 @@
+{% load url from future %}
+{% load i18n %}
+<div class="mm_subHeader">
+    <span class="mm_context">{% trans "Settings" %}</span>
+    <ul class="mm_nav">
+        <li class="mm_nav_item"><a href="{% url 'domain_index' %}">{% trans "Domain Index" %}</a></li>
+        <li class="mm_action"><a class="btn btn-mini btn-success" href="{% url 'domain_new' %}">{% trans "Create Domain" %}</a></li>
+    </ul>
+</div>

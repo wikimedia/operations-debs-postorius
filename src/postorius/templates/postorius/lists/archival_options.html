@@ -1,0 +1,28 @@
+{% extends postorius_base_template %}
+{% load url from future %}
+{% load i18n %}
+
+{% block subtitle %}
+{% trans "Archival Options | " as page_title %}{{ page_title|add:list.fqdn_listname}}
+{% endblock %}
+
+{% load nav_helpers %}
+
+{% block main %}
+    {% if message %}<p class="alert">{{ message }}</p>{% endif %}
+    {% list_nav 'list_archival_options' 'Archivers' %}
+
+    <h2>{% trans 'Archivers' %}</h2>
+
+    <div class="well">
+        
+        <form action="{% url 'list_archival_options' list.list_id %}" method="POST">{% csrf_token %}
+            <div class="archival-options-form">
+                {{ form }}
+            </div>
+            <button class="btn btn-primary" type="submit">{% trans 'Save Archivers' %}</button>
+        </form>
+
+    </div>
+
+{% endblock %}

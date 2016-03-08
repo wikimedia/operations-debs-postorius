@@ -1,0 +1,7 @@
+All Icons within this folder belong to the RRZE Icon Set which is based on Tango
+
+Both are published CC by SA and where included into mailman with special permission of Franziska Sponsel - one of the designers.
+
+Please see http://rrze-icon-set.berlios.de/team.html for the full team
+
+And http://tango.freedesktop.org/Tango_Desktop_Project for the Tango Project.

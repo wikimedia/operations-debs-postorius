@@ -1,0 +1,15 @@
+{% extends postorius_base_template %}
+{% load url from future %}
+{% load i18n %}
+
+{% block subtitle %}
+{% trans "Subscribe | " as page_title %}{{ page_title|add:list.fqdn_listname }}
+{% endblock %}
+
+{% block main %}
+    <h1>{% trans 'Subscribe' %} <span>{{ list.fqdn_listname}}</span></h1>
+    <form action="{% url 'list_subscribe' list.fqdn_listname %}" method="post" class="list_subscribe"> {% csrf_token %}
+        {{form.as_p}}
+        <input class="btn btn-primary" type="submit" value="{% trans 'Subscribe' %}" />
+    </form>
+{% endblock main %}

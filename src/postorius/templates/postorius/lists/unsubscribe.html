@@ -1,0 +1,12 @@
+{% extends postorius_base_template %}
+{% load url from future %}
+{% load i18n %}
+
+{% block subtitle %}
+{% trans "Confirm List Delete" as page_title %}{{ page_title|add:list.fqdn_listname}}
+{% endblock %}
+
+{% block main %}
+    <h1>{% trans 'Delete List' %} <span>{{ list.fqdn_listname}}</span></h1>
+    <p>{% trans 'Are you sure you want to delete' %} {{ list.fqdn_listname }}?</p>
+{% endblock main %}

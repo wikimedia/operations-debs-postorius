@@ -1,0 +1,14 @@
+{% extends "postorius/base.html" %}
+{% load url from future %}
+{% load i18n %}
+{% load nav_helpers %}
+
+{% block main %}
+    <h1>{% trans 'Confirm Removal of All Members' %}</h1>
+    <p>{% trans "Are you sure you want to unsubscribe all members from "  %}{{list_id}}{% trans " ?"%}</p>
+    <hr />
+   <form method="post" action="{% url 'unsubscribe_all' list_id %}">
+          {% csrf_token %}
+        <button class="btn btn-danger" type="submit" >{% trans "Unsubscribe All " %}</button>
+        <a class="btn" href="{% url 'list_members' list_id %}">{% trans "Cancel" %}</a>
+{% endblock main %}

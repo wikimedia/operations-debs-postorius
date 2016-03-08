@@ -1,0 +1,41 @@
+{% extends postorius_base_template %}
+{% load url from future %}
+{% load i18n %}
+{% load nav_helpers %}
+
+{% block body_class %}list_summary{% endblock %}
+
+{% block main %}
+    {% list_nav 'list_subscription_requests' "Subscription Requests" %}
+
+    {% if list.requests|length > 0 %}
+
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>{% trans 'E-Mail Address' %}</th>
+                    <th>&nbsp;</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in list.requests %}
+                <tr>
+                    <td>{{ request.email }}</td>
+
+                    <td class="mm_action">
+                        <a href="{% url 'handle_subscription_request' list.list_id request.token 'accept' %}" class="btn btn-mini btn-success">{% trans 'Accept' %}</a>
+                        <a href="{% url 'handle_subscription_request' list.list_id request.token 'reject' %}" class="btn btn-mini btn-danger">{% trans 'Reject' %}</a>
+                        <a href="{% url 'handle_subscription_request' list.list_id request.token 'discard' %}" class="btn btn-mini btn-danger">{% trans 'Discard' %}</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    {% else %}
+
+        <p>{% trans 'There are currently no subscription requests for this list.' %}</p>
+
+    {% endif %}
+  
+{% endblock %}

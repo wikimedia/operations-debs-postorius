@@ -1,0 +1,57 @@
+{% extends postorius_base_template %}
+{% load url from future %}
+{% load i18n %}
+
+{% block subtitle %}
+{% trans "User Settings | " as page_title %}{{ page_title|add:list.fqdn_listname}}
+{% endblock %}
+
+{% block main %}
+    {% include 'postorius/menu/user_nav.html' %}
+    <h1>{% trans "Membership" %}</h1>
+    {% ifequal tab "membership"%}
+        {% trans "Membership Settings" %} 
+        {% if list %}<span>{% trans "for"%}{% endif %} {{ list.fqdn_listname }}</span>
+    {% else %}
+        {% trans "User Settings" %}
+    {% endifequal %}
+
+    <div class="mm_box mm_clear">
+        <div class="mm_boxHeader">
+        {% trans "Content" %}
+        </div>  
+        <p>{% trans "Use this page to manage your account. You'll be able to see a list of your subscribed lists, modify these membership settings of the list and your personal preferences in user_settings <a href='https://bugs.launchpad.net/mailman/+bug/821438' >LP:821438</a> is solved <br>" %}</p>
+        {% if form %}
+            <form action="" method="post" class="user" name="user"> {% csrf_token %}
+            <ul class="">
+                {{ form.as_div }}
+                <li class="field">
+                    <button type="submit">{% trans "Save changes" %}</button>
+                </li>
+            </ul>
+            </form>
+        {% endif %}
+    </div>
+
+    <ul class="mm_actionButtons">
+        <li class="mm_user_settings"><a href="{% url 'user_settings' %}">{% trans "My Account" %}</a></li>
+        <li class="mm_user_subscriptions"><a href="{% url 'membership_settings' %}">{% trans "All my Subscriptions" %}</a></li>
+    </ul>    
+
+    {% if membership_lists %}
+        {% for list in membership_lists %}
+        <div class="mm_box mm_smallBox {% cycle 'mm_clear' '' %}">
+            <div class="mm_boxHeader">
+                <a href="{% url 'list_summary' fqdn_listname=list.fqdn_listname %}">
+                    {{ list.display_name }} {% if not list.settings.advertised %}(non-public){% endif %}
+                </a>
+            </div>
+            <ul>
+                <li><a href="{% url 'membership_settings' fqdn_listname=list.fqdn_listname%}"> {% trans "My Membership" %}</li>
+                <li><a href="{% url 'membership_settings' fqdn_listname=list.fqdn_listname %}"> 
+                {% trans "My Subscription" %}</a></li>
+            </ul>
+        </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

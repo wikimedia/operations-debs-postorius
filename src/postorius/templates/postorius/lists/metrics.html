@@ -1,0 +1,35 @@
+{% extends postorius_base_template %}
+{% load url from future %}
+{% load i18n %}
+
+{% block subtitle %}
+{% trans "List Metrics | " as page_title %}{{ page_title|add:list.fqdn_listname }}
+{% endblock %}
+
+{% load nav_helpers %}
+
+{% block main %}
+    {% list_nav 'list_metrics' 'Metrics' %}
+
+    <table class="table table-bordered table-striped mm_userData">
+    	<tbody>
+    		<tr>
+    			<th>{% trans 'Created at' %}</th>
+    			<td>{{list.settings.created_at}}</td>
+    		</tr>
+    		<tr>
+    			<th>{% trans 'Last post at' %}</th>
+    			<td>{{list.settings.last_post_at}}</td>
+    		</tr>
+    		<tr>
+    			<th>{% trans 'Digest last sent at' %}</th>
+    			<td>{{list.settings.digest_last_sent_at}}</td>
+    		</tr>
+    		<tr>
+    			<th>{% trans 'Volume' %}</th>
+    			<td>{{list.settings.volume}}</td>
+    		</tr>
+    	</tbody>
+    </table>
+
+{% endblock main %}

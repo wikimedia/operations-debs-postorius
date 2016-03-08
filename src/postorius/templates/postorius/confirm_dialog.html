@@ -1,0 +1,12 @@
+{% extends postorius_base_template %}
+{% load url from future %}
+{% load i18n %}
+
+{% block main %}
+    <h1>{% trans 'Confirm' %}</h1>
+    <p>{% trans "Are you sure?" %}</p>
+    <form action="{{submit_url}}" method="post"> {% csrf_token %}
+        <button class="btn btn-danger" type="submit">{% trans "OK" %}</button>
+        <a class="btn" href="{{cancel_url}}">{% trans "Cancel" %}</a>
+    </form>
+{% endblock main %}

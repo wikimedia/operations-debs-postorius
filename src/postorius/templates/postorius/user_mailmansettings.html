@@ -1,0 +1,88 @@
+{% extends postorius_base_template %}
+{% load url from future %}
+{% load i18n %}
+
+{% block subtitle %}
+{% trans "Subscription Preferences | " as page_title %}{{ page_title|add:user.username }}
+{% endblock %}
+
+{% block main %}
+{% include 'postorius/menu/user_nav.html' %}
+<ul class="nav nav-tabs">
+   <li class="active"><a>{% trans "Global Mailman Preferences" %}</a></li>
+   <li><a href="{% url 'user_address_preferences' %}">{% trans "Address Based Preferences" %}</a></li>
+   <li><a href="{% url 'user_subscription_preferences' %}">{% trans "Subscription Based Preferences" %}</a></li>
+</ul>
+{% if not mm_user %}
+    <div class="mm_subHeader" >
+       <h1>{% trans "No Preferences Available" %}</h1>
+    </div>
+    <p>{% trans 'You are not yet subscribed to any lists, so you have no Mailman preferences.' %}</p>
+{% else %}
+    <form  class="well" action="{% url 'user_mailmansettings' %}" method="post" >
+       {% csrf_token %}
+       <table class="table table-bordered table-striped" border="2">
+          <thead>
+             <tr>
+                <th> {% trans "Preferences" %} </th>
+                <th> {% trans "Global" %} </th>
+             </tr>
+          </thead >
+          <tr>
+             <td>
+                <p> {% trans "Mail Delivery" %}: </p>
+                </p>
+                [<span class="more_info"><a href="#" target="_blank">{% trans 'More info' %}</a><span>{{ settingsform.delivery_status.help_text }}
+                </span></span>] </p>
+             </td>
+             <td> {{settingsform.delivery_status }} </td>
+          </tr>
+          <tr>
+             <td>
+                <p> {% trans "Select a Mode of Delivery" %}: </p>
+                </p>
+                [<span class="more_info"><a href="#" target="_blank">{% trans 'More info' %}</a><span>{{ settingsform.delivery_mode.help_text }}
+                </span></span>] </p>
+             </td>
+             <td> {{settingsform.delivery_mode }} </td>
+          </tr>
+          <tr>
+             <td>
+                <p> {% trans "Receive your own posts to the list?" %} </p>
+                </p>
+                [<span class="more_info"><a href="#" target="_blank">{% trans 'More info' %}</a><span>{{ settingsform.receive_own_postings.help_text }}
+                </span></span>] </p>
+             </td>
+             <td> {{settingsform.receive_own_postings }} </td>
+          </tr>
+          <tr>
+             <td>
+                <p> {% trans "Receive acknowledgement mails?" %} </p>
+                </p>
+                [<span class="more_info"><a href="#" target="_blank">{% trans 'More info' %}</a><span>{{ settingsform.acknowledge_posts.help_text }}
+                </span></span>] </p>
+             </td>
+             <td> {{settingsform.acknowledge_posts }} </td>
+          </tr>
+          <tr>
+             <td>
+                <p>{% trans "Conceal yourself from the subscriber list?" %} </p>
+                </p>
+                [<span class="more_info"><a href="#" target="_blank">{% trans 'More info' %}</a><span>{{ settingsform.hide_address.help_text }}
+                </span></span>] </p>
+             </td>
+             <td> {{settingsform.hide_address }} </td>
+          </tr>
+          <tr>
+             <td>
+                <p>{% trans "Avoid duplicate copies of messages?" %}</p>
+                </p>                 [<span class="more_info"><a href="#" target="_blank">{% trans 'More info' %}</a><span>{{ settingsform.receive_list_copy.help_text }}
+                </span></span>] </p>
+             </td>
+             <td> {{settingsform.receive_list_copy }} </td>
+          </tr>
+       </table>
+       <center><button class="btn btn-success" type="submit">{% trans "Save" %}</button></center>
+    </form>
+{% endif %}
+{% endblock main %}

@@ -1,0 +1,309 @@
+html {
+    overflow-y: scroll;
+}
+
+body {
+    color: #444;
+    font-size: 13px;
+    background-color: #F7F7F7;
+}
+a {
+    color: #069;
+}
+h1 {
+    font-size: 32px;
+    line-height: 36px;
+    color: #444;
+    clear: both;
+    margin: 20px 0;
+    font-weight: normal;
+    -webkit-text-shadow: 1px 1px 0 #d8d8d8;
+    -moz-text-shadow: 1px 1px 0 #d8d8d8;
+    -o-text-shadow: 1px 1px 0 #d8d8d8;
+    -ms-text-shadow: 1px 1px 0 #d8d8d8;
+    text-shadow: 1px 1px 0 #d8d8d8;
+}
+h1 span {
+    font-size: 75%;
+    font-style: italic;
+}
+h2 {
+    font-size: 24px;
+    line-height: 28px;
+    color: #444;
+    margin: 10px 0;
+    font-weight: normal;
+    -webkit-text-shadow: 1px 1px 0 #d8d8d8;
+    -moz-text-shadow: 1px 1px 0 #d8d8d8;
+    -o-text-shadow: 1px 1px 0 #d8d8d8;
+    -ms-text-shadow: 1px 1px 0 #d8d8d8;
+    text-shadow: 1px 1px 0 #d8d8d8;
+}
+footer {
+    padding-top: 10px;
+    text-align: right;
+}
+
+.mm_canvas {
+    position: relative;
+    width: 960px;
+    margin: 0 auto;
+}
+
+/***** meta nav *****/
+.mm_header {
+    padding: 5px 0;
+    border-bottom: 1px solid #CACACA;
+    background: #fafafa;
+    background: -moz-linear-gradient(top, #fff 0%, #efefef 100%);
+    background: -webkit-linear-gradient(top, #fff 0%,#efefef 100%);
+    background: -o-linear-gradient(top, #fff 0%,#efefef 100%);
+    background: -ms-linear-gradient(top, #fff 0%,#efefef 100%);
+    background: linear-gradient(to bottom, #fff 0%,#efefef 100%);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+    box-shadow: 0 2px 5px #d8d8d8;
+}
+.mm_header .mm_logo {
+    float: left;
+}
+.mm_metaNav {
+    float: left;
+    list-style: none;
+    margin: 0 0 0 20px;
+    padding: 5px 0 0 0;
+}
+.mm_loginName {
+    float: right;
+    padding-top: 5px;
+}
+.mm_logout {
+    margin-left: 10px;
+}
+
+.mm_metaNav li {
+    float: left;
+    margin-left: 20px;
+}
+.mm_metaNav a {
+    text-decoration: none;
+    color: #444;
+    padding: 5px 0 5px 5px;
+    text-shadow: #fff 0px 1px 1px;
+}
+
+.mm_main {
+    background-color: #fff;
+    clear: both;
+    border: 1px solid #bbb;
+    border-top-width: 0;
+    border-radius: 5px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    padding: 60px 40px 20px 40px;
+}
+
+.mm_subHeader {
+    padding-top: 10px;
+    margin-bottom: 40px;
+}
+.mm_context {
+    display: block;
+    padding-top: 9px;
+    font-size: 20px;
+    font-style: italic;
+}
+.mm_nav {
+    padding: 10px 0 30px 0;
+    margin: 20px 0;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #e8e8e8;
+    border-radius: 2px;
+    background: -webkit-linear-gradient(top, white 0%,#EFEFEF 100%);
+    background: -moz-linear-gradient(top, white 0%,#EFEFEF 100%);
+    background: -ms-linear-gradient(top, white 0%,#EFEFEF 100%);
+    background: -o-linear-gradient(top, white 0%,#EFEFEF 100%);
+    background: linear-gradient(to bottom, #fff 0%,#efefef 100%);
+}
+.mm_nav li {
+    float: left;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0 10px;
+}
+.mm_nav li.mm_action {
+    float: right;
+    margin-right: 10px;
+}
+.mm_nav li a {
+    font-size: 14px;
+}
+.mm_nav .mm_nav_item a {
+    font-weight: bold;
+    padding: 5px;
+}
+.mm_nav .mm_nav_item a:hover, 
+.mm_nav .mm_nav_item a.mm_active {
+    text-decoration: none;
+    background: #fff;
+    border-radius: 3px;
+    box-shadow: inset 0px 0px 1px #888;
+}
+.mm_nav li .btn {
+    font-weight: normal;
+}
+
+.nav-pills > li > a {
+    border-radius: 2px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+/* messages */
+.mm_messages {
+    margin: 10px 0 0 0;
+    list-style: none;
+}
+
+/* (un)subscribe forms in list_summary */
+.list_summary .accordion {
+    float: right;
+    width: 300px;
+    margin-left: 20px;
+}
+
+/* forms */
+label, input, button, select, textarea {
+    font-size: 13px;
+}
+fieldset {
+    border: none;
+}
+legend {
+    border: none;
+}
+input, textarea, select, .uneditable-input {
+    border-radius: 2px;
+}
+.btn {
+    border-radius: 2px;
+}
+.control-group textarea {
+    width: 80%;
+    max-width: 400px;
+    height: 100px;
+}
+
+
+/* tables */
+.table .mm_action {
+    text-align: right;
+}
+.mm_userData {
+    width: 400px;
+}
+.mm_userData td {
+    width: 50%;
+}
+th {
+    background: -moz-linear-gradient(top, #fff 0%, #efefef 100%);
+    background: -webkit-linear-gradient(top, #fff 0%,#efefef 100%);
+    background: -o-linear-gradient(top, #fff 0%,#efefef 100%);
+    background: -ms-linear-gradient(top, #fff 0%,#efefef 100%);
+    background: linear-gradient(to bottom, #fff 0%,#efefef 100%);
+}
+
+/* auto-generated forms made a bit cleaner */
+.well label {
+    display: inline;
+}
+.well input {
+    display: inline;
+}
+.well li {
+    display: inline;
+    list-style: none;
+    padding-right: 1em;
+}
+.errorlist {
+    color: 	#A22630;
+}
+
+/* login form */
+#container {
+    width: 600px;
+    margin: 0 auto;
+}
+.mm_login {
+    width: 300px;
+    float: left;
+}
+.mm_login_b {
+    width: 200px;
+    float: right;
+}
+.mm_login label {
+    display: block;
+}
+
+/* Held message details modal */
+.held-message-details {
+    text-align: left;
+}
+
+/* Mouseover help */
+span.more_info {
+    border-bottom: thin dotted;
+    background: #ffeedd;
+    font-weight: normal;
+}
+span.more_info:hover {
+    text-decoration: none; background: #ffffff; z-index: 6;
+}
+span.more_info span {
+    position: absolute; left: -9999px;
+    margin: 0em; padding: 0.5em;
+    border-style:solid; border-color:black; border-width:1px; z-index: 6;
+}
+span.more_info:hover span {
+    left: 2%;
+    background: #ffffff;
+    text-align: left;
+}
+span.more_info span {
+    position: absolute; left: -9999px;
+    margin: 2em; padding: 0.5em; 
+    border: 1px solid #b4b4b4;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -o-border-radius: 3px;
+    -ms-border-radius: 3px;
+    border-radius: 3px;
+    box-shadow: 0 2px 2px 1px #cecece;
+}
+span.more_info:hover span {margin: 2em; background: #ffffff;
+z-index:6;} 
+
+.rotate {
+	transform:rotate(-90deg);
+	-webkit-transform: rotate(-90deg); /* Webkit/Safari/Chrome */
+	-moz-transform: rotate(-90deg); /* Firefox */
+	-ms-transform: rotate(-90deg); /* IE */
+	-o-transform: rotate(-90deg); /* Opera */
+
+	/* Internet Explorer */
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+
+/* archival options */
+.well .archival-options-form ul {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+.well .archival-options-form li {
+    display: block;
+}

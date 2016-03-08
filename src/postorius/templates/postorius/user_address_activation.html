@@ -1,0 +1,19 @@
+{% extends postorius_base_template %}
+{% load url from future %}
+{% load i18n %}
+
+{% block subtitle %}
+{% trans "Add Email | " as page_title %}{{ page_title|add:user.username }}
+{% endblock %}
+
+{% block main %}
+    {% include 'postorius/menu/user_nav.html' %}
+
+    <h1>{% trans 'Add another email address to your account' %}</h1>
+
+    <form action = "{% url 'address_activation' %}" method = "post" class = "well">
+       {% csrf_token %}
+       {{ form.as_p }}
+       <button class="btn btn-success" type="submit">{% trans "Save" %}</button>
+    </form>
+{% endblock main %}

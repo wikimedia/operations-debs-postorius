@@ -1,0 +1,8 @@
+.tox
+.coverage
+__pycache__
+*.egg-info
+build
+dist
+cover/
+src/postorius/doc/_build/*

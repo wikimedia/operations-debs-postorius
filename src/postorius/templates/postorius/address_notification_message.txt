@@ -1,0 +1,7 @@
+Someone has requested to add {{email}} to their mailing list profile at {{ host_url }}.
+
+If you are that person, please click the link below to confirm.
+
+{{ activation_link }}
+
+Thanks!

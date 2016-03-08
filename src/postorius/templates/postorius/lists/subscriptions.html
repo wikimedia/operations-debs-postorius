@@ -1,0 +1,25 @@
+{% extends postorius_base_template %}
+{% load url from future %}
+{% load i18n %}
+
+{% block main %}
+    {{list.list_name}} <span>{{list.display_name}}</span>
+    {% if form_subscribe %}
+    <form action="{%url 'list_subscriptions' list.fqdn_listname %}" method="post" class="subscribe mm_clear" name="subscribe"> {% csrf_token %}
+        {{ form_subscribe.as_div }}
+        <div class="field">
+            <button type="submit">{% trans "Subscribe" %}</button>
+        </div>
+
+    </form>
+    {% endif %}
+    {% if form_unsubscribe %}
+    <form action="{% url 'list_subscriptions' list.fqdn_listname %}" method="post" class="unsubscribe mm_clear" name="unsubscribe"> {% csrf_token %}
+        {{ form_unsubscribe.as_div }}
+        <div class="field">
+            <button type="submit">{% trans "Unsubscribe" %}</button>
+        </div>
+
+    </form>
+    {% endif %}
+{% endblock main %}

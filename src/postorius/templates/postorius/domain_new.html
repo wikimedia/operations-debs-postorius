@@ -1,0 +1,51 @@
+{% extends postorius_base_template %}
+{% load url from future %}
+{% load i18n %}
+
+{% block subtitle %}
+{% trans "Add Domain" as page_title %}{{ page_title }}
+{% endblock %}
+
+{% block main %}
+    {% include 'postorius/menu/settings_nav.html' %}
+
+    <form action="{% url 'domain_new' %}" method="post" class="well form-horizontal"> {% csrf_token %}
+    {{ form.non_field_errors }}
+    <fieldset>
+	<legend>{% trans "Add a new Domain" %}</legend>
+
+	<div class="control-group">
+	    {{ form.mail_host.errors }}
+	    <label for="id_mail_host" class="control-label">{% trans "Mail Host:" %}</label>
+	    <div class="controls">
+		{{ form.mail_host}}
+		<p class="help-block"><strong>{% trans "Example:" %}</strong> {% trans "domain.org" %}</p>
+	    </div>
+	</div>
+
+	<div class="control-group">
+	    {{ form.web_host.errors }}
+	    <label for="id_web_host" class="control-label">{% trans "Web Host:" %}</label>
+	    <div class="controls">
+		{{ form.web_host}}
+		<p class="help-block"><strong>{% trans "Example:" %}</strong> {% trans "http://www.domain.org" %}</p>
+	    </div>
+	</div>
+
+	<div class="control-group">
+	    {{ form.description.errors }}
+	    <label for="id_description" class="control-label">{% trans "Description:" %}</label>
+	    <div class="controls">
+		{{ form.description}}
+		<p class="help-block"><strong>{% trans "Example:" %}</strong> {% trans "Test lists will live on this domain." %}</p>
+	    </div>
+	</div>
+
+	<div class="form-actions">
+	    <button class="btn btn-success btn-primary" type="submit">{% trans "Create Domain" %}</button>
+	</div>
+
+    </fieldset>
+</form>
+
+{% endblock main %}
