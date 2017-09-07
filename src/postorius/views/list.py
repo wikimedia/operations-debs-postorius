@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2015 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2017 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -15,158 +15,184 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
-import logging
+
+from __future__ import absolute_import, unicode_literals
+
 import csv
+import email.utils
+import logging
 
-from django.http import HttpResponse
-
+from allauth.account.models import EmailAddress
+from django.http import HttpResponse, HttpResponseNotAllowed, Http404
+from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.decorators import (login_required,
-                                            user_passes_test)
+from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from django.shortcuts import render_to_response, redirect
-from django.template import RequestContext
 from django.core.validators import validate_email
+from django.forms import formset_factory
+from django.shortcuts import render, redirect
 from django.core.exceptions import ValidationError
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
-from urllib2 import HTTPError
+from django_mailman3.lib.mailman import get_mailman_client
+from django_mailman3.lib.paginator import paginate, MailmanPaginator
+from django.utils.six.moves.urllib.error import HTTPError
 
-from postorius import utils
-from postorius.models import (Domain, List, MailmanApiError)
-from postorius.forms import *
-from postorius.auth.decorators import *
+from postorius.forms import (
+    ListNew, MemberForm, ListSubscribe, MultipleChoiceForm, UserPreferences,
+    ListSubscriptionPolicyForm, ArchiveSettingsForm, MessageAcceptanceForm,
+    DigestSettingsForm, AlterMessagesForm, ListAutomaticResponsesForm,
+    ListIdentityForm, ListMassSubscription, ListMassRemoval, ListAddBanForm,
+    ListHeaderMatchForm, ListHeaderMatchFormset, MemberModeration,
+    DMARCMitigationsForm, ListAnonymousSubscribe)
+from postorius.models import Domain, List, Mailman404Error
+from postorius.auth.decorators import (
+    list_owner_required, list_moderator_required, superuser_required)
 from postorius.views.generic import MailingListView
 
 
 logger = logging.getLogger(__name__)
 
 
-class ListMembersView(MailingListView):
-
-    """Display all members of a given list.
-    """
-
-    def _get_list(self, list_id, page):
-        m_list = super(ListMembersView, self)._get_list(list_id, page)
-        m_list.member_page = m_list.get_member_page(25, page)
-        m_list.member_page_nr = page
-        m_list.member_page_previous_nr = page - 1
-        m_list.member_page_next_nr = page + 1
-        m_list.member_page_show_next = len(m_list.member_page) >= 25
-        return m_list
-
-    @method_decorator(list_owner_required)
-    def post(self, request, list_id, page=1):
-        if 'owner_email' in request.POST:
-            owner_form = NewOwnerForm(request.POST)
-            if owner_form.is_valid():
+@login_required
+@list_owner_required
+def list_members_view(request, list_id, role=None):
+    """Display all members of a given list."""
+    if role not in ['owner', 'moderator', 'subscriber']:
+        return redirect('list_members', list_id, 'subscriber')
+    mailing_list = List.objects.get_or_404(fqdn_listname=list_id)
+    if request.method == 'POST':
+        if role == 'subscriber':
+            form = MultipleChoiceForm(request.POST)
+            if form.is_valid():
+                members = form.cleaned_data['choices']
+                for member in members:
+                    mailing_list.unsubscribe(member)
+                messages.success(request, _('The selected members'
+                                            ' have been unsubscribed'))
+                return redirect('list_members', list_id, role)
+        else:
+            member_form = MemberForm(request.POST)
+            if member_form.is_valid():
                 try:
-                    self.mailing_list.add_owner(
-                        owner_form.cleaned_data['owner_email'])
+                    getattr(mailing_list, 'add_%s' % role)(
+                        member_form.cleaned_data['email'])
                     messages.success(
-                        request, _('%s has been added as list owner.'
-                                   % request.POST['owner_email']))
+                        request, _('%(email)s has been added'
+                                   ' with the role %(role)s')
+                        % {'email': member_form.cleaned_data['email'],
+                           'role': role})
+                    return redirect('list_members', list_id, role)
                 except HTTPError as e:
                     messages.error(request, _(e.msg))
-        if 'moderator_email' in request.POST:
-            moderator_form = NewModeratorForm(request.POST)
-            if moderator_form.is_valid():
-                try:
-                    self.mailing_list.add_moderator(
-                        moderator_form.cleaned_data['moderator_email'])
-                    messages.success(
-                        request, _('%s has been added as list moderator.'
-                                   % request.POST['moderator_email']))
-                except HTTPError as e:
-                    messages.error(request, _(e.msg))
-        owner_form = NewOwnerForm()
-        moderator_form = NewModeratorForm()
-        return render_to_response('postorius/lists/members.html',
-                                  {'list': self.mailing_list,
-                                   'owner_form': owner_form,
-                                   'moderator_form': moderator_form},
-                                  context_instance=RequestContext(request))
+    else:
+        form = MultipleChoiceForm()
+        member_form = MemberForm()
+    context = {
+        'list': mailing_list,
+        'role': role,
+    }
+    if role == 'subscriber':
+        context['page_title'] = _('List subscribers')
+        if request.GET.get('q'):
+            query = context['query'] = request.GET['q']
+            if "*" not in query:
+                query = '*{}*'.format(query)
 
-    @method_decorator(list_owner_required)
-    def get(self, request, list_id, page=1):
-        owner_form = NewOwnerForm()
-        moderator_form = NewModeratorForm()
-        return render_to_response('postorius/lists/members.html',
-                                  {'list': self.mailing_list,
-                                   'owner_form': owner_form,
-                                   'moderator_form': moderator_form},
-                                  context_instance=RequestContext(request))
+            # Proxy the find_members method to insert the query
+            def find_method(count, page):
+                return mailing_list.find_members(query, count=count, page=page)
+        else:
+            find_method = mailing_list.get_member_page
+        context['members'] = paginate(
+            find_method,
+            request.GET.get('page'),
+            request.GET.get('count', 25),
+            paginator_class=MailmanPaginator)
+        if mailing_list.member_count == 0:
+            context['empty_error'] = _('List has no Subscribers')
+        else:
+            context['empty_error'] =\
+                _('No member was found matching the search')
+        context['form'] = form
+    else:
+        context['member_form'] = member_form
+        if role == 'owner':
+            context['page_title'] = _('List owners')
+            context['members'] = mailing_list.owners
+            context['form_action'] = _('Add owner')
+        elif role == 'moderator':
+            context['page_title'] = _('List moderators')
+            context['members'] = mailing_list.moderators
+            context['empty_error'] = _('List has no moderators')
+            context['form_action'] = _('Add moderator')
+    return render(request, 'postorius/lists/members.html', context)
 
 
-class ListMemberOptionsView(MailingListView):
-    '''View the preferences for a single member of a mailing list'''
-
-    @method_decorator(list_owner_required)
-    def post(self, request, list_id, email):
-        try:
-            client = utils.get_client()
-            mm_member = client.get_member(list_id, email)
-            mm_list = client.get_list(list_id)
-            preferences_form = UserPreferences(request.POST)
+@login_required
+@list_owner_required
+def list_member_options(request, list_id, email):
+    template_name = 'postorius/lists/memberoptions.html'
+    client = get_mailman_client()
+    mm_list = List.objects.get_or_404(fqdn_listname=list_id)
+    try:
+        mm_member = client.get_member(list_id, email)
+        member_prefs = mm_member.preferences
+    except ValueError:
+        raise Http404(_('Member does not exist'))
+    except Mailman404Error:
+        return render(request, template_name, {'nolists': 'true'})
+    initial_moderation = dict([
+        (key, getattr(mm_member, key)) for key in MemberModeration.base_fields
+        ])
+    if request.method == 'POST':
+        if request.POST.get("formname") == 'preferences':
+            moderation_form = MemberModeration(initial=initial_moderation)
+            preferences_form = UserPreferences(
+                request.POST, initial=member_prefs)
             if preferences_form.is_valid():
-                preferences = mm_member.preferences
+                if not preferences_form.has_changed():
+                    messages.info(request,
+                                  _("No change to the member's preferences."))
+                    return redirect('list_member_options', list_id, email)
                 for key in preferences_form.fields.keys():
-                    preferences[key] = preferences_form.cleaned_data[key]
-                preferences.save()
-                messages.success(
-                    request, 'The member\'s preferences have been updated.')
-            else:
-                messages.error(request, 'Something went wrong.')
-
-            # this is a bit silly, since we already have the preferences,
-            # but I want to be sure we don't show stale data.
-            settingsform = UserPreferences(initial=mm_member.preferences)
-        except MailmanApiError:
-            return utils.render_api_error(request)
-        except HTTPError, e:
-            messages.error(request, e.msg)
-        return render_to_response(
-            'postorius/lists/memberoptions.html',
-            {'mm_member': mm_member,
-             'list': mm_list,
-             'settingsform': settingsform,
-             },
-            context_instance=RequestContext(request))
-
-    @method_decorator(list_owner_required)
-    def get(self, request, list_id, email):
-        try:
-            client = utils.get_client()
-            mm_member = client.get_member(list_id, email)
-            mm_list = client.get_list(list_id)
-            settingsform = UserPreferences(initial=mm_member.preferences)
-        except MailmanApiError:
-            return utils.render_api_error(request)
-        except Mailman404Error:
-            return render_to_response(
-                'postorius/lists/memberoptions.html',
-                {'nolists': 'true'},
-                context_instance=RequestContext(request))
-        return render_to_response(
-            'postorius/lists/memberoptions.html',
-            {'mm_member': mm_member,
-             'list': mm_list,
-             'settingsform': settingsform,
-             },
-            context_instance=RequestContext(request))
-
-
-class ListMetricsView(MailingListView):
-
-    """Shows common list metrics.
-    """
-
-    @method_decorator(list_owner_required)
-    def get(self, request, list_id):
-        return render_to_response('postorius/lists/metrics.html',
-                                  {'list': self.mailing_list},
-                                  context_instance=RequestContext(request))
+                    member_prefs[key] = preferences_form.cleaned_data[key]
+                try:
+                    member_prefs.save()
+                except HTTPError as e:
+                    messages.error(request, e.msg)
+                else:
+                    messages.success(request, _("The member's preferences have"
+                                                " been updated."))
+                    return redirect('list_member_options', list_id, email)
+        elif request.POST.get("formname") == 'moderation':
+            preferences_form = UserPreferences(initial=member_prefs)
+            moderation_form = MemberModeration(
+                request.POST, initial=initial_moderation)
+            if moderation_form.is_valid():
+                if not moderation_form.has_changed():
+                    messages.info(request,
+                                  _("No change to the member's moderation."))
+                    return redirect('list_member_options', list_id, email)
+                for key in moderation_form.fields.keys():
+                    setattr(mm_member, key, moderation_form.cleaned_data[key])
+                try:
+                    mm_member.save()
+                except HTTPError as e:
+                    messages.error(request, e.msg)
+                else:
+                    messages.success(request, _("The member's moderation "
+                                                "settings have been updated."))
+                    return redirect('list_member_options', list_id, email)
+    else:
+        preferences_form = UserPreferences(initial=member_prefs)
+        moderation_form = MemberModeration(initial=initial_moderation)
+    return render(request, template_name, {
+        'mm_member': mm_member,
+        'list': mm_list,
+        'preferences_form': preferences_form,
+        'moderation_form': moderation_form,
+        })
 
 
 class ListSummaryView(MailingListView):
@@ -174,42 +200,45 @@ class ListSummaryView(MailingListView):
     """
 
     def get(self, request, list_id):
-        try:
-            mm_user = MailmanUser.objects.get(address=request.user.email)
-            user_emails = [str(address) for address in getattr(mm_user, 'addresses')]
-            # TODO:maxking - add the clause below in above
-            # statement after the subscription policy is sorted out
-            # if address.verified_on is not None]
-        except Mailman404Error:
-            # The user does not have a mailman user associated with it.
-            user_emails = [request.user.email]
-        except AttributeError:
-            # Anonymous User, everyone logged out.
-            user_emails = None
-
-        userSubscribed = False
-        subscribed_address = None
-        if user_emails is not None:
+        data = {'list': self.mailing_list,
+                'user_subscribed': False,
+                'subscribed_address': None,
+                'public_archive': False,
+                'hyperkitty_enabled': False}
+        if self.mailing_list.settings['archive_policy'] == 'public':
+            data['public_archive'] = True
+        if getattr(settings, 'TESTING', False) and \
+                'hyperkitty' not in settings.INSTALLED_APPS:
+            # avoid systematic test failure when HyperKitty is installed
+            # (missing VCR request, see below).
+            list(self.mailing_list.archivers)
+        if ('hyperkitty' in settings.INSTALLED_APPS and
+                'hyperkitty' in self.mailing_list.archivers and
+                self.mailing_list.archivers['hyperkitty']):
+            data['hyperkitty_enabled'] = True
+        if request.user.is_authenticated():
+            user_emails = EmailAddress.objects.filter(
+                user=request.user, verified=True).order_by(
+                "email").values_list("email", flat=True)
+            pending_requests = [r['email'] for r in self.mailing_list.requests]
             for address in user_emails:
+                if address in pending_requests:
+                    data['user_request_pending'] = True
+                    break
                 try:
-                    userMember = self.mailing_list.get_member(address)
+                    self.mailing_list.get_member(address)
                 except ValueError:
                     pass
                 else:
-                    userSubscribed = True
-                    subscribed_address = address
-        data =  {'list': self.mailing_list,
-                 'userSubscribed': userSubscribed,
-                 'subscribed_address': subscribed_address}
-        if user_emails is not None:
-            data['change_subscription_form'] = ChangeSubscriptionForm(user_emails,
-                                                 initial={'email': subscribed_address})
+                    data['user_subscribed'] = True
+                    data['subscribed_address'] = address
+                    break  # no need to test more addresses
             data['subscribe_form'] = ListSubscribe(user_emails)
         else:
-            data['change_subscription_form'] = None
-        return render_to_response(
-            'postorius/lists/summary.html', data,
-            context_instance=RequestContext(request))
+            user_emails = None
+            data['anonymous_subscription_form'] = ListAnonymousSubscribe()
+        return render(request, 'postorius/lists/summary.html', data)
+
 
 class ChangeSubscriptionView(MailingListView):
     """Change mailing list subscription
@@ -218,34 +247,48 @@ class ChangeSubscriptionView(MailingListView):
     @method_decorator(login_required)
     def post(self, request, list_id):
         try:
-            mm_user = MailmanUser.objects.get(address=request.user.email)
-            user_emails = [str(address) for address in mm_user.addresses]
+            user_emails = EmailAddress.objects.filter(
+                user=request.user, verified=True).order_by(
+                "email").values_list("email", flat=True)
             form = ListSubscribe(user_emails, request.POST)
+            # Find the currently subscribed email
+            old_email = None
             for address in user_emails:
                 try:
-                    userMember = self.mailing_list.get_member(address)
+                    self.mailing_list.get_member(address)
                 except ValueError:
                     pass
                 else:
-                    userSubscribed = True
                     old_email = address
+                    break  # no need to test more addresses
+            assert old_email is not None
             if form.is_valid():
                 email = form.cleaned_data['email']
                 if old_email == email:
-                    messages.error(request, 'You are already subscribed')
+                    messages.error(request, _('You are already subscribed'))
                 else:
                     self.mailing_list.unsubscribe(old_email)
-                    self.mailing_list.subscribe(email)
-                    messages.success(request,
-                        'Subscription changed to {} address'.format(email))
+                    # Since the action is done via the web UI, no email
+                    # confirmation is needed.
+                    response = self.mailing_list.subscribe(
+                        email, pre_confirmed=True)
+                    if (type(response) == dict and
+                            response.get('token_owner') == 'moderator'):
+                        messages.success(
+                            request, _('Your request to change the email for'
+                                       ' this subscription was submitted and'
+                                       ' is waiting for moderator approval.'))
+                    else:
+                        messages.success(request,
+                                         _('Subscription changed to %s') %
+                                         email)
             else:
-                messages.error(request, 'Something went wrong. '
-                               'Please try again.')
-        except MailmanApiError:
-            return utils.render_api_error(request)
-        except HTTPError, e:
+                messages.error(request,
+                               _('Something went wrong. Please try again.'))
+        except HTTPError as e:
             messages.error(request, e.msg)
         return redirect('list_summary', self.mailing_list.list_id)
+
 
 class ListSubscribeView(MailingListView):
     """
@@ -255,37 +298,60 @@ class ListSubscribeView(MailingListView):
     @method_decorator(login_required)
     def post(self, request, list_id):
         """
-        Subscribes an email address to a mailing list via POST and 
+        Subscribes an email address to a mailing list via POST and
         redirects to the `list_summary` view.
         """
         try:
-            try:
-                mm_user = MailmanUser.objects.get(address=request.user.email)
-                user_addresses = [str(address) for address in mm_user.addresses]
-            except Mailman404Error:
-                mm_user = None
-                user_addresses = (request.POST.get('email'),)
-            form = ListSubscribe(user_addresses, request.POST)
+            user_emails = EmailAddress.objects.filter(
+                user=request.user, verified=True).order_by(
+                "email").values_list("email", flat=True)
+            form = ListSubscribe(user_emails, request.POST)
             if form.is_valid():
                 email = request.POST.get('email')
                 response = self.mailing_list.subscribe(
                     email, pre_verified=True, pre_confirmed=True)
-                if type(response) == dict and response.get('token_owner') == \
-                        'moderator':
+                if (type(response) == dict and
+                        response.get('token_owner') == 'moderator'):
                     messages.success(
-                        request,
-                        'Your subscription request has been submitted and is '
-                        'waiting for moderator approval.')
+                        request, _('Your subscription request has been'
+                                   ' submitted and is waiting for moderator'
+                                   ' approval.'))
                 else:
-                    messages.success(
-                        request, 'You are subscribed to %s.' %
-                        self.mailing_list.fqdn_listname)
+                    messages.success(request,
+                                     _('You are subscribed to %s.') %
+                                     self.mailing_list.fqdn_listname)
             else:
-                messages.error(request, 'Something went wrong. '
-                               'Please try again.')
-        except MailmanApiError:
-            return utils.render_api_error(request)
-        except HTTPError, e:
+                messages.error(request,
+                               _('Something went wrong. Please try again.'))
+        except HTTPError as e:
+            messages.error(request, e.msg)
+        return redirect('list_summary', self.mailing_list.list_id)
+
+
+class ListAnonymousSubscribeView(MailingListView):
+    """
+    view name: `list_anonymous_subscribe`
+    """
+
+    def post(self, request, list_id):
+        """
+        Subscribes an email address to a mailing list via POST and
+        redirects to the `list_summary` view.
+        This view is used for unauthenticated users and asks Mailman core to
+        verify the supplied email address.
+        """
+        try:
+            form = ListAnonymousSubscribe(request.POST)
+            if form.is_valid():
+                email = form.cleaned_data.get('email')
+                self.mailing_list.subscribe(email, pre_verified=False,
+                                            pre_confirmed=False)
+                messages.success(request, _('Please check your inbox for '
+                                            'further instructions'))
+            else:
+                messages.error(request,
+                               _('Something went wrong. Please try again.'))
+        except HTTPError as e:
             messages.error(request, e.msg)
         return redirect('list_summary', self.mailing_list.list_id)
 
@@ -295,104 +361,151 @@ class ListUnsubscribeView(MailingListView):
     """Unsubscribe from a mailing list."""
 
     @method_decorator(login_required)
-    def get(self, request, *args, **kwargs):
-        email = kwargs['email']
+    def post(self, request, *args, **kwargs):
+        email = request.POST['email']
         try:
             self.mailing_list.unsubscribe(email)
-            messages.success(request,
-                             '%s has been unsubscribed from this list.' %
-                             email)
-        except MailmanApiError:
-            return utils.render_api_error(request)
-        except ValueError, e:
+            messages.success(request, _('%s has been unsubscribed'
+                                        ' from this list.') % email)
+        except ValueError as e:
             messages.error(request, e)
         return redirect('list_summary', self.mailing_list.list_id)
 
 
-class ListMassSubscribeView(MailingListView):
-    """Mass subscription."""
-
-    @method_decorator(list_owner_required)
-    def get(self, request, *args, **kwargs):
-        form = ListMassSubscription()
-        return render_to_response('postorius/lists/mass_subscribe.html',
-                                  {'form': form, 'list': self.mailing_list},
-                                  context_instance=RequestContext(request))
-
-    def post(self, request, *args, **kwargs):
+@login_required
+@list_owner_required
+def list_mass_subscribe(request, list_id):
+    mailing_list = List.objects.get_or_404(fqdn_listname=list_id)
+    if request.method == 'POST':
         form = ListMassSubscription(request.POST)
-        if not form.is_valid():
-            messages.error(request, 'Please fill out the form correctly.')
-        else:
-            emails = request.POST["emails"].splitlines()
-            for email in emails:
+        if form.is_valid():
+            for data in form.cleaned_data['emails']:
                 try:
-                    validate_email(email)
-                    self.mailing_list.subscribe(address=email, pre_verified=True,
-                                                pre_confirmed=True)
+                    # Parse the data to get the address and the display name
+                    display_name, address = email.utils.parseaddr(data)
+                    validate_email(address)
+                    mailing_list.subscribe(address=address,
+                                           display_name=display_name,
+                                           pre_verified=True,
+                                           pre_confirmed=True,
+                                           pre_approved=True)
                     messages.success(
-                        request,
-                        'The address %s has been subscribed to %s.' %
-                        (email, self.mailing_list.fqdn_listname))
-                except MailmanApiError:
-                    return utils.render_api_error(request)
-                except HTTPError, e:
+                        request, _('The address %(address)s has been'
+                                   ' subscribed to %(list)s.') %
+                        {'address': address,
+                         'list': mailing_list.fqdn_listname})
+                except HTTPError as e:
                     messages.error(request, e)
                 except ValidationError:
-                    messages.error(request,
-                                   'The email address %s is not valid.' %
-                                   email)
-        return redirect('mass_subscribe', self.mailing_list.list_id)
+                    messages.error(request, _('The email address %s'
+                                              ' is not valid.') % address)
+    else:
+        form = ListMassSubscription()
+    return render(request, 'postorius/lists/mass_subscribe.html',
+                  {'form': form, 'list': mailing_list})
 
 
 class ListMassRemovalView(MailingListView):
 
     """Class For Mass Removal"""
 
+    @method_decorator(login_required)
     @method_decorator(list_owner_required)
     def get(self, request, *args, **kwargs):
         form = ListMassRemoval()
-        return render_to_response('postorius/lists/mass_removal.html',
-                                  {'form': form, 'list': self.mailing_list},
-                                  context_instance=RequestContext(request))
+        return render(request, 'postorius/lists/mass_removal.html',
+                      {'form': form, 'list': self.mailing_list})
 
     @method_decorator(list_owner_required)
     def post(self, request, *args, **kwargs):
         form = ListMassRemoval(request.POST)
         if not form.is_valid():
-            messages.error(request, 'Please fill out the form correctly.')
+            messages.error(request, _('Please fill out the form correctly.'))
         else:
-            emails = request.POST["emails"].splitlines()
-            for email in emails:
+            for address in form.cleaned_data['emails']:
                 try:
-                    validate_email(email)
-                    self.mailing_list.unsubscribe(email.lower())
-                    messages.success(request,
-                                    'The address %s has been unsubscribed from %s.' %
-                                    (email, self.mailing_list.fqdn_listname))
-                except MailmanApiError:
-                    return utils.render_api_error(request)
-                except HTTPError, e:
-                    messages.error(request, e)
-                except ValueError, e:
+                    validate_email(address)
+                    self.mailing_list.unsubscribe(address.lower())
+                    messages.success(
+                        request, _('The address %(address)s has been'
+                                   ' unsubscribed from %(list)s.') %
+                        {'address': address,
+                         'list': self.mailing_list.fqdn_listname})
+                except (HTTPError, ValueError) as e:
                     messages.error(request, e)
                 except ValidationError:
-                    messages.error(request,
-                                  'The email address %s is not valid.' %
-                                  email)
+                    messages.error(request, _('The email address %s'
+                                              ' is not valid.') % address)
         return redirect('mass_removal', self.mailing_list.list_id)
 
 
+def _perform_action(message_ids, action):
+    for message_id in message_ids:
+        action(message_id)
+
+
+@login_required
+@list_moderator_required
+def list_moderation(request, list_id, held_id=-1):
+    mailing_list = List.objects.get_or_404(fqdn_listname=list_id)
+    if request.method == 'POST':
+        form = MultipleChoiceForm(request.POST)
+        if form.is_valid():
+            message_ids = form.cleaned_data['choices']
+            try:
+                if 'accept' in request.POST:
+                    _perform_action(message_ids, mailing_list.accept_message)
+                    messages.success(request,
+                                     _('The selected messages were accepted'))
+                elif 'reject' in request.POST:
+                    _perform_action(message_ids, mailing_list.reject_message)
+                    messages.success(request,
+                                     _('The selected messages were rejected'))
+                elif 'discard' in request.POST:
+                    _perform_action(message_ids, mailing_list.discard_message)
+                    messages.success(request,
+                                     _('The selected messages were discarded'))
+            except HTTPError:
+                messages.error(request, _('Message could not be found'))
+    else:
+        form = MultipleChoiceForm()
+    held_messages = paginate(
+        mailing_list.get_held_page,
+        request.GET.get('page'), request.GET.get('count'),
+        paginator_class=MailmanPaginator)
+    context = {
+        'list': mailing_list,
+        'held_messages': held_messages,
+        'form': form,
+        }
+    return render(request, 'postorius/lists/held_messages.html', context)
+
+
+@login_required
+@list_moderator_required
+def moderate_held_message(request, list_id):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
+    msg_id = request.POST['msgid']
+    mailing_list = List.objects.get_or_404(fqdn_listname=list_id)
+    if 'accept' in request.POST:
+        mailing_list.accept_message(msg_id)
+        messages.success(request, _('The message was accepted'))
+    elif 'reject' in request.POST:
+        mailing_list.reject_message(msg_id)
+        messages.success(request, _('The message was rejected'))
+    elif 'discard' in request.POST:
+        mailing_list.discard_message(msg_id)
+        messages.success(request, _('The message was discarded'))
+    return redirect('list_held_messages', list_id)
+
+
+@login_required
 @list_owner_required
 def csv_view(request, list_id):
     """Export all the subscriber in csv
     """
-    mm_lists = []
-    try:
-        client = utils.get_client()
-        mm_lists = client.get_list(list_id)
-    except MailmanApiError:
-        return utils.render_api_error(request)
+    mm_lists = List.objects.get_or_404(fqdn_listname=list_id)
 
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = (
@@ -407,19 +520,12 @@ def csv_view(request, list_id):
 
 
 def _get_choosable_domains(request):
-    try:
-        domains = Domain.objects.all()
-    except MailmanApiError:
-        return utils.render_api_error(request)
-    choosable_domains = [("", _("Choose a Domain"))]
-    for domain in domains:
-        choosable_domains.append((domain.mail_host,
-                                  domain.mail_host))
-    return choosable_domains
+    domains = Domain.objects.all()
+    return [(d.mail_host, d.mail_host) for d in domains]
 
 
 @login_required
-@user_passes_test(lambda u: u.is_superuser)
+@superuser_required
 def list_new(request, template='postorius/lists/new.html'):
     """
     Add a new mailing list.
@@ -431,8 +537,9 @@ def list_new(request, template='postorius/lists/new.html'):
     be logged in to create a new list.
     """
     mailing_list = None
+    choosable_domains = [('', _('Choose a Domain'))]
+    choosable_domains += _get_choosable_domains(request)
     if request.method == 'POST':
-        choosable_domains = _get_choosable_domains(request)
         form = ListNew(choosable_domains, request.POST)
         if form.is_valid():
             # grab domain
@@ -444,160 +551,54 @@ def list_new(request, template='postorius/lists/new.html'):
                     form.cleaned_data['listname'])
                 mailing_list.add_owner(form.cleaned_data['list_owner'])
                 list_settings = mailing_list.settings
-                list_settings["description"] = form.cleaned_data['description']
+                if form.cleaned_data['description']:
+                    list_settings["description"] = \
+                        form.cleaned_data['description']
                 list_settings["advertised"] = form.cleaned_data['advertised']
                 list_settings.save()
                 messages.success(request, _("List created"))
                 return redirect("list_summary",
                                 list_id=mailing_list.list_id)
             # TODO catch correct Error class:
-            except HTTPError, e:
-                return render_to_response(
-                    'postorius/errors/generic.html',
-                    {'error': e}, context_instance=RequestContext(request))
-            else:
-                messages.success(_("New List created"))
+            except HTTPError as e:
+                return render(request, 'postorius/errors/generic.html',
+                              {'error': e})
+        else:
+            messages.error(request, _('Please check the errors below'))
     else:
-        choosable_domains = _get_choosable_domains(request)
-        form = ListNew(choosable_domains,
-                       initial={'list_owner': request.user.email})
-    return render_to_response(template, {'form': form},
-                              context_instance=RequestContext(request))
+        form = ListNew(choosable_domains, initial={
+            'list_owner': request.user.email,
+            'advertised': True,
+            })
+    return render(request, template, {'form': form})
 
 
-def list_index(request, template='postorius/lists/index.html'):
+def list_index(request, template='postorius/index.html'):
     """Show a table of all public mailing lists.
     """
-    lists = []
-    error = None
-    only_public = True
-    if request.user.is_superuser:
-        only_public = False
-    try:
-        lists = List.objects.all(only_public=only_public)
-        logger.debug(lists)
-    except MailmanApiError:
-        return utils.render_api_error(request)
-    choosable_domains = _get_choosable_domains(request)
     if request.method == 'POST':
         return redirect("list_summary", list_id=request.POST["list"])
-    else:
-        return render_to_response(template,
-                                  {'error': error,
-                                   'lists': lists,
-                                   'domain_count': len(choosable_domains)},
-                                  context_instance=RequestContext(request))
+
+    def _get_list_page(count, page):
+        client = get_mailman_client()
+        advertised = not request.user.is_superuser
+        return client.get_list_page(
+            advertised=advertised, count=count, page=page)
+    lists = paginate(
+        _get_list_page, request.GET.get('page'), request.GET.get('count'),
+        paginator_class=MailmanPaginator)
+    choosable_domains = _get_choosable_domains(request)
+    return render(request, template,
+                  {'lists': lists,
+                   'domain_count': len(choosable_domains)})
 
 
 @login_required
-def list_subscriptions(request, option=None, list_id=None,
-                       user_email=None,
-                       template='postorius/lists/subscriptions.html',
-                       *args, **kwargs):
-    """
-    Display the information there is available for a list. This
-    function also enables subscribing or unsubscribing a user to a
-    list. For the latter two different forms are available for the
-    user to fill in which are evaluated in this function.
-    """
-    # create Values for Template usage
-    message = None
-    error = None
-    form_subscribe = None
-    form_unsubscribe = None
-    if request.POST.get('list_id', ''):
-        list_id = request.POST.get('list_id', '')
-    # connect REST and catch issues getting the list
-    try:
-        the_list = List.objects.get_or_404(fqdn_listname=list_id)
-    except AttributeError, e:
-        return render_to_response('postorius/errors/generic.html',
-                                  {'error': 'Mailman REST API not available.'
-                                   ' Please start Mailman core.'},
-                                  context_instance=RequestContext(request))
-    # process submitted form
-    if request.method == 'POST':
-        form = False
-        # The form enables both subscribe and unsubscribe. As a result
-        # we must find out which was the case.
-        if request.POST.get('name', '') == "subscribe":
-            form = ListSubscribe(request.POST)
-            if form.is_valid():
-                # the form was valid so try to subscribe the user
-                try:
-                    email = form.cleaned_data['email']
-                    the_list.subscribe(
-                        address=email,
-                        display_name=form.cleaned_data.get('display_name', ''))
-                    return render_to_response(
-                        'postorius/lists/summary.html',
-                        {'list': the_list, 'option': option,
-                         'message': _("Subscribed ") + email},
-                        context_instance=RequestContext(request))
-                except HTTPError, e:
-                    return render_to_response(
-                        'postorius/errors/generic.html',
-                        {'error': e},
-                        context_instance=RequestContext(request))
-            else:  # invalid subscribe form
-                form_subscribe = form
-                form_unsubscribe = ListUnsubscribe(
-                    initial={'fqdn_listname': fqdn_listname,
-                             'name': 'unsubscribe'})
-        elif request.POST.get('name', '') == "unsubscribe":
-            form = ListUnsubscribe(request.POST)
-            if form.is_valid():
-                # the form was valid so try to unsubscribe the user
-                try:
-                    email = form.cleaned_data["email"]
-                    the_list.unsubscribe(address=email)
-                    return render_to_response(
-                        'postorius/lists/summary.html',
-                        {'list': the_list,
-                         'message': _("Unsubscribed ") + email},
-                        context_instance=RequestContext(request))
-                except ValueError, e:
-                    return render_to_response(
-                        'postorius/errors/generic.html',
-                        {'error': e},
-                        context_instance=RequestContext(request))
-            else:  # invalid unsubscribe form
-                form_subscribe = ListSubscribe(
-                    initial={'fqdn_listname': fqdn_listname,
-                             'option': option,
-                             'name': 'subscribe'})
-                form_unsubscribe = ListUnsubscribe(request.POST)
-    else:
-        # the request was a GET request so set the two forms to empty
-        # forms
-        if option == "subscribe" or not option:
-            form_subscribe = ListSubscribe(
-                initial={'fqdn_listname': fqdn_listname,
-                         'email': request.user.username,
-                         'name': 'subscribe'})
-        if option == "unsubscribe" or not option:
-            form_unsubscribe = ListUnsubscribe(
-                initial={'fqdn_listname': fqdn_listname,
-                         'email': request.user.username,
-                         'name': 'unsubscribe'})
-    the_list = List.objects.get_or_404(fqdn_listname=list_id)
-    return render_to_response(template,
-                              {'form_subscribe': form_subscribe,
-                               'form_unsubscribe': form_unsubscribe,
-                               'message': message,
-                               'error': error,
-                               'list': the_list},
-                              context_instance=RequestContext(request))
-
-
 @list_owner_required
 def list_delete(request, list_id):
     """Deletes a list but asks for confirmation first.
     """
-    try:
-        the_list = List.objects.get_or_404(fqdn_listname=list_id)
-    except MailmanApiError:
-        return utils.render_api_error(request)
+    the_list = List.objects.get_or_404(fqdn_listname=list_id)
     if request.method == 'POST':
         the_list.delete()
         return redirect("list_index")
@@ -605,103 +606,22 @@ def list_delete(request, list_id):
         submit_url = reverse('list_delete',
                              kwargs={'list_id': list_id})
         cancel_url = reverse('list_index',)
-        return render_to_response(
-            'postorius/lists/confirm_delete.html',
-            {'submit_url': submit_url, 'cancel_url': cancel_url,
-             'list': the_list},
-            context_instance=RequestContext(request))
+        return render(request, 'postorius/lists/confirm_delete.html',
+                      {'submit_url': submit_url, 'cancel_url': cancel_url,
+                       'list': the_list})
 
 
-@list_moderator_required
-def list_held_messages(request, list_id):
-    """Shows a list of held messages.
-    """
-    try:
-        the_list = List.objects.get_or_404(fqdn_listname=list_id)
-    except MailmanApiError:
-        return utils.render_api_error(request)
-    return render_to_response('postorius/lists/held_messages.html',
-                              {'list': the_list},
-                              context_instance=RequestContext(request))
-
-
-@list_moderator_required
-def accept_held_message(request, list_id, msg_id):
-    """Accepts a held message.
-    """
-    try:
-        the_list = List.objects.get_or_404(fqdn_listname=list_id)
-        the_list.accept_message(msg_id)
-    except MailmanApiError:
-        return utils.render_api_error(request)
-    except HTTPError, e:
-        messages.error(request, e.msg)
-        return redirect('list_held_messages', the_list.list_id)
-    messages.success(request, 'The message has been accepted.')
-    return redirect('list_held_messages', the_list.list_id)
-
-
-@list_moderator_required
-def discard_held_message(request, list_id, msg_id):
-    """Discards a held message.
-    """
-    try:
-        the_list = List.objects.get_or_404(fqdn_listname=list_id)
-        the_list.discard_message(msg_id)
-    except MailmanApiError:
-        return utils.render_api_error(request)
-    except HTTPError, e:
-        messages.error(request, e.msg)
-        return redirect('list_held_messages', the_list.list_id)
-    messages.success(request, 'The message has been discarded.')
-    return redirect('list_held_messages', the_list.list_id)
-
-
-@list_moderator_required
-def defer_held_message(request, list_id, msg_id):
-    """Defers a held message for a later decision.
-    """
-    try:
-        the_list = List.objects.get_or_404(fqdn_listname=list_id)
-        the_list.defer_message(msg_id)
-    except MailmanApiError:
-        return utils.render_api_error(request)
-    except HTTPError, e:
-        messages.error(request, e.msg)
-        return redirect('list_held_messages', the_list.list_id)
-    messages.success(request, 'The message has been deferred.')
-    return redirect('list_held_messages', the_list.list_id)
-
-
-@list_moderator_required
-def reject_held_message(request, list_id, msg_id):
-    """Rejects a held message.
-    """
-    try:
-        the_list = List.objects.get_or_404(fqdn_listname=list_id)
-        the_list.reject_message(msg_id)
-    except MailmanApiError:
-        return utils.render_api_error(request)
-    except HTTPError, e:
-        messages.error(request, e.msg)
-        return redirect('list_held_messages', the_list.list_id)
-    messages.success(request, 'The message has been rejected.')
-    return redirect('list_held_messages', the_list.list_id)
-
-
+@login_required
 @list_moderator_required
 def list_subscription_requests(request, list_id):
     """Shows a list of held messages.
     """
-    try:
-        m_list = utils.get_client().get_list(list_id)
-    except MailmanApiError:
-        return utils.render_api_error(request)
-    return render_to_response('postorius/lists/subscription_requests.html',
-                              {'list': m_list},
-                              context_instance=RequestContext(request))
+    m_list = List.objects.get_or_404(fqdn_listname=list_id)
+    return render(request, 'postorius/lists/subscription_requests.html',
+                  {'list': m_list})
 
 
+@login_required
 @list_moderator_required
 def handle_subscription_request(request, list_id, request_id, action):
     """
@@ -718,15 +638,18 @@ def handle_subscription_request(request, list_id, request_id, action):
         'defer': _('The request has been defered.'),
     }
     try:
-        m_list = utils.get_client().get_list(list_id)
+        m_list = List.objects.get_or_404(fqdn_listname=list_id)
         # Moderate request and add feedback message to session.
         m_list.moderate_request(request_id, action)
         messages.success(request, confirmation_messages[action])
-    except MailmanApiError:
-        return utils.render_api_error(request)
     except HTTPError as e:
-        messages.error(request, '{0}: {1}'.format(
-            _('The request could not be moderated'), e.reason))
+        if e.code == 409:
+            messages.success(request,
+                             _('The request was already moderated: %s')
+                             % e.reason)
+        else:
+            messages.error(request, _('The request could not be moderated: %s')
+                           % e.reason)
     return redirect('list_subscription_requests', m_list.list_id)
 
 
@@ -734,6 +657,7 @@ SETTINGS_SECTION_NAMES = (
     ('list_identity', _('List Identity')),
     ('automatic_responses', _('Automatic Responses')),
     ('alter_messages', _('Alter Messages')),
+    ('dmarc_mitigations', _('DMARC Mitigations')),
     ('digest', _('Digest')),
     ('message_acceptance', _('Message Acceptance')),
     ('archiving', _('Archiving')),
@@ -744,13 +668,15 @@ SETTINGS_FORMS = {
     'list_identity': ListIdentityForm,
     'automatic_responses': ListAutomaticResponsesForm,
     'alter_messages': AlterMessagesForm,
+    'dmarc_mitigations': DMARCMitigationsForm,
     'digest': DigestSettingsForm,
     'message_acceptance': MessageAcceptanceForm,
-    'archiving': ArchivePolicySettingsForm,
+    'archiving': ArchiveSettingsForm,
     'subscription_policy': ListSubscriptionPolicyForm,
 }
 
 
+@login_required
 @list_owner_required
 def list_settings(request, list_id=None, visible_section=None,
                   template='postorius/lists/settings.html'):
@@ -764,182 +690,220 @@ def list_settings(request, list_id=None, visible_section=None,
     <param> is optional / is used to differ in between section and option might
     result in using //option
     """
-    message = ""
     if visible_section is None:
         visible_section = 'list_identity'
-    form_class = SETTINGS_FORMS.get(visible_section)
     try:
-        m_list = List.objects.get_or_404(fqdn_listname=list_id)
-        list_settings = m_list.settings
-    except MailmanApiError, HTTPError:
-        return utils.render_api_error(request)
+        form_class = SETTINGS_FORMS[visible_section]
+    except KeyError:
+        raise Http404('No such settings section')
+    m_list = List.objects.get_or_404(fqdn_listname=list_id)
+    list_settings = m_list.settings
+    initial_data = dict(
+        (key, unicode(value)) for key, value in list_settings.items())
     # List settings are grouped an processed in different forms.
-    if form_class:
-        if request.method == 'POST':
-            form = form_class(request.POST)
-            if form.is_valid():
-                try:
-                    for key in form.fields.keys():
+    if request.method == 'POST':
+        form = form_class(request.POST, mlist=m_list, initial=initial_data)
+        if form.is_valid():
+            try:
+                for key in form.changed_data:
+                    if key in form_class.mlist_properties:
+                        setattr(m_list, key, form.cleaned_data[key])
+                    else:
                         list_settings[key] = form.cleaned_data[key]
-                    list_settings.save()
-                    messages.success(request,
-                                     _('The settings have been updated.'))
-                except HTTPError as e:
-                    messages.error(
-                        request,
-                        '{0}: {1}'.format(_('An error occured'), e.reason))
-        else:
-            form = form_class(initial=list_settings)
+                list_settings.save()
+                messages.success(request, _('The settings have been updated.'))
+            except HTTPError as e:
+                messages.error(request, _('An error occured: %s') % e.reason)
+            return redirect('list_settings', m_list.list_id, visible_section)
+    else:
+        form = form_class(initial=initial_data, mlist=m_list)
 
-    return render_to_response(template,
-                              {'form': form,
-                               'section_names': SETTINGS_SECTION_NAMES,
-                               'message': message,
-                               'list': m_list,
-                               'visible_section': visible_section},
-                              context_instance=RequestContext(request))
+    return render(request, template, {
+        'form': form,
+        'section_names': SETTINGS_SECTION_NAMES,
+        'list': m_list,
+        'visible_section': visible_section,
+        })
 
 
-@user_passes_test(lambda u: u.is_superuser)
+@login_required
+@list_owner_required
 def remove_role(request, list_id=None, role=None, address=None,
                 template='postorius/lists/confirm_remove_role.html'):
-    """Removes a list moderator or owner.
-    """
-    try:
-        the_list = List.objects.get_or_404(fqdn_listname=list_id)
-    except MailmanApiError:
-        return utils.render_api_error(request)
+    """Removes a list moderator or owner."""
+    the_list = List.objects.get_or_404(fqdn_listname=list_id)
+
+    redirect_on_success = redirect('list_members', the_list.list_id, role)
+
+    roster = getattr(the_list, '{}s'.format(role))
+    if address not in roster:
+        messages.error(request,
+                       _('The user %(email)s is not in the %(role)s group')
+                       % {'email': address, 'role': role})
+        return redirect('list_members', the_list.list_id, role)
 
     if role == 'owner':
-        if address not in the_list.owners:
-            messages.error(request,
-                           _('The user {} is not an owner'.format(address)))
-            return redirect("list_members", the_list.list_id)
-    elif role == 'moderator':
-        if address not in the_list.moderators:
-            messages.error(request,
-                           _('The user {} is not a moderator'.format(address)))
-            return redirect("list_members", the_list.list_id)
+        if len(roster) == 1:
+            messages.error(request, _('Removing the last owner is impossible'))
+            return redirect('list_members', the_list.list_id, role)
+        user_emails = EmailAddress.objects.filter(
+            user=request.user, verified=True).order_by(
+            "email").values_list("email", flat=True)
+        if address in user_emails:
+            # The user is removing themselves, redirect to the list info page
+            # because they won't have access to the members page anyway.
+            redirect_on_success = redirect('list_summary', the_list.list_id)
 
     if request.method == 'POST':
         try:
             the_list.remove_role(role, address)
-        except MailmanApiError:
-            return utils.render_api_error(request)
         except HTTPError as e:
-            messages.error(request, _('The {0} could not be removed:'
-                                      ' {1}'.format(role, e.msg)))
-            return redirect("list_members", the_list.list_id)
-        messages.success(request,
-                         _('The user {0} has been removed as {1}.'
-                           .format(address, role)))
-        return redirect("list_members", the_list.list_id)
-
-    return render_to_response(template,
-                              {'role': role, 'address': address,
-                               'list_id': the_list.list_id},
-                              context_instance=RequestContext(request))
+            messages.error(request, _('The user could not be removed: %(msg)s')
+                           % {'msg': e.msg})
+            return redirect('list_members', the_list.list_id, role)
+        messages.success(request, _('The user %(address)s has been removed'
+                                    ' from the %(role)s group.')
+                         % {'address': address, 'role': role})
+        return redirect_on_success
+    return render(request, template,
+                  {'role': role, 'address': address,
+                   'list_id': the_list.list_id})
 
 
-def _add_archival_messages(to_activate, to_disable, after_submission,
-                           request):
-    """
-    Add feedback messages to session, depending on previously set archivers.
-    """
-    # There are archivers to enable.
-    if len(to_activate) > 0:
-        # If the archiver shows up in the data set *after* the update,
-        # we can show a success message.
-        activation_postponed = []
-        activation_success = []
-        for archiver in to_activate:
-            if after_submission[archiver] is True:
-                activation_success.append(archiver)
-            else:
-                activation_postponed.append(archiver)
-        # If archivers couldn't be updated, show a message:
-        if len(activation_postponed) > 0:
-            messages.warning(request,
-                             _('Some archivers could not be enabled, probably '
-                               'because they are not enabled in the Mailman '
-                               'configuration. They will be enabled for '
-                               'this list, if the archiver is enabled in the '
-                               'Mailman configuration. {0}.'
-                               ''.format(', '.join(activation_postponed))))
-        if len(activation_success) > 0:
-            messages.success(request,
-                             _('You activated new archivers for this list: '
-                               '{0}'.format(', '.join(activation_success))))
-    # There are archivers to disable.
-    if len(to_disable) > 0:
-        messages.success(request,
-                         _('You disabled the following archivers: '
-                           '{0}'.format(', '.join(to_disable))))
-
-
+@login_required
 @list_owner_required
 def remove_all_subscribers(request, list_id):
 
     """Empty the list by unsubscribing all members."""
 
-    try:
-        mlist = List.objects.get_or_404(fqdn_listname=list_id)
-        if len(mlist.members) == 0:
-            messages.error(request, 'No member is subscribed to the list currently.')
-            return redirect('mass_removal', mlist.list_id)
-        if request.method == 'POST':
-            try:
-                for names in mlist.members:
-                    mlist.unsubscribe(names.email)
-                messages.success(request,
-                                'All members have been unsubscribed from the list.')
-                return redirect('list_members', mlist.list_id)
-            except Exception, e:
-                messages.error(request, e)
-        return render_to_response('postorius/lists/confirm_removeall_subscribers.html',
-                                 {'list_id': mlist.list_id},
-                                 context_instance=RequestContext(request))
-    except MailmanApiError:
-        return utils.render_api_error(request)
+    mlist = List.objects.get_or_404(fqdn_listname=list_id)
+    if len(mlist.members) == 0:
+        messages.error(request,
+                       _('No member is subscribed to the list currently.'))
+        return redirect('mass_removal', mlist.list_id)
+    if request.method == 'POST':
+        try:
+            for names in mlist.members:
+                mlist.unsubscribe(names.email)
+            messages.success(request, _('All members have been'
+                                        ' unsubscribed from the list.'))
+            return redirect('list_members', mlist.list_id)
+        except Exception as e:
+            messages.error(request, e)
+    return render(request,
+                  'postorius/lists/confirm_removeall_subscribers.html',
+                  {'list': mlist})
 
 
+@login_required
 @list_owner_required
-def list_archival_options(request, list_id):
+def list_bans(request, list_id):
     """
-    Activate or deactivate list archivers.
+    Ban or unban email addresses.
     """
     # Get the list and cache the archivers property.
-    m_list = utils.get_client().get_list(list_id)
-    archivers = m_list.archivers
+    m_list = List.objects.get_or_404(fqdn_listname=list_id)
+    ban_list = m_list.bans
 
     # Process form submission.
     if request.method == 'POST':
-        current = [key for key in archivers.keys() if archivers[key]]
-        posted = request.POST.getlist('archivers')
+        if 'add' in request.POST:
+            addban_form = ListAddBanForm(request.POST)
+            if addban_form.is_valid():
+                try:
+                    ban_list.add(addban_form.cleaned_data['email'])
+                    messages.success(request, _(
+                        'The email {} has been banned.'.format(
+                            addban_form.cleaned_data['email'])))
+                except HTTPError as e:
+                    messages.error(
+                        request, _('An error occured: %s') % e.reason)
+                except ValueError as e:
+                    messages.error(request, _('Invalid data: %s') % e)
+                return redirect('list_bans', list_id)
+        elif 'del' in request.POST:
+            try:
+                ban_list.remove(request.POST['email'])
+                messages.success(request, _(
+                    'The email {} has been un-banned'.format(
+                        request.POST['email'])))
+            except HTTPError as e:
+                messages.error(request, _('An error occured: %s') % e.reason)
+            except ValueError as e:
+                messages.error(request, _('Invalid data: %s') % e)
+            return redirect('list_bans', list_id)
+    else:
+        addban_form = ListAddBanForm()
+    banned_addresses = paginate(
+        list(ban_list), request.GET.get('page'), request.GET.get('count'))
+    return render(request, 'postorius/lists/bans.html',
+                  {'list': m_list,
+                   'addban_form': addban_form,
+                   'banned_addresses': banned_addresses,
+                   })
 
-        # These should be activated
-        to_activate = [arc for arc in posted if arc not in current]
-        for arc in to_activate:
-            archivers[arc] = True
-        # These should be disabled
-        to_disable = [arc for arc in current if arc not in posted and
-                      arc in current]
-        for arc in to_disable:
-            archivers[arc] = False
 
-        # Re-cache list of archivers after update.
-        archivers = m_list.archivers
+@login_required
+@list_owner_required
+def list_header_matches(request, list_id):
+    """
+    View and edit the list's header matches.
+    """
+    m_list = List.objects.get_or_404(fqdn_listname=list_id)
+    header_matches = m_list.header_matches
+    HeaderMatchFormset = formset_factory(
+        ListHeaderMatchForm, extra=1, can_delete=True, can_order=True,
+        formset=ListHeaderMatchFormset)
+    initial_data = [
+        dict([
+            (key, getattr(hm, key)) for key in ListHeaderMatchForm.base_fields
+        ]) for hm in header_matches]
 
-        # Show success/error messages.
-        _add_archival_messages(to_activate, to_disable, archivers, request)
+    # Process form submission.
+    if request.method == 'POST':
+        formset = HeaderMatchFormset(request.POST, initial=initial_data)
+        if formset.is_valid():
+            if not formset.has_changed():
+                return redirect('list_header_matches', list_id)
+            # Purge the existing header_matches
+            header_matches.clear()
+            # Add the ones in the form
 
-    # Instantiate form with current archiver data.
-    initial = {'archivers': [key for key in archivers.keys()
-                             if archivers[key] is True]}
-    form = ListArchiverForm(initial=initial, archivers=archivers)
+            def form_order(f):
+                # If ORDER is None (new header match), add it last.
+                return f.cleaned_data.get('ORDER') or len(formset.forms)
+            errors = []
+            for form in sorted(formset, key=form_order):
+                if 'header' not in form.cleaned_data:
+                    # The new header match form was not filled
+                    continue
+                if form.cleaned_data.get('DELETE'):
+                    continue
+                try:
+                    header_matches.add(
+                        header=form.cleaned_data['header'],
+                        pattern=form.cleaned_data['pattern'],
+                        action=form.cleaned_data['action'],
+                        )
+                except HTTPError as e:
+                    errors.append(e)
+            for e in errors:
+                messages.error(
+                    request, _('An error occured: %s') % e.reason)
+            if not errors:
+                messages.success(request, _('The header matches were'
+                                            ' successfully modified.'))
+            return redirect('list_header_matches', list_id)
+    else:
+        formset = HeaderMatchFormset(initial=initial_data)
+    # Adapt the last form to create new matches
+    form_new = formset.forms[-1]
+    form_new.fields['header'].widget.attrs['placeholder'] = _('New header')
+    form_new.fields['pattern'].widget.attrs['placeholder'] = _('New pattern')
+    del form_new.fields['ORDER']
+    del form_new.fields['DELETE']
 
-    return render_to_response('postorius/lists/archival_options.html',
-                              {'list': m_list,
-                               'form': form,
-                               'archivers': archivers},
-                              context_instance=RequestContext(request))
+    return render(request, 'postorius/lists/header_matches.html', {
+        'list': m_list,
+        'formset': formset,
+        })

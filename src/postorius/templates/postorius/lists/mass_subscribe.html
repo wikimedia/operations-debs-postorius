@@ -1,18 +1,18 @@
-{% extends postorius_base_template %}
-{% load url from future %}
+{% extends "postorius/base.html" %}
 {% load i18n %}
-
-{% block subtitle %}
-{% trans "Mass Subscribe | "%}{{ page_title|add:list.fqdn_listname}}
-{% endblock %}
-
+{% load bootstrap_tags %}
 {% load nav_helpers %}
 
-{% block main %}
-    {% list_nav 'mass_subscribe' "Mass Subscription" %}
+{% block head_title %}
+{% trans 'Mass subscribe' %} | {{ list.fqdn_listname }} - {{ block.super }}
+{% endblock %}
 
-    <form action="{% url 'mass_subscribe' list.fqdn_listname %}" method="post" class="well"> {% csrf_token %}
-        {{ form.as_p }}
-        <button class="btn btn-primary" type="submit">{% trans "Subscribe users" %}</button>
+{% block content %}
+
+    {% list_nav 'list_mass_ops' 'Mass subscription' %}
+
+    <form action="{% url 'mass_subscribe' list.list_id %}" method="post" class="form-horizontal">
+        {% bootstrap_form_horizontal form 2 8 'Subscribe users' %}
     </form>
-{% endblock main %}
+
+{% endblock content %}

@@ -1,13 +1,11 @@
-{% load url from future %}
 {% load i18n %}
-<div class="mm_subHeader">
-    <div class="mm_subHeader">
-        <h1>{% trans "Settings" %}</h1>
-    </div>
-    <ul class="mm_nav">
-        <li class="mm_nav_item"><a href="{% url 'user_profile' %}">{% trans "Profile" %}</a></li>
-        <li class="mm_nav_item"><a href="{% url 'user_mailmansettings' %}">{% trans "Subscription Settings" %}</a></li>
-        <li class="mm_nav_item"><a href="{% url 'user_subscriptions' %}">{% trans "Subscriptions" %}</a></li>
-        <li class="mm_nav_item"><a href="{% url 'address_activation' %}">{% trans "Add Email Address" %}</a></li>
-    </ul>    
-</div>
+{% load nav_helpers %}
+
+<h1>{% trans 'Mailman Settings' %} <small>{{ user }}</small></h1>
+
+<ul class="nav nav-tabs margin-bottom">
+    <li role="presentation" class="{% nav_active_class current 'subscriptions' %}"><a href="{% url 'ps_user_profile' %}">{% trans 'Subscriptions' %}</a></li>
+    <li role="presentation" class="{% nav_active_class current 'settings_global' %}"><a href="{% url 'user_mailmansettings' %}">{% trans 'Global Mailman preferences' %}</a></li>
+    <li role="presentation" class="{% nav_active_class current 'settings_address' %}"><a href="{% url 'user_address_preferences' %}">{% trans 'Address-based preferences' %}</a></li>
+    <li role="presentation" class="{% nav_active_class current 'settings_list' %}"><a href="{% url 'user_subscription_preferences' %}">{% trans 'List-based preferences' %}</a></li>
+</ul>

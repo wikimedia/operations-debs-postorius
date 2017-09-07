@@ -1,41 +1,39 @@
-{% extends postorius_base_template %}
-{% load url from future %}
+{% extends "postorius/base.html" %}
 {% load i18n %}
 {% load nav_helpers %}
 
-{% block body_class %}list_summary{% endblock %}
+{% block head_title %}
+{% trans 'Subscription requests' %} | {{ list.fqdn_listname }} - {{ block.super }}
+{% endblock %}
 
-{% block main %}
-    {% list_nav 'list_subscription_requests' "Subscription Requests" %}
+{% block content %}
+
+    {% list_nav 'list_subscription_requests' 'Subscription Requests' %}
 
     {% if list.requests|length > 0 %}
-
-        <table class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>{% trans 'E-Mail Address' %}</th>
-                    <th>&nbsp;</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for request in list.requests %}
-                <tr>
-                    <td>{{ request.email }}</td>
-
-                    <td class="mm_action">
-                        <a href="{% url 'handle_subscription_request' list.list_id request.token 'accept' %}" class="btn btn-mini btn-success">{% trans 'Accept' %}</a>
-                        <a href="{% url 'handle_subscription_request' list.list_id request.token 'reject' %}" class="btn btn-mini btn-danger">{% trans 'Reject' %}</a>
-                        <a href="{% url 'handle_subscription_request' list.list_id request.token 'discard' %}" class="btn btn-mini btn-danger">{% trans 'Discard' %}</a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>{% trans 'E-Mail Address' %}</th>
+                        <th>{% trans 'Actions' %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for request in list.requests %}
+                    <tr>
+                        <td>{{ request.email }}</td>
+                        <td>
+                            <a href="{% url 'handle_subscription_request' list.list_id request.token 'accept' %}" class="btn btn-xs btn-success">{% trans 'Accept' %}</a>
+                            <a href="{% url 'handle_subscription_request' list.list_id request.token 'reject' %}" class="btn btn-xs btn-danger">{% trans 'Reject' %}</a>
+                            <a href="{% url 'handle_subscription_request' list.list_id request.token 'discard' %}" class="btn btn-xs btn-danger">{% trans 'Discard' %}</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% else %}
-
         <p>{% trans 'There are currently no subscription requests for this list.' %}</p>
-
     {% endif %}
-  
 {% endblock %}

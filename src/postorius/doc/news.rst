@@ -2,8 +2,6 @@
 News / Changelog
 ================
 
-Copyright (C) 2012-2015 by the Free Software Foundation, Inc.
-
 The Postorius Django app provides a web user interface to
 access GNU Mailman.
 
@@ -20,6 +18,36 @@ You should have received a copy of the GNU Lesser General Public License
 along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 
 
+1.1.0 -- "Welcome to This World"
+================================
+(2017-05-26)
+
+* Added DMARC mitigation settings
+* Switch to Allauth auth library
+* Preference page improvements
+* Moderation page improvements
+* Django support up to Django 1.11
+* Added form to edit header matches
+* Domain edit form improvements
+* All pipelines recognized in alter messages form
+* Use django-mailman3 to share common code with HyperKitty
+* Various bug fixes, code cleanup, and performance improvements
+
+
+1.0.3
+=====
+(2016-02-03)
+
+* Fix security issue
+
+
+1.0.2
+=====
+(2015-11-14)
+
+* Bug fix release
+
+
 1.0.1
 =====
 (2015-04-28)
@@ -27,6 +55,7 @@ along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 * Help texts Small visual alignment fix; removed unnecessary links to
 separate help pages.
 * Import fix in fieldset_forms module (Django1.6 only)
+
 
 1.0.0 -- "Frizzle Fry"
 ======================
@@ -45,11 +74,11 @@ separate help pages.
 * Rework of internal testing
 * Mozilla Persona integration: switch from django-social-auto to django-browserid: Contributed by Abhilash Raj.
 * Fix manage.py mmclient command for non-IPython shells. Contributed by Ankush Sharma (LP: 1428169).
-* Added archiver options: Site-wide enabled archivers can not be enabled 
+* Added archiver options: Site-wide enabled archivers can not be enabled
 on a per-list basis through the web UI.
 * Added functionality to choose or switch subscription addresses. Contributed by Abhilash Raj.
-* Added subscription moderation, pre_verification/_confirmation. 
-* Several style changes. 
+* Added subscription moderation, pre_verification/_confirmation.
+* Several style changes.
 
 
 1.0 beta 1 -- "Year of the Parrot"

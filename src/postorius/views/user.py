@@ -1,5 +1,5 @@
-﻿# -*- coding: utf-8 -*-
-# Copyright (C) 1998-2015 by the Free Software Foundation, Inc.
+# -*- coding: utf-8 -*-
+# Copyright (C) 1998-2017 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -16,366 +16,295 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import absolute_import, unicode_literals
 
 import logging
+from django.utils.six.moves.urllib.error import HTTPError
 
-
-from django.forms.formsets import formset_factory
+from allauth.account.models import EmailAddress
+from django.forms import formset_factory
 from django.contrib import messages
-from django.contrib.auth import logout, authenticate, login
-from django.contrib.auth.decorators import (login_required,
-                                            user_passes_test)
-from django.contrib.auth.models import User
-from django.shortcuts import render_to_response, redirect
-from django.template import RequestContext
+from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse, reverse_lazy
+from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
-from django.views.generic import TemplateView
-from urllib2 import HTTPError
+from django.views.generic import FormView
+from django.http import Http404
 
-from postorius import utils
-from postorius.models import (
-    MailmanUser, MailmanConnectionError, MailmanApiError, Mailman404Error,
-    AddressConfirmationProfile)
-from postorius.forms import *
-from postorius.auth.decorators import *
-from postorius.views.generic import MailmanUserView
-from smtplib import SMTPException
+from postorius.models import List, MailmanUser
+from postorius.forms import (
+    UserPreferences, UserPreferencesFormset, ChangeSubscriptionForm)
+from postorius.views.generic import MailmanClientMixin
+from django_mailman3.lib.mailman import get_mailman_client
 
 
-class UserMailmanSettingsView(MailmanUserView):
-    """The logged-in user's global Mailman Preferences."""
+logger = logging.getLogger(__name__)
 
-    @method_decorator(login_required)
-    def post(self, request):
-        try:
-            mm_user = MailmanUser.objects.get(address=request.user.email)
-            global_preferences_form = UserPreferences(request.POST)
-            if global_preferences_form.is_valid():
-                preferences = mm_user.preferences
-                for key in global_preferences_form.fields.keys():
-                    preferences[
-                        key] = global_preferences_form.cleaned_data[key]
-                    preferences.save()
-                messages.success(
-                    request, 'Your preferences have been updated.')
-            else:
-                messages.error(request, 'Something went wrong.')
-        except MailmanApiError:
-            return utils.render_api_error(request)
-        except Mailman404Error as e:
-            messages.error(request, e.msg)
-        return redirect("user_mailmansettings")
+
+class UserPreferencesView(FormView, MailmanClientMixin):
+    """Generic view for the logged-in user's various preferences."""
+
+    form_class = UserPreferences
+
+    def get_context_data(self, **kwargs):
+        data = super(UserPreferencesView, self).get_context_data(**kwargs)
+        data['mm_user'] = self.mm_user
+        return data
+
+    def get_form_kwargs(self):
+        kwargs = super(UserPreferencesView, self).get_form_kwargs()
+        kwargs['preferences'] = self._get_preferences()
+        return kwargs
+
+    def _set_view_attributes(self, request, *args, **kwargs):
+        self.mm_user = MailmanUser.objects.get_or_create_from_django(
+            request.user)
 
     @method_decorator(login_required)
-    def get(self, request):
+    def dispatch(self, request, *args, **kwargs):
+        self._set_view_attributes(request, *args, **kwargs)
+        return super(UserPreferencesView, self).dispatch(
+            request, *args, **kwargs)
+
+    def form_valid(self, form):
         try:
-            mm_user = MailmanUser.objects.get(address=request.user.email)
-            settingsform = UserPreferences(initial=mm_user.preferences)
-        except MailmanApiError:
-            return utils.render_api_error(request)
-        except Mailman404Error:
-            mm_user = None
-            settingsform = None
-        return render_to_response('postorius/user_mailmansettings.html',
-                                  {'mm_user': mm_user,
-                                   'settingsform': settingsform},
-                                  context_instance=RequestContext(request))
+            form.save()
+        except HTTPError as e:
+            messages.error(self.request, e.msg)
+        if form.has_changed():
+            messages.success(
+                self.request, _('Your preferences have been updated.'))
+        else:
+            messages.info(self.request, _('Your preferences did not change.'))
+        return super(UserPreferencesView, self).form_valid(form)
 
 
-class UserAddressPreferencesView(MailmanUserView):
+class UserMailmanSettingsView(UserPreferencesView):
+    """The logged-in user's global Mailman preferences."""
+
+    form_class = UserPreferences
+    template_name = 'postorius/user/mailman_settings.html'
+    success_url = reverse_lazy('user_mailmansettings')
+
+    def _get_preferences(self):
+        # Get the defaults and pre-populate so view shows them
+        combinedpreferences = self._get_combined_preferences()
+        for key in combinedpreferences:
+            if key != u"self_link":
+                self.mm_user.preferences[key] = combinedpreferences[key]
+
+        # This is a bit of a hack so preferences behave as users expect
+        # We probably don't want to save, only display here
+        # but this means that whatever preferences the users see first are
+        # the ones they have unless they explicitly change them
+        self.mm_user.preferences.save()
+
+        return self.mm_user.preferences
+
+    def _get_combined_preferences(self):
+        # Get layers of default preferences to match how they are applied
+        # We ignore self_link as we don't want to over-write it
+        defaultpreferences = get_mailman_client().preferences
+        combinedpreferences = {}
+        for key in defaultpreferences:
+            if key != u"self_link":
+                combinedpreferences[key] = defaultpreferences[key]
+
+        # Clobber defaults with any preferences already set
+        for key in self.mm_user.preferences:
+            if key != u"self_link":
+                combinedpreferences[key] = self.mm_user.preferences[key]
+
+        return(combinedpreferences)
+
+
+class UserAddressPreferencesView(UserPreferencesView):
     """The logged-in user's address-based Mailman Preferences."""
 
-    @method_decorator(login_required)
-    def post(self, request):
-        try:
-            mm_user = MailmanUser.objects.get(address=request.user.email)
-            formset_class = formset_factory(UserPreferences)
-            formset = formset_class(request.POST)
-            zipped_data = zip(formset.forms, mm_user.addresses)
-            if formset.is_valid():
-                for form, address in zipped_data:
-                    preferences = address.preferences
-                    for key in form.fields.keys():
-                        preferences[
-                            key] = form.cleaned_data[key]
-                        preferences.save()
-                messages.success(
-                    request, 'Your preferences have been updated.')
-            else:
-                messages.error(request, 'Something went wrong.')
-        except MailmanApiError:
-            return utils.render_api_error(request)
-        except HTTPError, e:
-            messages.error(request, e.msg)
-        return redirect("user_address_preferences")
+    template_name = 'postorius/user/address_preferences.html'
+    success_url = reverse_lazy('user_address_preferences')
 
-    @method_decorator(login_required)
-    def get(self, request):
-        try:
-            helperform = UserPreferences()
-            mm_user = MailmanUser.objects.get(address=request.user.email)
-            addresses = mm_user.addresses
-            i = 0
-            for address in addresses:
-                i = i + 1
-            AFormset = formset_factory(UserPreferences, extra=i)
-            formset = AFormset()
-            zipped_data = zip(formset.forms, addresses)
-            for form, address in zipped_data:
-                form.initial = address.preferences
-        except MailmanApiError:
-            return utils.render_api_error(request)
-        except Mailman404Error:
-            return render_to_response(
-                'postorius/user_address_preferences.html',
-                {'nolists': 'true'},
-                context_instance=RequestContext(request))
-        return render_to_response('postorius/user_address_preferences.html',
-                                  {'mm_user': mm_user,
-                                   'addresses': addresses,
-                                   'helperform': helperform,
-                                   'formset': formset,
-                                   'zipped_data': zipped_data},
-                                  context_instance=RequestContext(request))
+    def get_form_class(self):
+        return formset_factory(
+            UserPreferences, formset=UserPreferencesFormset, extra=0)
+
+    def _get_preferences(self):
+        return [address.preferences for address in self.mm_user.addresses]
+
+    def _get_combined_preferences(self):
+        # grab the default preferences
+        defaultpreferences = get_mailman_client().preferences
+
+        # grab your global preferences
+        globalpreferences = self.mm_user.preferences
+
+        # start a new combined preferences object
+        combinedpreferences = []
+
+        for address in self.mm_user.addresses:
+            # make a per-address prefs object
+            prefs = {}
+
+            # initialize with default preferences
+            for key in defaultpreferences:
+                if key != u"self_link":
+                    prefs[key] = defaultpreferences[key]
+
+            # overwrite with user's global preferences
+            for key in globalpreferences:
+                if key != u"self_link":
+                    prefs[key] = globalpreferences[key]
+
+            # overwrite with address-specific preferences
+            for key in address.preferences:
+                if key != u"self_link":
+                    prefs[key] = address.preferences[key]
+            combinedpreferences.append(prefs)
+
+            # put the combined preferences back on the original object
+            for key in prefs:
+                if key != u"self_link":
+                    address.preferences[key] = prefs[key]
+
+        return combinedpreferences
+
+    def get_context_data(self, **kwargs):
+        data = super(UserAddressPreferencesView, self).get_context_data(
+            **kwargs)
+        data['formset'] = data.pop('form')
+        for form, address in zip(
+                data['formset'].forms, self.mm_user.addresses):
+            form.address = address
+        return data
 
 
-class UserSubscriptionPreferencesView(MailmanUserView):
+class UserListOptionsView(UserPreferencesView):
+    """The logged-in user's subscription preferences."""
+
+    form_class = UserPreferences
+    template_name = 'postorius/user/list_options.html'
+
+    def _get_subscription(self):
+        subscription = None
+        for s in self.mm_user.subscriptions:
+            if s.role == 'member' and s.list_id == self.mlist.list_id:
+                subscription = s
+                break
+        if not subscription:
+            raise Http404(_('Subscription does not exist'))
+        return subscription
+
+    def _set_view_attributes(self, request, *args, **kwargs):
+        super(UserListOptionsView, self)._set_view_attributes(
+            request, *args, **kwargs)
+        self.mlist = List.objects.get_or_404(fqdn_listname=kwargs['list_id'])
+        self.subscription = self._get_subscription()
+
+    def _get_preferences(self):
+        return self.subscription.preferences
+
+    def get_context_data(self, **kwargs):
+        data = super(UserListOptionsView, self).get_context_data(**kwargs)
+        data['mlist'] = self.mlist
+        user_emails = EmailAddress.objects.filter(
+            user=self.request.user, verified=True).order_by(
+            "email").values_list("email", flat=True)
+        data['change_subscription_form'] = ChangeSubscriptionForm(
+            user_emails, initial={'email': self.subscription.email})
+        return data
+
+    def get_success_url(self):
+        return reverse(
+            'user_list_options', kwargs=dict(list_id=self.mlist.list_id))
+
+
+class UserSubscriptionPreferencesView(UserPreferencesView):
     """The logged-in user's subscription-based Mailman Preferences."""
 
-    @method_decorator(login_required)
-    def post(self, request):
-        try:
-            mm_user = MailmanUser.objects.get(address=request.user.email)
-            formset_class = formset_factory(UserPreferences)
-            formset = formset_class(request.POST)
-            zipped_data = zip(formset.forms, mm_user.subscriptions)
-            if formset.is_valid():
-                for form, subscription in zipped_data:
-                    preferences = subscription.preferences
-                    for key in form.cleaned_data.keys():
-                        preferences[key] = form.cleaned_data[key]
-                    preferences.save()
-                messages.success(
-                    request, 'Your preferences have been updated.')
-            else:
-                messages.error(request, 'Something went wrong.')
-        except MailmanApiError:
-            return utils.render_api_error(request)
-        except HTTPError, e:
-            messages.error(request, e.msg)
-        return redirect("user_subscription_preferences")
+    template_name = 'postorius/user/subscription_preferences.html'
+    success_url = reverse_lazy('user_subscription_preferences')
 
-    @method_decorator(login_required)
-    def get(self, request):
-        try:
-            mm_user = MailmanUser.objects.get(address=request.user.email)
-            subscriptions = mm_user.subscriptions
-            i = len(subscriptions)
-            member_subscriptions = []
-            for subscription in subscriptions:
-                if subscription.role == "member":
-                    member_subscriptions.append(subscription)
-            Mformset = formset_factory(UserPreferences, extra=i)
-            formset = Mformset()
-            zipped_data = zip(formset.forms, member_subscriptions)
-            for form, subscription in zipped_data:
-                form.initial = subscription.preferences
-        except MailmanApiError:
-            return utils.render_api_error(request)
-        except Mailman404Error:
-            return render_to_response(
-                'postorius/user_subscription_preferences.html',
-                {'nolists': 'true'},
-                context_instance=RequestContext(request))
-        return render_to_response(
-            'postorius/user_subscription_preferences.html',
-            {'mm_user': mm_user,
-             'subscriptions': subscriptions,
-             'zipped_data': zipped_data,
-             'formset': formset},
-            context_instance=RequestContext(request))
+    def _get_subscriptions(self):
+        subscriptions = []
+        for s in self.mm_user.subscriptions:
+            if s.role != 'member':
+                continue
+            subscriptions.append(s)
+        return subscriptions
 
+    def _set_view_attributes(self, request, *args, **kwargs):
+        super(UserSubscriptionPreferencesView, self)._set_view_attributes(
+            request, *args, **kwargs)
+        self.subscriptions = self._get_subscriptions()
 
-class UserSummaryView(MailmanUserView):
+    def get_form_class(self):
+        return formset_factory(
+            UserPreferences, formset=UserPreferencesFormset, extra=0)
 
-    """Shows a summary of a user.
-    """
+    def _get_preferences(self):
+        return [sub.preferences for sub in self.subscriptions]
 
-    @method_decorator(user_passes_test(lambda u: u.is_superuser))
-    def get(self, request, user_id):
-        settingsform = MembershipSettings()
-        memberships = self._get_memberships()
-        return render_to_response('postorius/users/summary.html',
-                                  {'mm_user': self.mm_user,
-                                   'settingsform': settingsform,
-                                   'memberships': memberships},
-                                  context_instance=RequestContext(request))
+    def _get_combined_preferences(self):
+        # grab the default preferences
+        defaultpreferences = get_mailman_client().preferences
 
+        # grab your global preferences
+        globalpreferences = self.mm_user.preferences
 
-class UserSubscriptionsView(MailmanUserView):
+        # start a new combined preferences object
+        combinedpreferences = []
 
-    """Shows the subscriptions of a user.
-    """
+        for sub in self.subscriptions:
+            # make a per-address prefs object
+            prefs = {}
 
-    def get(self, request):
-        memberships = self._get_memberships()
-        return render_to_response('postorius/user_subscriptions.html',
-                                  {'memberships': memberships},
-                                  context_instance=RequestContext(request))
+            # initialize with default preferences
+            for key in defaultpreferences:
+                if key != u"self_link":
+                    prefs[key] = defaultpreferences[key]
 
+            # overwrite with user's global preferences
+            for key in globalpreferences:
+                if key != u"self_link":
+                    prefs[key] = globalpreferences[key]
 
-class AddressActivationView(TemplateView):
-    """
-    Starts the process of adding additional email addresses to a mailman user 
-    record. Forms are processes and email notifications are sent accordingly.
-    """
+            # overwrite with address-based preferences
+            # There is currently no better way to do this,
+            # we may consider revisiting.
+            addresspreferences = {}
+            for address in self.mm_user.addresses:
+                if sub.email == address.email:
+                    addresspreferences = address.preferences
 
-    @method_decorator(login_required)
-    def get(self, request):
-        form = AddressActivationForm(initial={'user_email': request.user.email})
-        return render_to_response('postorius/user_address_activation.html',
-                                  {'form': form},
-                                  context_instance=RequestContext(request))
+            for key in addresspreferences:
+                if key != u"self_link":
+                    prefs[key] = addresspreferences[key]
 
-    @method_decorator(login_required)
-    def post(self, request):
-        form = AddressActivationForm(request.POST)
-        if form.is_valid():
-            profile = AddressConfirmationProfile.objects.create_profile(
-                email=form.cleaned_data['email'], user=request.user)
-            try:
-                profile.send_confirmation_link(request)
-            except SMTPException:
-                messages.error(request, 'The email confirmation message could '
-                               'not be sent. %s' % profile.activation_key)
-            return render_to_response('postorius/user_address_activation_sent.html',
-                                      context_instance=RequestContext(request))
-        return render_to_response('postorius/user_address_activation.html',
-                                  {'form': form},
-                                  context_instance=RequestContext(request))
+            # overwrite with subscription-specific preferences
+            for key in sub.preferences:
+                if key != u"self_link":
+                    prefs[key] = sub.preferences[key]
 
+            combinedpreferences.append(prefs)
 
-@user_passes_test(lambda u: u.is_superuser)
-def user_index(request, page=1, template='postorius/users/index.html'):
-    """Show a table of all users.
-    """
-    page = int(page)
-    error = None
-    try:
-        mm_user_page = utils.get_client().get_user_page(25, page)
-    except MailmanApiError:
-        return utils.render_api_error(request)
-    return render_to_response(
-        template,
-        {'error': error,
-         'mm_user_page': mm_user_page,
-         'mm_user_page_nr': page,
-         'mm_user_page_previous_nr': page - 1,
-         'mm_user_page_next_nr': page + 1,
-         'mm_user_page_show_next': len(mm_user_page) >= 25},
-        context_instance=RequestContext(request))
+        return combinedpreferences
+        # return [sub.preferences for sub in self.subscriptions]
 
-
-@user_passes_test(lambda u: u.is_superuser)
-def user_new(request):
-    message = None
-    if request.method == 'POST':
-        form = UserNew(request.POST)
-        if form.is_valid():
-            user = MailmanUser(display_name=form.cleaned_data['display_name'],
-                               email=form.cleaned_data['email'],
-                               password=form.cleaned_data['password'])
-            try:
-                user.save()
-            except MailmanApiError:
-                return utils.render_api_error(request)
-            except HTTPError, e:
-                messages.error(request, e)
-            else:
-                messages.success(request, _("New User registered"))
-            return redirect("user_index")
-    else:
-        form = UserNew()
-    return render_to_response('postorius/users/new.html',
-                              {'form': form, 'message': message},
-                              context_instance=RequestContext(request))
-
-
-def user_logout(request):
-    logout(request)
-    return redirect('user_login')
-
-
-@login_required()
-def user_profile(request, user_email=None):
-    if not request.user.is_authenticated():
-        return redirect('user_login')
-    # try:
-    #    the_user = User.objects.get(email=user_email)
-    # except MailmanApiError:
-    #    return utils.render_api_error(request)
-    return render_to_response('postorius/user_profile.html',
-                              # {'mm_user': the_user},
-                              context_instance=RequestContext(request))
+    def get_context_data(self, **kwargs):
+        data = super(UserSubscriptionPreferencesView, self).get_context_data(
+            **kwargs)
+        data['formset'] = data.pop('form')
+        for form, subscription in zip(
+                data['formset'].forms, self.subscriptions):
+            form.list_id = subscription.list_id
+        return data
 
 
 @login_required
-def user_tasks(request):
-    return render_to_response('postorius/user_tasks.html',
-                              context_instance=RequestContext(request))
-
-
-@user_passes_test(lambda u: u.is_superuser)
-def user_delete(request, user_id,
-                template='postorius/users/user_confirm_delete.html'):
-    """ Deletes a user upon confirmation.
-    """
-    try:
-        mm_user = MailmanUser.objects.get_or_404(address=user_id)
-        email_id = mm_user.addresses[0]
-    except MailmanApiError:
-        return utils.render_api_error(request)
-    except IndexError:
-        email_id = ''
-    if request.method == 'POST':
-        try:
-            mm_user.delete()
-        except MailmanApiError:
-            return utils.render_api_error(request)
-        except HTTPError as e:
-            messages.error(request, _('The user could not be deleted:'
-                                      ' %s' % e.msg))
-            return redirect("user_index")
-        messages.success(request,
-                         _('The user %s has been deleted.' % email_id))
-        return redirect("user_index")
-    return render_to_response(template,
-                              {'user_id': user_id, 'email_id': email_id},
-                              context_instance=RequestContext(request))
-
-
-def _add_address(request, user_email, address):
-    # Add an address to a user record in mailman.
-    try:
-        mailman_user = utils.get_client().get_user(user_email)
-        mailman_user.add_address(address)
-    except (MailmanApiError, MailmanConnectionError) as e:
-        messages.error(request, 'The address could not be added.')
-
-
-def address_activation_link(request, activation_key):
-    """
-    Checks the given activation_key. If it is valid, the saved address will be
-    added to mailman. Also, the corresponding profile record will be removed. 
-    If the key is not valid, it will be ignored. 
-    """
-    try:
-        profile = AddressConfirmationProfile.objects.get(
-            activation_key=activation_key)
-        if not profile.is_expired:
-            _add_address(request, profile.user.email, profile.email)
-    except profile.DoesNotExist:
-        pass
-    return render_to_response('postorius/user_address_activation_link.html',
-        {}, context_instance=RequestContext(request))
+def user_subscriptions(request):
+    """Shows the subscriptions of a user."""
+    mm_user = MailmanUser.objects.get_or_create_from_django(request.user)
+    memberships = [m for m in mm_user.subscriptions if m.role == 'member']
+    return render(request, 'postorius/user/subscriptions.html',
+                  {'memberships': memberships})

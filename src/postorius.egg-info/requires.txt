@@ -1,0 +1,4 @@
+Django>=1.8
+Django<1.12
+django-mailman3
+mailmanclient

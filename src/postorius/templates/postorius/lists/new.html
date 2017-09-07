@@ -1,15 +1,19 @@
-{% extends postorius_base_template %}
-{% load url from future %}
+{% extends "postorius/base.html" %}
 {% load i18n %}
+{% load bootstrap_tags %}
 
-{% block subtitle %}
-{% trans "Create List" as page_title %}{{ page_title }}
+{% block head_title %}
+{% trans 'Create list' %} - {{ block.super }}
 {% endblock %}
 
-{% block main %}
-    <h1>{% trans "Create a new List" %} {{ block.super }}</h1> 
-    <form action="{% url 'list_new' %}" method="post" class="well"> {% csrf_token %}
-        {{ form.as_p }}
-        <button class="btn btn-success" type="submit">{% trans "Create List" %}</button>
+{% block content %}
+
+    <div class="page-header">
+        <h1>{% trans 'Create a new list' %}</h1>
+    </div>
+
+    <form action="{% url 'list_new' %}" method="post" class="form-horizontal">
+        {% bootstrap_form_horizontal form 2 8 'Create list' %}
     </form>
+
 {% endblock %}
