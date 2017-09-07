@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2017 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -16,35 +16,14 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import absolute_import, unicode_literals
+
 import logging
-
-from django.conf import settings
-from django.core.urlresolvers import reverse, NoReverseMatch
-
 logger = logging.getLogger(__name__)
 
 
 def postorius(request):
     """Add template variables to context.
     """
-    # Use a template so that the page header/footer is suppressed when
-    # requested via AJAX
-
-    if request.is_ajax():
-        template_to_extend = "postorius/base_ajax.html"
-    else:
-        template_to_extend = "postorius/base.html"
-
-    # Find the HyperKitty URL if installed
-    hyperkitty_url = False
-    if "hyperkitty" in settings.INSTALLED_APPS:
-        try:
-            hyperkitty_url = reverse("hk_root")
-        except NoReverseMatch:
-            pass
-
-    return {
-        'postorius_base_template': template_to_extend,
-        'request': request,
-        'hyperkitty_url': hyperkitty_url,
-    }
+    # Unused at the moment
+    return {}

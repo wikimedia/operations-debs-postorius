@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2015 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2017 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -16,10 +16,9 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf import settings
-from django.core.management.base import BaseCommand, CommandError
-from postorius import utils
-from urllib2 import HTTPError
+from django.core.management.base import BaseCommand
+from django_mailman3.lib.mailman import get_mailman_client
+
 
 class Command(BaseCommand):
     help = """Opens a Python shell with a mailmanclient object named `client`.
@@ -30,12 +29,11 @@ Usage example:
     foo = client.get_list('foo@example.org')
     foo.members
     [<Member "les@primus.org">]
-    
-A complete list of commands can be found in the mailman.client documentation."""
-    
+
+A complete list of commands can be found in the mailmanclient documentation."""
+
     def handle(self, *args, **options):
         # choose an interpreter
-        console = None
         try:
             import IPython
             console_fn = IPython.embed
@@ -44,7 +42,7 @@ A complete list of commands can be found in the mailman.client documentation."""
             shell = code.InteractiveConsole(globals())
             console_fn = shell.interact
         # connect to mailmanclient
-        client = utils.get_client()
+        client = get_mailman_client()
         # Putting client back in the global scope
         globals()['client'] = client
         # run the interpreter

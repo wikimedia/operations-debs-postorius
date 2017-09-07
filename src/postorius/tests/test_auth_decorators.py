@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2015 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2017 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -15,17 +15,19 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import absolute_import, unicode_literals
+
+from allauth.account.models import EmailAddress
 from django.contrib.auth.models import AnonymousUser, User
 from django.core.exceptions import PermissionDenied
 from django.test.client import RequestFactory
-from django.utils import unittest
+from django.test import TestCase
 from mock import patch
 
 from postorius.auth.decorators import (list_owner_required,
                                        list_moderator_required,
-                                       basic_auth_login)
-from postorius.models import (Domain, List, Member, MailmanUser,
-                              MailmanApiError, Mailman404Error)
+                                       superuser_required)
+from postorius.tests.utils import create_mock_list
 from mailmanclient import Client
 
 
@@ -39,11 +41,23 @@ def dummy_function_mod_req(request, list_id):
     return True
 
 
-class ListOwnerRequiredTest(unittest.TestCase):
+@superuser_required
+def dummy_superuser_required(request):
+    return True
+
+
+def create_user():
+    user = User.objects.create_user(
+        'les c', 'les@primus.org', 'pwd')
+    EmailAddress.objects.create(
+        user=user, email=user.email, verified=True)
+    return user
+
+
+class ListOwnerRequiredTest(TestCase):
     """Tests the list_owner_required auth decorator."""
 
     def setUp(self):
-        from django.test.client import RequestFactory
         from postorius.tests.utils import create_mock_list
         self.request_factory = RequestFactory()
         # create a mock list with members
@@ -57,8 +71,8 @@ class ListOwnerRequiredTest(unittest.TestCase):
     def test_not_authenticated(self, mock_get_list):
         """Should raise PermissionDenied if user is not authenticated."""
         mock_get_list.return_value = self.mock_list
-        request = self.request_factory.get('/lists/foolist.example.org/'
-                                           'settings/')
+        request = self.request_factory.get(
+            '/lists/foolist.example.org/settings/')
         request.user = AnonymousUser()
         self.assertRaises(PermissionDenied, dummy_function, request,
                           list_id='foolist.example.org')
@@ -67,12 +81,14 @@ class ListOwnerRequiredTest(unittest.TestCase):
     def test_superuser(self, mock_get_list):
         """Should call the dummy method, if user is superuser."""
         mock_get_list.return_value = self.mock_list
-        request = self.request_factory.get('/lists/foolist.example.org/'
-                                           'settings/')
-        request.user = User.objects.create_superuser('su1', 'su@sodo.org',
-                                                     'pwd')
-        return_value = dummy_function(request,
-                                      list_id='foolist.example.org')
+        request = self.request_factory.get(
+            '/lists/foolist.example.org/settings/')
+        request.user = User.objects.create_superuser(
+            'su1', 'su@sodo.org', 'pwd')
+        EmailAddress.objects.create(
+            user=request.user, email=request.user.email, verified=True)
+        return_value = dummy_function(
+            request, list_id='foolist.example.org')
         self.assertEqual(return_value, True)
 
     @patch.object(Client, 'get_list')
@@ -82,10 +98,9 @@ class ListOwnerRequiredTest(unittest.TestCase):
         self.mock_list.owners = ['geddy@rush.it']
         mock_get_list.return_value = self.mock_list
         # prepare request
-        request = self.request_factory.get('/lists/foolist.example.org/'
-                                           'settings/')
-        request.user = User.objects.create_user('les c', 'les@primus.org',
-                                                'pwd')
+        request = self.request_factory.get(
+            '/lists/foolist.example.org/settings/')
+        request.user = create_user()
         self.assertRaises(PermissionDenied, dummy_function, request,
                           list_id='foolist.example.org')
 
@@ -96,20 +111,18 @@ class ListOwnerRequiredTest(unittest.TestCase):
         self.mock_list.owners = ['les@primus.org']
         mock_get_list.return_value = self.mock_list
         # prepare request
-        request = self.request_factory.get('/lists/foolist.example.org/'
-                                           'settings/')
-        request.user = User.objects.create_user('les cl', 'les@primus.org',
-                                                'pwd')
-        return_value = dummy_function(request,
-                                      list_id='foolist.example.org')
+        request = self.request_factory.get(
+            '/lists/foolist.example.org/settings/')
+        request.user = create_user()
+        return_value = dummy_function(
+            request, list_id='foolist.example.org')
         self.assertEqual(return_value, True)
 
 
-class ListModeratorRequiredTest(unittest.TestCase):
+class ListModeratorRequiredTest(TestCase):
     """Tests the list_owner_required auth decorator."""
 
     def setUp(self):
-        from django.test.client import RequestFactory
         from postorius.tests.utils import create_mock_list
         self.request_factory = RequestFactory()
         # create a mock list with members
@@ -123,8 +136,8 @@ class ListModeratorRequiredTest(unittest.TestCase):
     def test_not_authenticated(self, mock_get_list):
         """Should raise PermissionDenied if user is not authenticated."""
         mock_get_list.return_value = self.mock_list
-        request = self.request_factory.get('/lists/foolist.example.org/'
-                                           'settings/')
+        request = self.request_factory.get(
+            '/lists/foolist.example.org/settings/')
         request.user = AnonymousUser()
         self.assertRaises(PermissionDenied, dummy_function_mod_req, request,
                           list_id='foolist.example.org')
@@ -133,13 +146,14 @@ class ListModeratorRequiredTest(unittest.TestCase):
     def test_superuser(self, mock_get_list):
         """Should call the dummy method, if user is superuser."""
         mock_get_list.return_value = self.mock_list
-        request = self.request_factory.get('/lists/foolist.example.org/'
-                                           'settings/')
-        request.user = User.objects.create_superuser('su2', 'su@sodo.org',
-                                                     'pwd')
-        return_value = dummy_function_mod_req(request,
-                                              list_id=
-                                              'foolist.example.org')
+        request = self.request_factory.get(
+            '/lists/foolist.example.org/settings/')
+        request.user = User.objects.create_superuser(
+            'su2', 'su@sodo.org', 'pwd')
+        EmailAddress.objects.create(
+            user=request.user, email=request.user.email, verified=True)
+        return_value = dummy_function_mod_req(
+            request, list_id='foolist.example.org')
         self.assertEqual(return_value, True)
 
     @patch.object(Client, 'get_list')
@@ -149,10 +163,9 @@ class ListModeratorRequiredTest(unittest.TestCase):
         self.mock_list.moderators = ['geddy@rush.it']
         mock_get_list.return_value = self.mock_list
         # prepare request
-        request = self.request_factory.get('/lists/foolist.example.org/'
-                                           'settings/')
-        request.user = User.objects.create_user('les cl2', 'les@primus.org',
-                                                'pwd')
+        request = self.request_factory.get(
+            '/lists/foolist.example.org/settings/')
+        request.user = create_user()
         self.assertRaises(PermissionDenied, dummy_function_mod_req, request,
                           list_id='foolist.example.org')
 
@@ -163,13 +176,11 @@ class ListModeratorRequiredTest(unittest.TestCase):
         self.mock_list.owners = ['les@primus.org']
         mock_get_list.return_value = self.mock_list
         # prepare request
-        request = self.request_factory.get('/lists/foolist.example.org/'
-                                           'settings/')
-        request.user = User.objects.create_user('les cl3', 'les@primus.org',
-                                                'pwd')
-        return_value = dummy_function_mod_req(request,
-                                              list_id=
-                                              'foolist.example.org')
+        request = self.request_factory.get(
+            '/lists/foolist.example.org/settings/')
+        request.user = create_user()
+        return_value = dummy_function_mod_req(
+            request, list_id='foolist.example.org')
         self.assertEqual(return_value, True)
 
     @patch.object(Client, 'get_list')
@@ -179,11 +190,54 @@ class ListModeratorRequiredTest(unittest.TestCase):
         self.mock_list.moderators = ['les@primus.org']
         mock_get_list.return_value = self.mock_list
         # prepare request
-        request = self.request_factory.get('/lists/foolist.example.org/'
-                                           'settings/')
-        request.user = User.objects.create_user('les cl4', 'les@primus.org',
-                                                'pwd')
-        return_value = dummy_function_mod_req(request,
-                                              list_id=
-                                              'foolist.example.org')
+        request = self.request_factory.get(
+            '/lists/foolist.example.org/settings/')
+        request.user = create_user()
+        return_value = dummy_function_mod_req(
+            request, list_id='foolist.example.org')
         self.assertEqual(return_value, True)
+
+
+class TestSuperUserOr403(TestCase):
+    """Tests superuser_required auth decorator"""
+
+    def setUp(self):
+        self.request_factory = RequestFactory()
+        # create a mock list with members
+        list_name = 'foolist.example.org'
+        list_id = 'foolist.example.org'
+        self.mock_list = create_mock_list(dict(
+            fqdn_listname=list_name,
+            list_id=list_id))
+
+    @patch.object(Client, 'get_list')
+    def test_anonymous_user(self, mock_get_list):
+        """Should raise PermissionDenied if user is an anonymous user."""
+        mock_get_list.return_value = self.mock_list
+
+        request = self.request_factory.get(
+            '/lists/foolist.example.org/settings/')
+        request.user = AnonymousUser()
+        self.assertRaises(PermissionDenied, dummy_superuser_required, request)
+
+    @patch.object(Client, 'get_list')
+    def test_normal_user(self, mock_get_list):
+        """Should raise PermissionDenied if user is a normal user."""
+        mock_get_list.return_value = self.mock_list
+
+        request = self.request_factory.get(
+            '/lists/foolist.example.org/settings/')
+        request.user = create_user()
+        self.assertRaises(PermissionDenied, dummy_superuser_required, request)
+
+    @patch.object(Client, 'get_list')
+    def test_super_user(self, mock_get_list):
+        """Should not raise PermissionDenied if user is superuser."""
+        mock_get_list.return_value = self.mock_list
+
+        request = self.request_factory.get(
+            '/lists/foolist.example.org/settings/')
+        request.user = create_user()
+        request.user.is_superuser = True
+        request.user.save()
+        self.assertTrue(dummy_superuser_required(request))

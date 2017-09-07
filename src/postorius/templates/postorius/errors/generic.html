@@ -1,9 +1,7 @@
-{% extends postorius_base_template %}
-{% load url from future %}
+{% extends "postorius/base.html" %}
 {% load i18n %}
 
-{% block main %}
+{% block content %}
     <h1>{% trans 'Something went wrong' %}</h1>
-
-    {% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %} 
+    {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
 {% endblock %}

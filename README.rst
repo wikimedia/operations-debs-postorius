@@ -1,11 +1,22 @@
 ===================================
 Postorius - web ui for GNU Mailman
 ===================================
+.. image:: https://gitlab.com/mailman/postorius/badges/master/build.svg
+    :target: https://gitlab.com/mailman/postorius/commits/master
 
-Copyright (C) 1998-2014 by the Free Software Foundation, Inc.
+.. image:: https://readthedocs.org/projects/postorius/badge
+    :target: https://postorius.readthedocs.io
+
+.. image:: http://img.shields.io/pypi/v/postorius.svg
+    :target: https://pypi.python.org/pypi/postorius
+
+.. image:: http://img.shields.io/pypi/dm/postorius.svg
+    :target: https://pypi.python.org/pypi/postorius
+
+Copyright (C) 1998-2017 by the Free Software Foundation, Inc.
 
 The Postorius Django app provides a web user interface to
-access GNU Mailman. 
+access GNU Mailman.
 
 Postorius is free software: you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public License as
@@ -23,10 +34,9 @@ along with mailman.client. If not, see <http://www.gnu.org/licenses/>.
 Requirements
 ============
 
-Postorius requires Python 2.6 or newer and mailman.client,
-the official Python bindings for GNU Mailman, it also requires
-django-social-auth.
-The minimum Django version is 1.6.
+Postorius requires Python 2.7 or newer and mailmanclient,
+the official Python bindings for GNU Mailman.
+The minimum Django version is 1.8.
 Postorius needs a running version of GNU Mailman version 3.
 
 
@@ -42,12 +52,13 @@ Installation
 ============
 
 To install GNU Mailman follow the instructions in the documentation:
-http://packages.python.org/mailman/
+http://mailman.readthedocs.org/
 
-A description how to run Postorius on Django's dev server or using
-Apache/mod_wsgi, can be found in the package documentation: 
+A description how to run Postorius on Django's dev server or deploying it 
+using Apache/mod_wsgi or Nginx/uwsig, can be found in the package documentation: 
 
 src/postorius/doc/setup.rst
+src/postorius/doc/deployment.rst
 
 
 Acknowledgements
@@ -55,11 +66,4 @@ Acknowledgements
 
 Many thanks go out to Anna Senarclens de Grancy and Benedict Stein for
 developing the initial versions of this Django app during the Google Summer of
-Code 2010 and 2011. 
-
-
-Icons
-=====
-
-Postorius uses the WPZOOM Developer Icon Set (http://www.wpzoom.com).
-
+Code 2010 and 2011.

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2015 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2017 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -16,7 +16,8 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.core.urlresolvers import reverse
+from __future__ import absolute_import, unicode_literals
+
 from django import template
 
 
@@ -24,41 +25,22 @@ register = template.Library()
 
 
 @register.inclusion_tag('postorius/menu/list_nav.html', takes_context=True)
-def list_nav(context, current, title=None):
-    if title is None:
-        title = ''
+def list_nav(context, current, title='', subtitle=''):
     return dict(list=context['list'],
                 current=current,
                 user=context['request'].user,
-                title=title)
+                title=title, subtitle=subtitle)
 
 
-@register.inclusion_tag('postorius/menu/mm_user_nav.html', takes_context=True)
-def user_nav(context, current, title=None):
-    if title is None:
-        title = ''
-    return dict(mm_user=context['mm_user'],
-                current=current,
-                user=context['request'].user,
-                title=title)
-
-
-@register.inclusion_tag('postorius/menu/users_nav.html', takes_context=True)
-def users_nav(context, current, title=None):
-    if title is None:
-        title = ''
+@register.inclusion_tag('postorius/menu/user_nav.html', takes_context=True)
+def user_nav(context, current, title='', subtitle=''):
     return dict(current=current,
                 user=context['request'].user,
-                title=title)
-
-
-@register.simple_tag
-def page_url(view_name, *args, **kwargs):
-    return reverse(view_name, *args, **kwargs)
+                title=title, subtitle=subtitle)
 
 
 @register.simple_tag(takes_context=True)
 def nav_active_class(context, current, view_name):
     if current == view_name:
-        return 'mm_active'
+        return 'active'
     return ''
