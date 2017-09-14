@@ -12,7 +12,7 @@ Standards-Version: 4.0.0
 Homepage: http://www.list.org/
 Vcs-Browser: https://github.com/P-EB/mailman3-postorius
 Vcs-Git: https://github.com/P-EB/mailman3-postorius.git -b master
-X-Python-Version: >= 2.6
+X-Python-Version: >= 2.7
 
 Package: mailman3-postorius
 Architecture: any
