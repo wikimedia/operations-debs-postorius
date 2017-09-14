@@ -1,0 +1,16 @@
+General maintenance
+
+    This package is maintained in Git at github.com:P-EB/mailman3-postorius.
+    It uses the "3.0 (quilt)" source format and follows the Git packaging
+    workflow from the Debian Python Modules Team. For more information, see:
+    * https://wiki.debian.org/Python/GitPackaging
+    * https://python-modules.alioth.debian.org/policy.html#git-procedures
+
+Building the package
+
+    Build the package using git-buildpackage with pristine tar:
+
+        gbp buildpackage --git-pristine-tar
+
+ -- Jonas Meurer <mejo@debian.org>  Thu, 14 Sep 2017 11:18:52 +0200
+
