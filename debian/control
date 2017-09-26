@@ -1,4 +1,4 @@
-Source: mailman3-postorius
+Source: postorius
 Section: mail
 Priority: optional
 Maintainer: Pierre-Elliott Bécue <becue@crans.org>
@@ -10,14 +10,14 @@ Build-Depends: debhelper (>= 9),
                python-sphinx
 Standards-Version: 4.1.0
 Homepage: http://www.list.org/
-Vcs-Browser: https://github.com/P-EB/mailman3-postorius
-Vcs-Git: https://github.com/P-EB/mailman3-postorius.git -b master
+Vcs-Browser: https://anonscm.debian.org/git/pkg-mailman/postorius.git/
+Vcs-Git: https://anonscm.debian.org/cgit/pkg-mailman/postorius.git/
 X-Python-Version: >= 2.7
 
-Package: mailman3-postorius
+Package: postorius
 Architecture: any
-Depends: mailman3-client, ${misc:Depends}, ${python:Depends}, ${shlibs:Depends}
-Recommends: nginx, uwsgi
+Depends: mailman3-client, ${misc:Depends}, ${python:Depends}
+Recommends: nginx, uwsgi, mailman3-core, python-mailmanclient
 Description: Web user interface to access GNU Mailman
  The Postorius Django app provides a web user interface
  to access GNU Mailman, and manage it. This interface
