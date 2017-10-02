@@ -25,4 +25,3 @@ Description: Web user interface to access GNU Mailman3
  The Postorius Django app provides a web user interface
  to access GNU Mailman3, and manage it. This interface
  uses django, and requires some configuration.
-
