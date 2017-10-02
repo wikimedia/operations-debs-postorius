@@ -24,29 +24,11 @@ License: GPL-3
 Files: debian/*
 Copyright: © 2015-2017 Pierre-Elliott Bécue <becue@crans.org>
            © 2017 Jonas Meurer <jonas@freesources.org>
-License: GPL-2+
- This package is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 2 of the License, or
- (at your option) any later version.
- .
- This package is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
- .
- On Debian systems, the complete text of the GNU General
- Public License version 2 can be found in "/usr/share/common-licenses/GPL-2".
+License: GPL-2
 
 Files: debian/contrib/html5shiv.js debian/contrib/html5shiv.min.js
 Copyright: © 2014 Alexander Farkas (aFarkas)
 License: Expat or GPL-2
- This software is licensed under a dual license system (MIT or GPL version 2).
- This means you are free to choose with which of both licenses (MIT or GPL
- version 2) you want to use this library.
- .
- On Debian systems, the complete text of the GNU General
- Public License version 2 can be found in "/usr/share/common-licenses/GPL-2".
 
 Files: debian/contrib/respond.*.js
 Copyright: © 2014 Scott Jehl
@@ -64,6 +46,20 @@ License: Expat
 Files: debian/missing-sources/modernizr-1.7.js
 Copyright: © 2009-2011 Faruk Ates and Paul Irish
 License: Expat
+
+License: GPL-2
+ This package is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+ .
+ This package is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ On Debian systems, the complete text of the GNU General
+ Public License version 2 can be found in "/usr/share/common-licenses/GPL-2".
 
 License: Expat
  Permission is hereby granted, free of charge, to any person obtaining a
