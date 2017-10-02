@@ -54,18 +54,18 @@ License: Expat
 
 Files: debian/missing-sources/bootstrap.js
 Copyright: © 2011-2015 Twitter, Inc.
-License: MIT
+License: Expat
 
 Files: debian/missing-sources/jquery-1.11.3.js
 Copyright: © 2005, 2014 jQuery Foundation, Inc. and other contributors
            © 2011 The Dojo Foundation
-License: MIT
+License: Expat
 
 Files: debian/missing-sources/modernizr-1.7.js
 Copyright: © 2009-2011 Faruk Ates and Paul Irish
-License: MIT
+License: Expat
 
-License: MIT
+License: Expat
  Permission is hereby granted, free of charge, to any person obtaining a
  copy of this software and associated documentation files (the "Software"),
  to deal in the Software without restriction, including without limitation
