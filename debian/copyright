@@ -49,9 +49,7 @@ License: MIT
 
 Files: debian/missing-sources/modernizr-1.7.js
 Copyright: © 2009-2011 Faruk Ates and Paul Irish
-License: BSD, MIT
- On Debian systems, the complete text of the BSD License can be found in
- "/usr/share/common-licenses/BSD".
+License: MIT
 
 License: MIT
  Permission is hereby granted, free of charge, to any person obtaining a
