@@ -3,14 +3,13 @@
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
 export PYBUILD_NAME = postorius
-export PYBUILD_DESTDIR = debian/postorius
 
 %:
 	dh $@ --with python2,sphinxdoc --buildsystem=pybuild
 
-override_dh_auto_test:
+#override_dh_auto_test:
 
 
 override_dh_auto_install:
 	dh_auto_install
-	find debian/postorius/usr -type d -name "tests" -print0 | xargs -0 rm -r
+	#find debian/postorius/usr -type d -name "tests" -print0 | xargs -0 rm -r
