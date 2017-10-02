@@ -13,6 +13,7 @@ ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 	for python in $(shell pyversions -r); do \
 		PYTHONPATH="." $$python example_project/manage.py test --settings=test_settings; \
 	done
+endif
 
 override_dh_auto_install:
 	dh_auto_install
