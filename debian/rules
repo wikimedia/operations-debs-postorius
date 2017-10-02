@@ -13,6 +13,9 @@ override_dh_auto_test:
 #		PYTHONPATH="." $$python example_project/manage.py test --settings=test_settings; \
 #	done
 
+override_dh_auto_build:
+	PYTHONPATH=. sphinx-build -b html -E -N src/postorius/doc build/sphinx/html
+
 override_dh_auto_install:
 	dh_auto_install
 	#find debian/postorius/usr -type d -name "tests" -print0 | xargs -0 rm -r
