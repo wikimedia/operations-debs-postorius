@@ -7,9 +7,6 @@ Uploaders: Pierre-Elliott Bécue <becue@crans.org>,
 Build-Depends: debhelper (>= 9),
                dh-python,
                python-all,
-               python-django-allauth,
-               python-django (>= 1.6),
-               python-django-mailman3,
                python-setuptools,
                python-sphinx
 Standards-Version: 4.1.0
@@ -21,7 +18,8 @@ X-Python-Version: >= 2.7
 
 Package: postorius
 Architecture: all
-Depends: python-django-allauth,
+Depends: python-django,
+         python-django-allauth,
          python-django-mailman3,
          python-mailmanclient,
          ${misc:Depends},
