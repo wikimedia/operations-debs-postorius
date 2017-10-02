@@ -17,7 +17,7 @@ Vcs-Git: https://anonscm.debian.org/cgit/pkg-mailman/postorius.git/
 Testsuite: autopkgtest-pkg-python
 X-Python-Version: >= 2.7
 
-Package: postorius
+Package: python-django-postorius
 Architecture: all
 Depends: python-django,
          python-django-allauth,

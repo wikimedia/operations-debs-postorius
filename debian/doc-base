@@ -5,5 +5,5 @@ Abstract: This manual describes how to use Postorius, the Mailman3 web frontend
 Section: Network/Communication
 
 Format: HTML
-Index: /usr/share/doc/postorius/html/index.html
-Files: /usr/share/doc/postorius/html/*
+Index: /usr/share/doc/python-django-postorius/html/index.html
+Files: /usr/share/doc/python-django-postorius/html/*
