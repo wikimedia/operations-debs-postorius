@@ -1,6 +1,6 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: postorius
-Source: https://gitlab.com/mailman/postorius.git
+Source: https://gitlab.com/mailman/postorius
 
 Files: *
 Copyright: © 1998-2014, Free Software Foundation, Inc.
