@@ -7,6 +7,7 @@ Uploaders: Pierre-Elliott Bécue <becue@crans.org>,
 Build-Depends: debhelper (>= 9),
                dh-python,
                python-all,
+               python-allauth,
                python-django (>= 1.6),
                python-setuptools,
                python-sphinx
@@ -19,7 +20,10 @@ X-Python-Version: >= 2.7
 
 Package: postorius
 Architecture: all
-Depends: python-mailmanclient, ${misc:Depends}, ${python:Depends}
+Depends: python-allauth,
+         python-mailmanclient,
+         ${misc:Depends},
+         ${python:Depends}
 Recommends: nginx | libapache2-mod-uwsgi, uwsgi, mailman3-core
 Description: Web user interface to access GNU Mailman3
  The Postorius Django app provides a web user interface
