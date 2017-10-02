@@ -43,10 +43,6 @@ Copyright: © 2005, 2014 jQuery Foundation, Inc. and other contributors
            © 2011 The Dojo Foundation
 License: Expat
 
-Files: debian/missing-sources/modernizr-1.7.js
-Copyright: © 2009-2011 Faruk Ates and Paul Irish
-License: Expat
-
 License: GPL-2
  This package is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
