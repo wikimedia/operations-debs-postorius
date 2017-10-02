@@ -1,5 +1,5 @@
 Source: postorius
-Section: mail
+Section: python
 Priority: optional
 Maintainer: Debian Mailman Team <pkg-mailman-hackers@lists.alioth.debian.org>
 Uploaders: Pierre-Elliott Bécue <becue@crans.org>,
