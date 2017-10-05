@@ -19,7 +19,9 @@ X-Python-Version: >= 2.7
 
 Package: python-django-postorius
 Architecture: all
-Depends: python-django,
+Depends: libjs-jquery,
+         libjs-bootstrap,
+         python-django,
          python-django-allauth,
          python-django-mailman3,
          python-mailmanclient,

@@ -16,3 +16,11 @@ override_dh_auto_test:
 override_dh_auto_build:
 	PYTHONPATH=. sphinx-build -b html -E -N src/postorius/doc build/sphinx/html
 	dh_auto_build
+
+override_dh_auto_install:
+	dh_auto_install
+	# Don't embed bootstrap/jquery JS scripts
+	find debian/python-django-hyperkitty -name 'jquery-1.11.3.min.js' -type f -exec \
+		ln -sf /usr/share/javascript/jquery/jquery.min.js {} \;
+	find debian/python-django-hyperkitty -name 'bootstrap.min.js' -type f -exec \
+		ln -sf /usr/share/javascript/bootstrap/js/bootstrap.min.js {} \;

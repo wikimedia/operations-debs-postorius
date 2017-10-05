@@ -1,5 +1,9 @@
 postorius (1.1.0-1) unstable; urgency=low
 
+  [ Pierre-Elliott Bécue ]
   * Initial release (Closes: #799285)
 
- -- Pierre-Elliott Bécue <becue@crans.org>  Tue, 26 Sep 2017 11:04:25 +0200
+  [ Jonas Meurer ]
+  * Update to upstream version 1.1.0
+
+ -- Jonas Meurer <mejo@debian.org>  Mon, 02 Oct 2017 21:03:11 +0200
