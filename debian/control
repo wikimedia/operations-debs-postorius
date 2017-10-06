@@ -27,7 +27,7 @@ Depends: libjs-jquery,
          python-mailmanclient,
          ${misc:Depends},
          ${python:Depends}
-Recommends: nginx | libapache2-mod-uwsgi, uwsgi, mailman3-core
+Recommends: mailman3-core
 Description: Web user interface to access GNU Mailman3
  The Postorius Django app provides a web user interface
  to access GNU Mailman3, and manage it. This interface
