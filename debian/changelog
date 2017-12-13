@@ -6,8 +6,9 @@ postorius (1.1.0-2) unstable; urgency=medium
 
   [ Jonas Meurer ]
   * d/tests/control: Add new test that runs example_project/manage.py.
+  * d/control: Bump standards-version to 4.1.2, no changes needed.
 
- -- Jonas Meurer <mejo@debian.org>  Wed, 13 Dec 2017 17:34:03 +0100
+ -- Jonas Meurer <mejo@debian.org>  Wed, 13 Dec 2017 23:23:49 +0100
 
 postorius (1.1.0-1) unstable; urgency=low
 
