@@ -1,0 +1,2 @@
+Test-Command: python example_project/manage.py test --settings=test_settings
+Restrictions: build-needed
