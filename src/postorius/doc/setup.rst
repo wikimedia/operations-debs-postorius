@@ -6,12 +6,8 @@ Installation
     This installation guide covers Postorius, the web user interface for
     GNU Mailman 3. To install GNU Mailman follow the instructions in the `documentation`_.
 
-    If you are looking for an easy way to set up the whole GNU Mailman 3
-    suite (GNU Mailman 3, Postorius, Hyperkitty and mailmanclient), check
-    out the `mailman-bundler`_ project on GitLab.
 
-.. _mailman-bundler: https://gitlab.com/mailman/mailman-bundler
-.. _documentation: http://mailman.readthedocs.org
+.. _documentation: http://docs.mailman3.org/en/latest/
 
 Install Postorius
 =================

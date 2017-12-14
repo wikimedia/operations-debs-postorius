@@ -18,6 +18,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 
 
+1.1.1
+=====
+(2017-11-17)
+
+ * Improved testing and internal bug fixes.
+ * Preserve formatting of Mailing List description in the summary view.
+ * Site's Name isn't capitalized anymore in the navigation bar.
+ * html5shiv and response.js libraries are now included, instead of loading from a CDN.
+
 1.1.0 -- "Welcome to This World"
 ================================
 (2017-05-26)

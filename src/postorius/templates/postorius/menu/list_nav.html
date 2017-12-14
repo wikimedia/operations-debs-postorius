@@ -1,5 +1,8 @@
 {% load i18n %}
 {% load nav_helpers %}
+<div class="page-header">
+    <h1>{{ list.display_name }} <small>{{ list.fqdn_listname }}</small></h1>
+</div>
 
 {% if user.is_authenticated  %}
 <ul class="nav nav-pills">
@@ -37,11 +40,5 @@
     {% endif %}
 </ul>
 {% endif %}
-
-<div class="page-header">
-    {% if current == 'list_summary' %}
-        <h1>{{ list.display_name }} <small>{{ list.fqdn_listname }}</small></h1>
-    {% else %}
-        <h3>{{ title }} {% if subtitle %}<small>{{ subtitle }}</small>{% endif %}</h3>
-    {% endif %}
-</div>
+<h3>{{ title }} {% if subtitle %}<small>{{ subtitle }}</small>{% endif %}</h3>
+<br>

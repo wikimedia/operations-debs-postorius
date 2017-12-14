@@ -15,12 +15,25 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
+import re
+import sys
 from setuptools import setup, find_packages
+
+# Calculate the version number without importing the postorius package.
+with open('src/postorius/__init__.py') as fp:
+    for line in fp:
+        mo = re.match("__version__ = '(?P<version>[^']+?)'", line)
+        if mo:
+            __version__ = mo.group('version')
+            break
+    else:
+        print('No version number found')
+        sys.exit(1)
 
 
 setup(
     name="postorius",
-    version='1.1.0',
+    version=__version__,
     description="A web user interface for GNU Mailman",
     long_description=open('README.rst').read(),
     maintainer="The Mailman GSOC Coders",
@@ -29,7 +42,7 @@ setup(
     url=" https://gitlab.com/mailman/postorius",
     classifiers=[
         "Programming Language :: Python",
-        ],
+    ],
     packages=find_packages('src'),
     package_dir={'': 'src'},
     include_package_data=True,
@@ -37,7 +50,7 @@ setup(
         'Django>=1.8',
         'Django<1.12',
         'django-mailman3',
-        'mailmanclient',
+        'mailmanclient~=3.1.1a1'
     ],
     tests_require=[
         "mock",

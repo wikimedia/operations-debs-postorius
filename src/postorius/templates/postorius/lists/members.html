@@ -26,7 +26,7 @@
         </form>
     {% endif %}
 
-    {% if role == 'subscriber' %}
+    {% if role == 'subscriber' and members|length > 0 %}
         {% if form.choices.errors %}
             <div class="alert alert-danger">{{ form.choices.errors }}</div>
         {% endif %}

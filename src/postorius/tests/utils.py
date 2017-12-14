@@ -18,6 +18,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import os
+import vcr
 import logging
 
 from django.conf import settings
@@ -25,14 +26,64 @@ from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from mock import MagicMock
-from six.moves.urllib_parse import quote
+from six import binary_type, text_type, PY3
+from six.moves.urllib_parse import (
+    quote, urlparse, urlunparse, parse_qsl, urlencode)
 from django_mailman3.lib.mailman import get_mailman_client
 from django_mailman3.tests.utils import get_flash_messages
 
-from mailmanclient.testing.vcr_helpers import get_vcr
 
 vcr_log = logging.getLogger('vcr')
 vcr_log.setLevel(logging.WARNING)
+
+
+def reorder_request_params(request):
+    def reorder_params(params):
+        if PY3:
+            if isinstance(params, binary_type):
+                params = params.decode("ascii")
+                parsed = parse_qsl(params, encoding="utf-8")
+        else:
+            parsed = parse_qsl(params)
+        if parsed:
+            return urlencode(sorted(parsed, key=lambda kv: kv[0]))
+        else:
+            # Parsing failed, it may be a simple string.
+            return params
+        # sort the URL query-string by key names.
+    uri_parts = urlparse(request.uri)
+    if uri_parts.query:
+        request.uri = urlunparse((
+            uri_parts.scheme, uri_parts.netloc, uri_parts.path,
+            uri_parts.params, reorder_params(uri_parts.query),
+            uri_parts.fragment,
+        ))
+        # convert the request body to text and sort the parameters.
+    if isinstance(request.body, binary_type):
+        try:
+            request._body = request._body.decode('utf-8')
+        except UnicodeDecodeError:
+            pass
+    if isinstance(request.body, text_type):
+        request._body = reorder_params(request._body.encode('utf-8'))
+    return request
+
+
+def filter_response_headers(response):
+    for header in ('Date', 'Server', 'date', 'server'):
+        # The headers are lowercase on Python 2 and capitalized on Python 3
+        if header in response['headers']:
+            del response['headers'][header]
+    return response
+
+
+def get_vcr(**kwargs):
+    return vcr.VCR(
+        filter_headers=['authorization', 'user-agent', 'date'],
+        before_record=reorder_request_params,
+        before_record_response=filter_response_headers,
+        **kwargs
+    )
 
 
 def create_mock_domain(properties=None):

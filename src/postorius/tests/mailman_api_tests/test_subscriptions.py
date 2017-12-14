@@ -54,7 +54,7 @@ class TestSubscription(ViewTestCase):
         for address in self.mm_user.addresses:
             address.verify()
 
-    @patch('mailmanclient._client.MailingList.subscribe')
+    @patch('mailmanclient.MailingList.subscribe')
     def test_anonymous_subscribe(self, mock_subscribe):
         response = self.client.post(
             reverse('list_anonymous_subscribe',

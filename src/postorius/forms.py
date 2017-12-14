@@ -21,6 +21,7 @@ from __future__ import absolute_import, unicode_literals
 from django import forms
 from django.core.urlresolvers import reverse
 from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 from django.utils.encoding import smart_text
 from django.utils.translation import ugettext_lazy as _
 from django.utils.version import get_complete_version
@@ -115,7 +116,7 @@ class DomainForm(forms.Form):
         mail_host = self.cleaned_data['mail_host']
         try:
             validate_email('mail@' + mail_host)
-        except:
+        except ValidationError:
             raise forms.ValidationError(_("Please enter a valid domain name"))
         return mail_host
 
@@ -142,7 +143,7 @@ class ListNew(forms.Form):
                         'invalid': _('Please enter a valid list name.')})
     mail_host = forms.ChoiceField()
     list_owner = forms.EmailField(
-        label=_('Inital list owner address'),
+        label=_('Initial list owner address'),
         error_messages={
             'required': _("Please enter the list owner's email address.")},
         required=True)
@@ -179,7 +180,7 @@ class ListNew(forms.Form):
     def clean_listname(self):
         try:
             validate_email(self.cleaned_data['listname'] + '@example.net')
-        except:
+        except ValidationError:
             raise forms.ValidationError(_("Please enter a valid listname"))
         return self.cleaned_data['listname']
 
@@ -234,9 +235,6 @@ class ListAnonymousSubscribe(forms.Form):
 
     display_name = forms.CharField(
         label=_('Your name (optional)'), required=False)
-
-    def __init__(self, *args, **kwargs):
-        super(ListAnonymousSubscribe, self).__init__(*args, **kwargs)
 
 
 class ListSettingsForm(forms.Form):
@@ -358,7 +356,7 @@ class MessageAcceptanceForm(ListSettingsForm):
             'Discard: this simply discards the message, with no notice '
             'sent to the post\'s author.\n'
             'Accept: accepts any postings without any further checks.\n'
-            'Defer: default processing, run additional checks and accept '
+            'Default Processing: run additional checks and accept '
             'the message.'))
     default_nonmember_action = forms.ChoiceField(
         widget=forms.RadioSelect(),
@@ -373,6 +371,13 @@ class MessageAcceptanceForm(ListSettingsForm):
             'is matched against the list of explicitly accepted, held, '
             'rejected (bounced), and discarded addresses. '
             'If no match is found, then this action is taken.'))
+    max_message_size = forms.IntegerField(
+        min_value=0,
+        label=_('Maximum message size'),
+        help_text=_(
+            'The maximum allowed message size. '
+            'This can be used to prevent emails with large attachments. '
+            'A size of 0 disables the check.'))
 
 
 class DigestSettingsForm(ListSettingsForm):
@@ -888,12 +893,12 @@ class UserPreferences(forms.Form):
     receive_list_copy = forms.NullBooleanField(
         widget=NullBooleanRadioSelect(choices=choices),
         required=False,
-        label=_('Avoid Duplicates'),
+        label=_('Receive list copies (possible duplicates)'),
         help_text=_(
             'When you are listed explicitly in the To: or Cc: headers of a '
             'list message, you can opt to not receive another copy from the '
-            'mailing list. Select Yes to avoid receiving copies from the '
-            'mailing list; select No to receive copies. '))
+            'mailing list. Select No to receive copies. '
+            'Select Yes to avoid receiving copies from the mailing list'))
 
     class Meta:
 

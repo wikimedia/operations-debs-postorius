@@ -13,7 +13,7 @@
 
     <p>{{ list.settings.description }}</p>
     {% if list.settings.info %}
-    <p>{{ list.settings.info }}</p>
+    <p><pre style="white-space: pre-wrap; word-break: normal;">{{ list.settings.info }}</pre></p>
     {% endif %}
     <p>{% trans 'To contact the list owners, use the following email address:' %} <em>{{ list.settings.owner_address }}</em></p>
 
@@ -86,7 +86,7 @@
         <p>
         {% blocktrans %}
         You can also subscribe without creating an account.
-        If you wish to to so, please use the form below.
+        If you wish to do so, please use the form below.
         {% endblocktrans%}
         </p>
         <form action="{% url 'list_anonymous_subscribe' list.list_id %}"
