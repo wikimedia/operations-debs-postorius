@@ -71,3 +71,15 @@ class DomainCreationTest(ViewTestCase):
         self.assertContains(response, 'Please enter a valid domain name')
         # self.assertHasErrorMessage(response)
         self.assertEquals(response.status_code, 200)
+
+    def test_only_redirect_if_domain_creation_is_successful(self):
+        self.client.login(username='su', password='pwd')
+        post_data = {'mail_host': 'example.com',
+                     'site': '1',
+                     'description': 'A new Domain.'}
+        response = self.client.post(reverse('domain_new'), post_data)
+        self.assertEquals(response.status_code, 302)
+        self.assertHasSuccessMessage(response)
+        response = self.client.post(reverse('domain_new'), post_data)
+        self.assertEquals(response.status_code, 200)
+        self.assertIsNotNone(response.context['form'].errors)

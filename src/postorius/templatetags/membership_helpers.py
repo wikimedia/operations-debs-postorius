@@ -23,20 +23,40 @@ from django import template
 from postorius.auth.utils import user_is_in_list_roster
 from postorius.models import List
 
-from mailmanclient._client import MailingList
+from mailmanclient import MailingList
 
 register = template.Library()
 
+__all__ = [
+    'get_list',
+    'user_is_list_moderator',
+    'user_is_list_owner',
+]
+
 
 def get_list(mlist):
+    """
+    Given either a mailing list identifier or MailingList object itself, return
+    the MailingList object. Identifiers could be one of the following:
+    - List's posting address: test_list@example.com
+    - List's fqdn: test_list.example.com
+    """
     return mlist if isinstance(mlist, MailingList) else List.objects.get(mlist)
 
 
 @register.assignment_tag
 def user_is_list_owner(user, mlist):
+    """
+    Given a User object and a MailingList object/identifier, returns True if
+    the user is an owner of the given MailingList False otherwise.
+    """
     return user_is_in_list_roster(user, get_list(mlist), 'owners')
 
 
 @register.assignment_tag
 def user_is_list_moderator(user, mlist):
+    """
+    Given a User object and a MailingList object/identifier, return True if
+    the user is one of the list moderators, False otherwise.
+    """
     return user_is_in_list_roster(user, get_list(mlist), 'moderators')

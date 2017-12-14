@@ -28,6 +28,18 @@ An ideal workflow would be like this:
 3. Make a "merge request" to get your code reviewed and merged.
 
 
+First Contributions / Coverage Reports
+======================================
+
+If you don't know how you can contribute,
+writing tests is a good way to get you started.
+
+You can start by exploring the existing `test coverage`_
+and finding code that's not covered ie. not tested.
+
+.. _`test coverage`: https://mailman.gitlab.io/postorius/index.html
+
+
 Installing and running the tests
 ================================
 

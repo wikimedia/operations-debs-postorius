@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2015-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2017 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -15,23 +15,21 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
+#
 
 from __future__ import absolute_import, unicode_literals
 
-from postorius import utils
-from postorius.models import MailmanApiError
-from mailmanclient import MailmanConnectionError
+from django.test import RequestFactory, TestCase
+
+from postorius.utils import render_api_error
 
 
-class PostoriusMiddleware(object):
+class TestUtils(TestCase):
 
-    def __init__(self, get_response=None):
-        self.get_response = get_response
+    def setUp(self):
+        self.factory = RequestFactory()
 
-    def __call__(self, request):
-        return self.get_response(request)
-
-    def process_exception(self, request, exception):
-        if isinstance(exception, MailmanApiError) or isinstance(
-                exception, MailmanConnectionError):
-            return utils.render_api_error(request)
+    def test_render_api_error_works(self):
+        request = self.factory.get('/postorius/lists')
+        response = render_api_error(request)
+        self.assertTrue('Mailman REST API not available.' in response.content)
