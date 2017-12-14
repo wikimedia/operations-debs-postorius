@@ -1,2 +1,2 @@
-Test-Command: python example_project/manage.py test --settings=test_settings
+Test-Command: django-admin test --pythonpath=. --settings=example_project.test_settings postorius
 Restrictions: build-needed

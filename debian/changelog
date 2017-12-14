@@ -14,7 +14,7 @@ postorius (1.1.1-1) unstable; urgency=medium
   * d/copyright: Update copyright statements for JS libraries
   * d/patches/0002-example_project-Fix-path-to-urls-for-tests.patch:
     Fix path to urls module to run postorius testsuite.
-  * d/tests/control: Add new test that runs example_project/manage.py.
+  * d/tests/control: Add new test that runs postorius testsuite.
   * d/control: Bump standards-version to 4.1.2, no changes needed.
   * d/upstream/signing-key.asc: Replace upstream GnuPG signing key from
     Barry Warsaw (FP: 8417 157E DBE7 3D9E AC1E  539B 126E B563 A74B 06BF)
