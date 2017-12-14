@@ -1,20 +1,6 @@
 ===================================
 Postorius - web ui for GNU Mailman
 ===================================
-.. image:: https://gitlab.com/mailman/postorius/badges/master/build.svg
-    :target: https://gitlab.com/mailman/postorius/commits/master
-
-.. image:: https://readthedocs.org/projects/postorius/badge
-    :target: https://postorius.readthedocs.io
-
-.. image:: https://gitlab.com/mailman/postorius/badges/master/coverage.svg?job=coverage
-    :target: https://mailman.gitlab.io/postorius
-
-.. image:: http://img.shields.io/pypi/v/postorius.svg
-    :target: https://pypi.python.org/pypi/postorius
-
-.. image:: http://img.shields.io/pypi/dm/postorius.svg
-    :target: https://pypi.python.org/pypi/postorius
 
 Copyright (C) 1998-2018 by the Free Software Foundation, Inc.
 
