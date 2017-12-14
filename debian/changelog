@@ -1,10 +1,12 @@
-postorius (1.1.0-2) unstable; urgency=medium
+postorius (1.1.1-1) unstable; urgency=medium
 
   [ Pierre-Elliott Bécue ]
   * Install upstream changelog with dh.
   * Add a link to mmclient in /usr/bin
 
   [ Jonas Meurer ]
+  * New upstream bugfix release 1.1.1.
+    * Drop d/patches/0001-local-js-files.patch, got applied upstream.
   * d/tests/control: Add new test that runs example_project/manage.py.
   * d/control: Bump standards-version to 4.1.2, no changes needed.
   * d/upstream/signing-key.asc: Replace upstream GnuPG signing key from
@@ -12,7 +14,7 @@ postorius (1.1.0-2) unstable; urgency=medium
     with the one from
     Abhilash Raj (FP: 541E A044 8453 394F F77A  0ECC 9D9B 2BA0 61D0 A67C).
 
- -- Jonas Meurer <mejo@debian.org>  Wed, 13 Dec 2017 23:27:45 +0100
+ -- Jonas Meurer <mejo@debian.org>  Thu, 14 Dec 2017 12:11:49 +0100
 
 postorius (1.1.0-1) unstable; urgency=low
 
