@@ -1,0 +1,37 @@
+From: Jonas Meurer <jonas@freesources.org>
+Date: Thu, 14 Dec 2017 12:16:17 +0100
+Description: README.rst: remove embedded images
+ The documentation files shipped with Debian packages should not embed
+ remote images, especially not from sources that are known to track
+ users (like shields.io).
+Forwarded: not-needed
+
+---
+ README.rst | 14 --------------
+ 1 file changed, 14 deletions(-)
+
+diff --git a/README.rst b/README.rst
+index ecc4013..c0fc96a 100644
+--- a/README.rst
++++ b/README.rst
+@@ -1,20 +1,6 @@
+ ===================================
+ Postorius - web ui for GNU Mailman
+ ===================================
+-.. image:: https://gitlab.com/mailman/postorius/badges/master/build.svg
+-    :target: https://gitlab.com/mailman/postorius/commits/master
+-
+-.. image:: https://readthedocs.org/projects/postorius/badge
+-    :target: https://postorius.readthedocs.io
+-
+-.. image:: https://gitlab.com/mailman/postorius/badges/master/coverage.svg?job=coverage
+-    :target: https://mailman.gitlab.io/postorius
+-
+-.. image:: http://img.shields.io/pypi/v/postorius.svg
+-    :target: https://pypi.python.org/pypi/postorius
+-
+-.. image:: http://img.shields.io/pypi/dm/postorius.svg
+-    :target: https://pypi.python.org/pypi/postorius
+ 
+ Copyright (C) 1998-2017 by the Free Software Foundation, Inc.
+ 

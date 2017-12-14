@@ -7,6 +7,8 @@ postorius (1.1.1-1) unstable; urgency=medium
   [ Jonas Meurer ]
   * New upstream bugfix release 1.1.1.
     * Drop d/patches/0001-local-js-files.patch, got applied upstream.
+  * d/patches/0001-README.rst-remove-embedded-images.patch: Remove embedded
+    images from README.rst.
   * d/tests/control: Add new test that runs example_project/manage.py.
   * d/control: Bump standards-version to 4.1.2, no changes needed.
   * d/upstream/signing-key.asc: Replace upstream GnuPG signing key from
@@ -14,7 +16,7 @@ postorius (1.1.1-1) unstable; urgency=medium
     with the one from
     Abhilash Raj (FP: 541E A044 8453 394F F77A  0ECC 9D9B 2BA0 61D0 A67C).
 
- -- Jonas Meurer <mejo@debian.org>  Thu, 14 Dec 2017 12:11:49 +0100
+ -- Jonas Meurer <jonas@freesources.org>  Thu, 14 Dec 2017 12:21:04 +0100
 
 postorius (1.1.0-1) unstable; urgency=low
 
