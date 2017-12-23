@@ -7,7 +7,12 @@ Uploaders: Pierre-Elliott Bécue <becue@crans.org>,
 Build-Depends: debhelper (>= 10),
                dh-python,
                python-all,
+               python-bs4,
+               python-django,
+               python-django-mailman3,
+               python-mock,
                python-setuptools,
+               python-vcr,
                python3-sphinx,
                python3-sphinx-rtd-theme
 Standards-Version: 4.1.2

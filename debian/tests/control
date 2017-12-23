@@ -1,6 +1,5 @@
-Test-Command: django-admin test --pythonpath=. --settings=example_project.test_settings postorius
+Test-Command: django-admin test --pythonpath=example_project --settings=test_settings postorius
 Depends: @,
-         python-beautifulsoup,
          python-bs4,
          python-mock,
          python-vcr

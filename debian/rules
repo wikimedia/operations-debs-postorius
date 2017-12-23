@@ -8,6 +8,9 @@ export PYBUILD_NAME = postorius
 	dh $@ --with python2,sphinxdoc --buildsystem=pybuild
 
 override_dh_auto_test:
+	ln -s ../src/postorius example_project/postorius
+	django-admin test --pythonpath=example_project --settings=test_settings postorius
+	rm example_project/postorius
 
 override_dh_auto_build:
 	PYTHONPATH=. sphinx-build -b html -E -N src/postorius/doc build/sphinx/html
