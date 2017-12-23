@@ -4,4 +4,5 @@ Depends: @,
          python-bs4,
          python-mock,
          python-vcr
-Restrictions: build-needed
+Restrictions: build-needed,
+              allow-stderr
