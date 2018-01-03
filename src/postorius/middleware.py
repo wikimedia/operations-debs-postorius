@@ -23,6 +23,11 @@ from postorius.models import MailmanApiError
 from mailmanclient import MailmanConnectionError
 
 
+__all__ = [
+    'PostoriusMiddleware',
+]
+
+
 class PostoriusMiddleware(object):
 
     def __init__(self, get_response=None):

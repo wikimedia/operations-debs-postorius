@@ -18,5 +18,5 @@
 
 from __future__ import absolute_import, unicode_literals
 
-__version__ = '1.1.1'
+__version__ = '1.1.2'
 default_app_config = 'postorius.apps.PostoriusConfig'

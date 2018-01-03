@@ -150,7 +150,8 @@ class MailmanUserManager(MailmanRestManager):
         super(MailmanUserManager, self).__init__('user', 'users')
 
     def create_from_django(self, user):
-        return self.create(user.email, user.get_full_name())
+        return self.create(
+            email=user.email, password=None, display_name=user.get_full_name())
 
     def get_or_create_from_django(self, user):
         try:
