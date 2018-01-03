@@ -9,6 +9,9 @@ postorius (1.1.1-2) unstable; urgency=medium
 
   [ Pierre-Elliott Bécue ]
   * Add a d/source/local-options file to unapply the patches after the build.
+  * d/control:
+    - Bump debhelper version requirement to 11.
+  * d/compat: Bump to compat 11.
 
  -- Pierre-Elliott Bécue <becue@crans.org>  Tue, 02 Jan 2018 19:37:38 +0100
 
