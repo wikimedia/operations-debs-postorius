@@ -40,6 +40,7 @@ src/postorius/doc/setup.rst
 src/postorius/management/__init__.py
 src/postorius/management/commands/__init__.py
 src/postorius/management/commands/mmclient.py
+src/postorius/management/commands/reset_passwords.py
 src/postorius/migrations/0001_initial.py
 src/postorius/migrations/0002_auto_20160210_0721.py
 src/postorius/migrations/0003_drop_addressconfirmationprofile.py
@@ -234,6 +235,7 @@ src/postorius/tests/mailman_api_tests/test_list_members.py
 src/postorius/tests/mailman_api_tests/test_list_new.py
 src/postorius/tests/mailman_api_tests/test_list_settings.py
 src/postorius/tests/mailman_api_tests/test_list_summary.py
+src/postorius/tests/mailman_api_tests/test_middleware.py
 src/postorius/tests/mailman_api_tests/test_models.py
 src/postorius/tests/mailman_api_tests/test_subscriptions.py
 src/postorius/tests/mailman_api_tests/test_user.py

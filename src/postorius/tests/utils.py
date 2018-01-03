@@ -39,6 +39,7 @@ vcr_log.setLevel(logging.WARNING)
 
 def reorder_request_params(request):
     def reorder_params(params):
+        parsed = None
         if PY3:
             if isinstance(params, binary_type):
                 params = params.decode("ascii")

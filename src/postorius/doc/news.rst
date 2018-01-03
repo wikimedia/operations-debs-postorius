@@ -18,14 +18,26 @@ You should have received a copy of the GNU Lesser General Public License
 along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 
 
+1.1.2
+=====
+(2017-12-27)
+
+* Added a new ``reset_passwords`` command that resets _all_ user's passwords
+  inside of Core. This password is different from the one Postorius maintains
+  and is used for logging users in.
+* Postorius now sets the 'Display Name' of the user in Core correctly. This
+  fixes a security vulnerability where user's display_name would be set as their
+  Core's password.
+
+
 1.1.1
 =====
 (2017-11-17)
 
- * Improved testing and internal bug fixes.
- * Preserve formatting of Mailing List description in the summary view.
- * Site's Name isn't capitalized anymore in the navigation bar.
- * html5shiv and response.js libraries are now included, instead of loading from a CDN.
+* Improved testing and internal bug fixes.
+* Preserve formatting of Mailing List description in the summary view.
+* Site's Name isn't capitalized anymore in the navigation bar.
+* html5shiv and response.js libraries are now included, instead of loading from a CDN.
 
 1.1.0 -- "Welcome to This World"
 ================================
