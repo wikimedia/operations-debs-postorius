@@ -19,7 +19,7 @@ postorius (1.1.2-1) unstable; urgency=medium
   * d/compat: Bump to compat 11.
   * Move the d/python-django-postorius.links file into d/links
 
- -- Pierre-Elliott Bécue <becue@crans.org>  Wed, 03 Jan 2018 14:39:39 +0100
+ -- Pierre-Elliott Bécue <becue@crans.org>  Wed, 03 Jan 2018 15:05:50 +0100
 
 postorius (1.1.1-1) unstable; urgency=medium
 
