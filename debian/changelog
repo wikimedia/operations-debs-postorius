@@ -12,9 +12,7 @@ postorius (1.1.2-1) unstable; urgency=medium
   * Add a d/source/local-options file to unapply the patches after the build.
   * d/control:
     - Bump Standards-Version to 4.1.3.
-    - Bump debhelper version requirement to 11.
     - Enforce python-django dep version to be << 1:1.12
-  * d/compat: Bump to compat 11.
   * Move the d/python-django-postorius.links file into d/links
 
  -- Pierre-Elliott Bécue <becue@crans.org>  Wed, 03 Jan 2018 15:05:50 +0100
