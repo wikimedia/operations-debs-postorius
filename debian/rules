@@ -10,6 +10,7 @@ export PYBUILD_NAME = postorius
 override_dh_auto_test:
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 	ln -s ../src/postorius example_project/postorius
+	set -e; \
 	for python in $(shell pyversions -r); do \
 		$$python $(shell which django-admin) test --pythonpath=example_project --settings=test_settings postorius; \
 	done
