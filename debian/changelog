@@ -8,6 +8,7 @@ postorius (1.1.2-1) unstable; urgency=medium
   * d/rules: Run 'django-admin test' as build-time test.
 
   [ Pierre-Elliott Bécue ]
+  * mmclient is a django command called via manage.py, removing the link
   * New upstream release 1.1.2.
   * Add a d/source/local-options file to unapply the patches after the build.
   * d/control:
@@ -15,7 +16,7 @@ postorius (1.1.2-1) unstable; urgency=medium
     - Enforce python-django dep version to be << 1:1.12
   * Move the d/python-django-postorius.links file into d/links
 
- -- Pierre-Elliott Bécue <becue@crans.org>  Wed, 03 Jan 2018 15:05:50 +0100
+ -- Pierre-Elliott Bécue <becue@crans.org>  Sat, 06 Jan 2018 21:32:19 +0100
 
 postorius (1.1.1-1) unstable; urgency=medium
 
