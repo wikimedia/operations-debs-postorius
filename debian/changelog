@@ -2,8 +2,9 @@ postorius (1.1.2-2) unstable; urgency=medium
 
   * Add dependency on python-sphinx-rtd-theme on the binary package
     (Closes: #891374)
+  * d/control: update Vcs links to salsa
 
- -- Pierre-Elliott Bécue <becue@crans.org>  Tue, 27 Feb 2018 23:55:48 +0100
+ -- Pierre-Elliott Bécue <becue@crans.org>  Tue, 27 Feb 2018 23:58:42 +0100
 
 postorius (1.1.2-1) unstable; urgency=medium
 
