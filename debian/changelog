@@ -2,9 +2,13 @@ postorius (1.1.2-2) unstable; urgency=medium
 
   * Add dependency on python-sphinx-rtd-theme on the binary package
     (Closes: #891374)
-  * d/control: update Vcs links to salsa
+  * d/control:
+    - update Vcs links to salsa
+    - Add dependency on fonts-glewlwyd
+  * Add a rule to replace a font file by a link to the fonts-glewlwyd
+    associate file
 
- -- Pierre-Elliott Bécue <becue@crans.org>  Tue, 27 Feb 2018 23:58:42 +0100
+ -- Pierre-Elliott Bécue <becue@crans.org>  Wed, 28 Feb 2018 19:18:24 +0100
 
 postorius (1.1.2-1) unstable; urgency=medium
 
