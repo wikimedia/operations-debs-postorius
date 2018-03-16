@@ -33,7 +33,7 @@ Depends: libjs-jquery,
          python-sphinx-rtd-theme,
          ${misc:Depends},
          ${python:Depends}
-Recommends: mailman3-core
+Recommends: mailman3-web
 Description: Web user interface to access GNU Mailman3
  The Postorius Django app provides a web user interface
  to access GNU Mailman3, and manage it. This interface

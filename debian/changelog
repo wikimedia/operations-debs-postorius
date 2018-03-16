@@ -1,3 +1,10 @@
+postorius (1.1.2-3) unstable; urgency=medium
+
+  * d/control:
+    - Don't recommend mailman3, recommend mailman3-web instead.
+
+ -- Jonas Meurer <jonas@freesources.org>  Fri, 16 Mar 2018 09:20:59 +0100
+
 postorius (1.1.2-2) unstable; urgency=medium
 
   * Add dependency on python-sphinx-rtd-theme on the binary package
