@@ -31,10 +31,10 @@ override_dh_auto_install:
 	find debian/python-django-postorius -name 'glyphicons-halflings-regular.ttf' -type f -exec \
 		ln -sf /usr/share/glewlwyd/webapp/fonts/glyphicons-halflings-regular.ttf {} \;
 	# Move static files outside of the lib directory
-	find debian/python-django-postorius/usr/lib/python2.7/dist-packages/postorius -maxdepth 1 \
-		-name "static" -exec \
-		mv {} debian/python-django-postorius/usr/share/python-django-postorius/ \; -exec \
-		ln -sf /usr/share/python-django-postorius/static {} \;
+	mv debian/python-django-postorius/usr/lib/python2.7/dist-packages/postorius/static \
+		debian/python-django-postorius/usr/share/python-django-postorius/
+	ln -sf /usr/share/python-django-postorius/static \
+		debian/python-django-postorius/usr/lib/python2.7/dist-packages/postorius/static
 
 override_dh_installchangelogs:
 	dh_installchangelogs src/postorius/doc/news.rst
