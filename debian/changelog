@@ -9,8 +9,11 @@ postorius (1.1.2-3) unstable; urgency=medium
     - Raise debhelper build dependency level to 11
   * d/compat: Bump to 11
   * d/s/lintian-overrides: Add an override for the missing python3 package.
+  * d/rules:
+    - Add a rule to move the static directory in /usr/share and link against
+      it in /usr/lib/…
 
- -- Pierre-Elliott Bécue <becue@crans.org>  Fri, 16 Mar 2018 13:03:07 +0100
+ -- Pierre-Elliott Bécue <becue@crans.org>  Fri, 16 Mar 2018 13:25:10 +0100
 
 postorius (1.1.2-2) unstable; urgency=medium
 

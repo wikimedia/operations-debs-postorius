@@ -3,6 +3,9 @@
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
 export PYBUILD_NAME = postorius
+export PYBUILD_AFTER_INSTALL=mv '{destdir}/{install_dir}/postorius/static' \
+	'{destdir}/usr/share/postorius/'; \
+	ln -sf '/usr/share/postorius' '{destdir}{install_dir}/postorius/static'
 
 %:
 	dh $@ --with python2,sphinxdoc --buildsystem=pybuild
