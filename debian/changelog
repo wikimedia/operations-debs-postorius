@@ -1,9 +1,15 @@
 postorius (1.1.2-3) unstable; urgency=medium
 
+  [ Jonas Meurer ]
   * d/control:
     - Don't recommend mailman3, recommend mailman3-web instead.
 
- -- Jonas Meurer <jonas@freesources.org>  Fri, 16 Mar 2018 09:20:59 +0100
+  [ Pierre-Elliott Bécue ]
+  * d/control:
+    - Raise debhelper build dependency level to 11
+  * d/compat: Bump to 11
+
+ -- Pierre-Elliott Bécue <becue@crans.org>  Fri, 16 Mar 2018 12:56:07 +0100
 
 postorius (1.1.2-2) unstable; urgency=medium
 
