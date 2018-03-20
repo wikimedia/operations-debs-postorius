@@ -28,6 +28,13 @@ override_dh_auto_install:
 		ln -sf /usr/share/javascript/jquery/jquery.min.js {} \;
 	find debian/python-django-postorius -name 'bootstrap.min.js' -type f -exec \
 		ln -sf /usr/share/javascript/bootstrap/js/bootstrap.min.js {} \;
+	find debian/python-django-postorius -name 'glyphicons-halflings-regular.ttf' -type f -exec \
+		ln -sf /usr/share/glewlwyd/webapp/fonts/glyphicons-halflings-regular.ttf {} \;
+	# Move static files outside of the lib directory
+	mv debian/python-django-postorius/usr/lib/python2.7/dist-packages/postorius/static \
+		debian/python-django-postorius/usr/share/python-django-postorius/
+	ln -sf /usr/share/python-django-postorius/static \
+		debian/python-django-postorius/usr/lib/python2.7/dist-packages/postorius/static
 
 override_dh_installchangelogs:
 	dh_installchangelogs src/postorius/doc/news.rst

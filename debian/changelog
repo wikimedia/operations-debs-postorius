@@ -1,3 +1,32 @@
+postorius (1.1.2-3) unstable; urgency=medium
+
+  [ Jonas Meurer ]
+  * d/control:
+    - Don't recommend mailman3, recommend mailman3-web instead.
+
+  [ Pierre-Elliott Bécue ]
+  * d/control:
+    - Raise debhelper build dependency level to 11
+  * d/compat: Bump to 11
+  * d/s/lintian-overrides: Add an override for the missing python3 package.
+  * d/rules:
+    - Add a rule to move the static directory in /usr/share and link against
+      it in /usr/lib/…
+
+ -- Pierre-Elliott Bécue <becue@crans.org>  Fri, 16 Mar 2018 16:57:27 +0100
+
+postorius (1.1.2-2) unstable; urgency=medium
+
+  * Add dependency on python-sphinx-rtd-theme on the binary package
+    (Closes: #891374)
+  * d/control:
+    - update Vcs links to salsa
+    - Add dependency on fonts-glewlwyd
+  * Add a rule to replace a font file by a link to the fonts-glewlwyd
+    associate file
+
+ -- Pierre-Elliott Bécue <becue@crans.org>  Wed, 28 Feb 2018 19:18:24 +0100
+
 postorius (1.1.2-1~bpo9+1) stretch-backports; urgency=medium
 
   * Rebuild for stretch-backports.

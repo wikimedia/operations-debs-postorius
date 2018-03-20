@@ -1,0 +1,9 @@
+# Postorius is not yet supporting python3. Upstream is currently working on
+# this matter and should soon provide a python3-only version of postorius
+# and drop python2 support.
+#
+# See https://gitlab.com/mailman/postorius/merge_requests/255 for more
+# information. The merge happened into master on commit
+# https://gitlab.com/mailman/postorius/commit/0fc55b19fb8331b138c4377a316d07a146318353
+# and postorius 1.2.0 relase will include it.
+postorius source: python-foo-but-no-python3-foo python-django-postorius
