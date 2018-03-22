@@ -25,7 +25,6 @@ Package: python-django-postorius
 Architecture: all
 Depends: libjs-jquery,
          libjs-bootstrap,
-         fonts-glewlwyd,
          python-django,
          python-django-allauth,
          python-django-mailman3,
