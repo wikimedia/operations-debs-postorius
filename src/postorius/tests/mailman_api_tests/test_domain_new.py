@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -15,11 +15,10 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import, print_function, unicode_literals
 
 from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django_mailman3.models import MailDomain
 
 from postorius.tests.utils import ViewTestCase
@@ -54,8 +53,8 @@ class DomainCreationTest(ViewTestCase):
         self.assertRedirects(response, reverse('domain_index'))
 
         a_new_domain = self.mm_client.get_domain('example.com')
-        self.assertEqual(a_new_domain.mail_host, u'example.com')
-        self.assertEqual(a_new_domain.owners[0]['user_id'],
+        self.assertEqual(a_new_domain.mail_host, 'example.com')
+        self.assertEqual(a_new_domain.owners[0].user_id,
                          self.mm_client.get_user('su@example.com').user_id)
         self.assertTrue(
             MailDomain.objects.filter(mail_domain='example.com').exists())
@@ -70,7 +69,7 @@ class DomainCreationTest(ViewTestCase):
         response = self.client.post(reverse('domain_new'), post_data)
         self.assertContains(response, 'Please enter a valid domain name')
         # self.assertHasErrorMessage(response)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_only_redirect_if_domain_creation_is_successful(self):
         self.client.login(username='su', password='pwd')
@@ -78,8 +77,8 @@ class DomainCreationTest(ViewTestCase):
                      'site': '1',
                      'description': 'A new Domain.'}
         response = self.client.post(reverse('domain_new'), post_data)
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         self.assertHasSuccessMessage(response)
         response = self.client.post(reverse('domain_new'), post_data)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertIsNotNone(response.context['form'].errors)

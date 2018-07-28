@@ -11,9 +11,9 @@
 
     {% list_nav 'list_settings' 'List Settings' %}
 
-    <ul class="nav nav-tabs margin-bottom">
+    <ul class="nav nav-tabs margin-bottom" role="tablist">
         {% for section in section_names %}
-        <li {% if section.0 == visible_section %}class="active"{% endif %}><a href="{% url 'list_settings' list_id=list.list_id visible_section=section.0 %}">{{ section.1 }}</a></li>
+        <li role="tab" {% if section.0 == visible_section %}class="active"{% endif %}><a href="{% url 'list_settings' list_id=list.list_id visible_section=section.0 %}">{{ section.1 }}</a></li>
         {% endfor %}
     </ul>
 

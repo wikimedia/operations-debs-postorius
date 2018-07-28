@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -17,13 +17,12 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from __future__ import absolute_import, unicode_literals
-
+from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django_mailman3.lib.mailman import get_mailman_client
 
 from postorius.models import List
-from postorius.auth.utils import set_user_access_props
+from postorius.auth.utils import set_list_access_props
 
 
 class MailmanClientMixin(object):
@@ -43,6 +42,13 @@ class MailingListView(TemplateView, MailmanClientMixin):
 
     Sets self.mailing_list to list object if list_id is in **kwargs.
     """
+    def get(self, request):
+        # This should be overridden by the subclass.
+        return HttpResponse(status=405)
+
+    def post(self, request):
+        # This should be overridden by the subclass.
+        return HttpResponse(status=405)
 
     def _get_list(self, list_id, page):
         return List.objects.get_or_404(fqdn_listname=list_id)
@@ -52,7 +58,7 @@ class MailingListView(TemplateView, MailmanClientMixin):
         if 'list_id' in kwargs:
             self.mailing_list = self._get_list(kwargs['list_id'],
                                                int(kwargs.get('page', 1)))
-            set_user_access_props(request.user, self.mailing_list)
+            set_list_access_props(request.user, self.mailing_list)
         # set the template
         if 'template' in kwargs:
             self.template = kwargs['template']

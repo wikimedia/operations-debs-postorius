@@ -12,6 +12,7 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+
 import sys
 import os
 
@@ -49,8 +50,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Postorius'
-copyright = u'2012, The Free Software Foundation'
+project = 'Postorius'
+copyright = '2012, The Free Software Foundation'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -188,8 +189,8 @@ htmlhelp_basename = 'postoriusdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual])
 latex_documents = [
-    ('index', 'postoriusweb.tex', u'Postorius Documentation',
-        u'Mailman Coders', 'manual'),
+    ('index', 'postoriusweb.tex', 'Postorius Documentation',
+        'Mailman Coders', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -221,18 +222,18 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'postorius', u'Postorius Documentation',
-     [u'Mailman Coders'], 1)
+    ('index', 'postorius', 'Postorius Documentation',
+     ['Mailman Coders'], 1)
 ]
 
 
 # -- Options for Epub output --------------------------------------------------
 
 # Bibliographic Dublin Core info.
-epub_title = u'postorius'
-epub_author = u'Mailman Coders'
-epub_publisher = u'Mailman Coders'
-epub_copyright = u'2012, The Free Software Foundation'
+epub_title = 'postorius'
+epub_author = 'Mailman Coders'
+epub_publisher = 'Mailman Coders'
+epub_copyright = '2012, The Free Software Foundation'
 
 # The language of the text. It defaults to the language option
 # or en if the language is not set.

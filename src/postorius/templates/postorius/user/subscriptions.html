@@ -22,7 +22,7 @@
                         <th>{% trans 'List Name' %}</th>
                         <th>{% trans 'Subscription Address' %}</th>
                         <th>{% trans 'Delivery Mode' %}</th>
-                        <th class="text-center">{% trans 'Roles' %}</th>
+                        <th class="text-center">{% trans 'Role' %}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -31,18 +31,7 @@
                             <td><a href="{% url 'list_summary' subscription.list_id %}">{{ subscription.list_id }}</a></td>
                             <td>{{ subscription.address }}</td>
                             <td>{{ subscription.preferences.delivery_mode }}</td>
-                            <td>
-                                {% trans 'subscriber' %}
-                                {% user_is_list_moderator request.user subscription.list_id as is_moderator %}
-                                {% if is_moderator %}
-                                + {% trans 'moderator' %}
-                                {% endif %}
-                                {% user_is_list_owner request.user subscription.list_id as is_owner %}
-                                {% if is_owner %}
-                                + {% trans 'owner' %}
-                                {% endif %}
-                                </ul>
-                            </td>
+                            <td>{{ subscription.role }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>

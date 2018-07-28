@@ -15,7 +15,7 @@
         {% csrf_token %}
         {% for choice in form.archivers %}
             <div class="checkbox">
-                <label>
+                <label for="{{ choice.id_for_label }}">
                     {{ choice }} {{ choice.label }}
                 </label>
             </div>

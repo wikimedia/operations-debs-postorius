@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -15,11 +15,10 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import, print_function, unicode_literals
 
 from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from postorius.tests.utils import ViewTestCase
 
@@ -42,18 +41,37 @@ class ListCreationTest(ViewTestCase):
         response = self.client.get(reverse('list_new'))
         self.assertEqual(response.status_code, 403)
 
+    def test_duplicate_listname_validation(self):
+        # First, let's create a mailing list.
+        self.domain.create_list('foo')
+        self.client.login(username='su', password='pwd')
+        post_data = {'listname': 'foo',
+                     'mail_host': 'example.com',
+                     'list_owner': 'owner@example.com',
+                     'advertised': 'True',
+                     'list_style': 'legacy-default',
+                     'description': 'A new list.'}
+        response = self.client.post(reverse('list_new'), post_data)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Mailing List already exists')
+        # Make sure this is the list create form and not just error page.
+        self.assertContains(response, 'Create a new list')
+
     def test_new_list_created_with_owner(self):
         self.client.login(username='su', password='pwd')
         post_data = {'listname': 'a_new_list',
                      'mail_host': 'example.com',
                      'list_owner': 'owner@example.com',
                      'advertised': 'True',
+                     'list_style': 'legacy-default',
                      'description': 'A new list.'}
         response = self.client.post(reverse('list_new'), post_data)
-        self.assertHasSuccessMessage(response)
+        self.assertEqual(response.status_code, 302)
+        # self.assertHasSuccessMessage(response)
         a_new_list = self.mm_client.get_list('a_new_list@example.com')
-        self.assertEqual(a_new_list.fqdn_listname, u'a_new_list@example.com')
-        self.assertEqual(a_new_list.owners, [u'owner@example.com'])
+        self.assertEqual(a_new_list.fqdn_listname, 'a_new_list@example.com')
+        owner_emails = [owner.email for owner in a_new_list.owners]
+        self.assertEqual(owner_emails, ['owner@example.com'])
 
     def test_listname_validation(self):
         self.client.login(username='su', password='pwd')
@@ -61,8 +79,9 @@ class ListCreationTest(ViewTestCase):
                      'mail_host': 'example.com',
                      'list_owner': 'owner@example.com',
                      'advertised': 'True',
+                     'list_style': 'legacy-default',
                      'description': 'A new list.'}
         response = self.client.post(reverse('list_new'), post_data)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         # self.assertHasErrorMessage(response)
         self.assertContains(response, 'Please enter a valid listname')

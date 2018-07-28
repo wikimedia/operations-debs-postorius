@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -16,17 +16,16 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import, unicode_literals
-
 import json
 
-from email.parser import Parser as EmailParser
+from email import policy
+from email import message_from_string
 from email.parser import HeaderParser
 
 from django.http import HttpResponse, Http404
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import gettext as _
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from postorius.auth.decorators import list_moderator_required
 from postorius.models import List
@@ -34,13 +33,13 @@ from django_mailman3.lib.scrub import Scrubber
 
 
 def parse(message):
-    msgobj = EmailParser().parsestr(message)
+    msgobj = message_from_string(message, policy=policy.SMTP)
     header_parser = HeaderParser()
 
     headers = []
     headers_dict = header_parser.parsestr(message)
     for key in headers_dict.keys():
-        headers += ['{}: {}'.format(key, headers_dict[key])]
+        headers.append('{}: {}'.format(key, headers_dict[key]))
     content = Scrubber(msgobj).scrub()[0]
     return {
         'body': content,
@@ -49,7 +48,7 @@ def parse(message):
 
 
 def get_attachments(message):
-    message = EmailParser().parsestr(message)
+    message = message_from_string(message, policy=policy.SMTP)
     return Scrubber(message).scrub()[1]
 
 

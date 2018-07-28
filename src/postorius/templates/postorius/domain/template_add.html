@@ -1,0 +1,25 @@
+{% extends "postorius/base.html" %}
+{% load i18n %}
+{% load bootstrap_tags %}
+
+{% block head_title %}
+{% trans 'Templates' %}
+{% endblock head_title %}
+
+{% block content  %}
+    <div class="page-header">
+      <h1>{{ view.header }}
+        <small>{{ domain.mail_host }}</small>
+      </h1>
+    </div>
+
+    {% if object %}
+        <h3> {{ object.description }} </h3>
+    {% endif %}
+
+    <form action="" method="post" class="form-group">
+      {% csrf_token %}
+      {% bootstrap_form_horizontal form 3 8 'Save' %}
+    </form>
+    
+{% endblock content %}

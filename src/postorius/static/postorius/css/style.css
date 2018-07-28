@@ -55,3 +55,32 @@ table.header-matches td .errorlist {
 		margin-top: 0px;
 		padding-top: 0px;
 }
+
+/* Improve contrast per accessibility guidelines */
+.navbar-default .navbar-brand {
+    color: #666;
+}
+.navbar-default .navbar-nav > li > a {
+    color: #666;
+} 
+.h1 .small, .h1 small, .h2 .small, .h2 small, .h3 .small, .h3 small, .h4 .small, .h4 small, .h5 .small, .h5 small, .h6 .small, .h6 small, h1 .small, h1 small, h2 .small, h2 small, h3 .small, h3 small, h4 .small, h4 small, h5 .small, h5 small, h6 .small, h6 small {
+    color: #666;
+}
+a {
+    color: #2269a6;
+}
+.btn-danger {
+    background-color: #c8423e;
+}
+.btn-success {
+    background-color: #298529; 
+}
+.btn-warning {
+    background-color: #A4660E;
+}
+.alert-success {
+    color: #294C29;
+}
+.alert-danger {
+    color: #773231;
+}

@@ -1,6 +1,7 @@
 {% extends "postorius/base.html" %}
 {% load i18n %}
 {% load nav_helpers %}
+{% load pagination %}
 
 {% block head_title %}
 {% trans 'Subscription requests' %} | {{ list.fqdn_listname }} - {{ block.super }}
@@ -8,9 +9,9 @@
 
 {% block content %}
 
-    {% list_nav 'list_subscription_requests' 'Subscription Requests' %}
+    {% list_nav 'list_subscription_requests' 'Subscription Requests' page_subtitle %}
 
-    {% if list.requests|length > 0 %}
+    {% if paginated_requests.paginator.count > 0 %}
         <div class="table-responsive">
             <table class="table table-bordered table-striped">
                 <thead>
@@ -20,7 +21,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for request in list.requests %}
+                    {% for request in paginated_requests.object_list %}
                     <tr>
                         <td>{{ request.email }}</td>
                         <td>
@@ -33,6 +34,7 @@
                 </tbody>
             </table>
         </div>
+        {% paginator paginated_requests %}
     {% else %}
         <p>{% trans 'There are currently no subscription requests for this list.' %}</p>
     {% endif %}

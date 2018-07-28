@@ -1,0 +1,50 @@
+Message-ID: <50619B7A.2030404@thelounge.net>
+Date: Tue, 25 Sep 2012 13:54:34 +0200
+From: nonmember@example.com
+MIME-Version: 1.0
+To: foo@example.com
+Subject: request: remove "gd.tuwien.ac.at" from mirror-lists
+Content-Type: multipart/mixed; boundary="===============8632363506430537088=="
+
+This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
+--===============8632363506430537088==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="------------enig472FDA8B19C158E487EA5823"
+
+This is an OpenPGP/MIME signed message (RFC 2440 and 3156)
+--------------enig472FDA8B19C158E487EA5823
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+This is a test message
+Non-ascii chars: Hofm=C3=BChlgasse
+
+--------------enig472FDA8B19C158E487EA5823
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+Comment: Using GnuPG with Mozilla - http://www.enigmail.net/
+
+iEYEARECAAYFAlBhm3oACgkQhmBjz394AnmMnQCcC+6tWcqE1dPQmIdRbLXgKGVp
+EeUAn2OqtaXaXaQV7rx+SmOldmSzcFw4
+=OEJv
+-----END PGP SIGNATURE-----
+
+--------------enig472FDA8B19C158E487EA5823--
+
+--===============8632363506430537088==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+LS0gCmRldmVsIG1haWxpbmcgbGlzdApkZXZlbEBsaXN0cy5mZWRvcmFwcm9qZWN0Lm9yZwpodHRw
+czovL2FkbWluLmZlZG9yYXByb2plY3Qub3JnL21haWxtYW4vbGlzdGluZm8vZGV2ZWw=
+
+--===============8632363506430537088==--
+
+

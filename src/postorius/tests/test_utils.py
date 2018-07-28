@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2017-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -32,4 +32,6 @@ class TestUtils(TestCase):
     def test_render_api_error_works(self):
         request = self.factory.get('/postorius/lists')
         response = render_api_error(request)
-        self.assertTrue('Mailman REST API not available.' in response.content)
+        self.assertTrue('Mailman REST API not available.' in
+                        str(response.content))
+        self.assertEquals(response.status_code, 503)

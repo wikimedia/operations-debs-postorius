@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2016-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -17,12 +17,11 @@
 
 """Tests for list header matches"""
 
-from __future__ import absolute_import, print_function, unicode_literals
 
 from allauth.account.models import EmailAddress
 from bs4 import BeautifulSoup
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from postorius.tests.utils import ViewTestCase
 
@@ -88,8 +87,8 @@ class ListHeaderMatchesTest(ViewTestCase):
         self.assertEqual(len(response.context["formset"]), 2)
         self.assertEqual(
             response.context["formset"].initial,
-            [{'header': u'testheader', 'pattern': u'testpattern',
-              'action': u'discard'}])
+            [{'header': 'testheader', 'pattern': 'testpattern',
+              'action': 'discard'}])
         self.assertContains(response, 'testheader')
         self.assertContains(response, 'testpattern')
         soup = BeautifulSoup(response.content, "html.parser")
@@ -162,7 +161,7 @@ class ListHeaderMatchesTest(ViewTestCase):
         self.assertHasNoMessage(response)
         self.assertEqual(
             response.context["formset"].errors,
-            [{'header': [u'Please enter a header.']}])
+            [{'header': ['Please enter a header.']}])
         self.assertEqual(len(self.mlist.header_matches), 0)
 
     def test_add_empty_pattern(self):
@@ -184,7 +183,7 @@ class ListHeaderMatchesTest(ViewTestCase):
         self.assertHasNoMessage(response)
         self.assertEqual(
             response.context["formset"].errors,
-            [{'pattern': [u'Please enter a pattern.']}])
+            [{'pattern': ['Please enter a pattern.']}])
         self.assertEqual(len(self.mlist.header_matches), 0)
 
     def test_edit(self):
@@ -245,8 +244,8 @@ class ListHeaderMatchesTest(ViewTestCase):
         self.assertHasNoMessage(response)
         self.assertEqual(
             response.context["formset"].errors,
-            [{'header': [u'Please enter a header.'],
-              'pattern': [u'Please enter a pattern.'],
+            [{'header': ['Please enter a header.'],
+              'pattern': ['Please enter a pattern.'],
               }, {}])
         self.assertEqual(len(self.mlist.header_matches), 1)
         hm = self.mlist.header_matches[0]

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -15,11 +15,10 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import, print_function, unicode_literals
 
 from allauth.account.models import EmailAddress
-from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
+from django.urls import reverse
 from django_mailman3.models import MailDomain
 from django.utils.six.moves.urllib.error import HTTPError
 
