@@ -2,6 +2,8 @@ postorius (1.2.1-1) UNRELEASED; urgency=medium
 
   * New upstream release 1.2.1
     - Comes with full python3 suppors
+  * d/control:
+    - Updated (Build-)?Dependencies due to python3 migration
 
  -- Pierre-Elliott Bécue <becue@crans.org>  Sat, 28 Jul 2018 16:56:08 +0200
 
