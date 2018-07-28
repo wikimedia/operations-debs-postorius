@@ -5,6 +5,7 @@ postorius (1.2.1-1) UNRELEASED; urgency=medium
   * d/control:
     - Updated (Build-)?Dependencies due to python3 migration
     - Drop X-Python-Version
+    - Bump Standards-Version to 4.1.5. No change required
 
  -- Pierre-Elliott Bécue <becue@crans.org>  Sat, 28 Jul 2018 16:56:08 +0200
 
