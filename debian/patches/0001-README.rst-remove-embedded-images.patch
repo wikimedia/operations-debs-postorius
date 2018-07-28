@@ -5,6 +5,7 @@ Description: README.rst: remove embedded images
  remote images, especially not from sources that are known to track
  users (like shields.io).
 Forwarded: not-needed
+Subject: README.rst-remove-embedded-images
 
 ---
  README.rst | 14 --------------
