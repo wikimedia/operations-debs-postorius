@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2017-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -15,19 +15,16 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
+#
 
-from __future__ import absolute_import, unicode_literals
-
+import re
 from django import forms
-from django.core.urlresolvers import reverse
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-from django.utils.encoding import smart_text
 from django.utils.translation import ugettext_lazy as _
-from django.utils.version import get_complete_version
-from django.contrib.sites.models import Site
-
 from django_mailman3.lib.mailman import get_mailman_client
+
+from postorius.forms.fields import ListOfStringsField
 
 
 ACTION_CHOICES = (
@@ -36,98 +33,10 @@ ACTION_CHOICES = (
     ("discard", _("Discard (no notification)")),
     ("accept", _("Accept immediately (bypass other rules)")),
     ("defer", _("Default processing")),
-    )
+)
 
 
-class ListOfStringsField(forms.Field):
-    widget = forms.widgets.Textarea
-
-    def prepare_value(self, value):
-        if isinstance(value, list):
-            value = '\n'.join(value)
-        return value
-
-    def to_python(self, value):
-        "Returns a list of Unicode object."
-        if value.strip() in self.empty_values:
-            return []
-        result = []
-        for line in value.splitlines():
-            line = line.strip()
-            if not line:
-                continue
-            result.append(smart_text(line))
-        return result
-
-
-class NullBooleanRadioSelect(forms.RadioSelect):
-    """
-    This is necessary to detect that such a field has not been changed.
-    """
-
-    def value_from_datadict(self, data, files, name):
-        value = data.get(name, None)
-        return {'2': True,
-                True: True,
-                'True': True,
-                '3': False,
-                'False': False,
-                False: False}.get(value, None)
-
-
-class SiteModelChoiceField(forms.ModelChoiceField):
-
-    def label_from_instance(self, obj):
-            return "%s (%s)" % (obj.name, obj.domain)
-
-
-def _get_web_host_help():
-    # Using a function is necessary, otherwise reverse() will be called before
-    # URLConfs are loaded.
-    return (_('<a href="%s">Edit</a> the list of available web hosts.')
-            % reverse("admin:sites_site_changelist"))
-
-
-class DomainForm(forms.Form):
-    """
-    Add or edit a domain.
-    """
-    mail_host = forms.CharField(
-        label=_('Mail Host'),
-        error_messages={'required': _('Please enter a domain name'),
-                        'invalid': _('Please enter a valid domain name.')},
-        required=True,
-        help_text=_('Example: domain.org'),
-        )
-    description = forms.CharField(
-        label=_('Description'),
-        required=False)
-    site = SiteModelChoiceField(
-        label=_('Web Host'),
-        error_messages={'required': _('Please enter a domain name'),
-                        'invalid': _('Please enter a valid domain name.')},
-        required=True,
-        queryset=Site.objects.order_by("name").all(),
-        initial=lambda: Site.objects.get_current(),
-        help_text=_get_web_host_help,
-        )
-
-    def clean_mail_host(self):
-        mail_host = self.cleaned_data['mail_host']
-        try:
-            validate_email('mail@' + mail_host)
-        except ValidationError:
-            raise forms.ValidationError(_("Please enter a valid domain name"))
-        return mail_host
-
-
-class MemberForm(forms.Form):
-    """Assing a role to the member"""
-    email = forms.EmailField(
-        label=_('Email Address'),
-        error_messages={
-            'required': _('Please enter an email adddress.'),
-            'invalid': _('Please enter a valid email adddress.')})
+EMPTY_STRING = ''
 
 
 class ListNew(forms.Form):
@@ -156,11 +65,12 @@ class ListNew(forms.Form):
         choices=(
             (True, _("Advertise this list in list index")),
             (False, _("Hide this list in list index"))))
+    list_style = forms.ChoiceField()
     description = forms.CharField(
         label=_('Description'),
         required=False)
 
-    def __init__(self, domain_choices, *args, **kwargs):
+    def __init__(self, domain_choices, style_choices, *args, **kwargs):
         super(ListNew, self).__init__(*args, **kwargs)
         self.fields["mail_host"] = forms.ChoiceField(
             widget=forms.Select(),
@@ -168,7 +78,14 @@ class ListNew(forms.Form):
             required=True,
             choices=domain_choices,
             error_messages={'required': _("Choose an existing Domain."),
-                            'invalid': "ERROR-todo_forms.py"})
+                            'invalid': _("Choose a valid Mail Host")})
+        self.fields["list_style"] = forms.ChoiceField(
+            widget=forms.Select(),
+            label=_('List Style'),
+            required=True,
+            choices=style_choices,
+            error_messages={'required': _("Choose a List Style."),
+                            'invalid': _("Choose a valid List Style.")})
         if len(domain_choices) < 2:
             self.fields["mail_host"].help_text = _(
                 "Site admin has not created any domains")
@@ -181,6 +98,9 @@ class ListNew(forms.Form):
         try:
             validate_email(self.cleaned_data['listname'] + '@example.net')
         except ValidationError:
+            # TODO (maxking): Error should atleast point to what is a valid
+            # listname. It may not always be obvious which characters aren't
+            # allowed in a listname.
             raise forms.ValidationError(_("Please enter a valid listname"))
         return self.cleaned_data['listname']
 
@@ -196,6 +116,7 @@ class ListNew(forms.Form):
         layout = [["List Details",
                    "listname",
                    "mail_host",
+                   "list_style",
                    "list_owner",
                    "description",
                    "advertised"], ]
@@ -299,16 +220,16 @@ class ArchiveSettingsForm(ListSettingsForm):
 
     def __init__(self, *args, **kwargs):
         super(ArchiveSettingsForm, self).__init__(*args, **kwargs)
+        archiver_opts = sorted(self._mlist.archivers.keys())
         self.fields['archivers'].choices = sorted(
-            [(key, key) for key in sorted(self._mlist.archivers.keys())])
+            [(key, key) for key in archiver_opts])
         if self.initial:
             self.initial['archivers'] = [
-                key for key in sorted(self._mlist.archivers.keys())
-                if self._mlist.archivers[key] is True]
+                key for key in archiver_opts if self._mlist.archivers[key] is True]   # noqa
 
     def clean_archivers(self):
         result = {}
-        for archiver, ignore_ in self.fields['archivers'].choices:
+        for archiver, etc in self.fields['archivers'].choices:
             result[archiver] = archiver in self.cleaned_data['archivers']
         self.cleaned_data['archivers'] = result
         return result
@@ -322,13 +243,22 @@ class MessageAcceptanceForm(ListSettingsForm):
         label=_("Acceptable aliases"),
         required=False,
         help_text=_(
-            'Alias names which qualify as explicit to or cc destination names '
-            'for this list. Alternate addresses that are acceptable when '
-            '`require_explicit_destination\' is enabled. This option takes a '
-            'list of regular expressions, one per line, which is matched '
-            'against every recipient address in the message. The matching is '
-            'performed with Python\'s re.match() function, meaning they are '
-            'anchored to the start of the string.'))
+            'This is a list, one per line, of addresses and regexps matching '
+            'addresses that are acceptable in To: or Cc: in lieu of the list '
+            'posting address when `require_explicit_destination\' is enabled. '
+            ' Entries are either email addresses or regexps matching email '
+            'addresses.  Regexps are entries beginning with `^\' and are '
+            'matched against every recipient address in the message. The '
+            'matching is performed with Python\'s re.match() function, meaning'
+            ' they are anchored to the start of the string.'))
+    require_explicit_destination = forms.BooleanField(
+        widget=forms.RadioSelect(choices=((True, _('Yes')), (False, _('No')))),
+        required=False,
+        label=_('Require Explicit Destination'),
+        help_text=_(
+            'This checks to ensure that the list posting address or an '
+            'acceptable alias explicitly appears in a To: or Cc: header in '
+            'the post.'))
     administrivia = forms.BooleanField(
         widget=forms.RadioSelect(choices=((True, _('Yes')), (False, _('No')))),
         required=False,
@@ -380,6 +310,29 @@ class MessageAcceptanceForm(ListSettingsForm):
             'This can be used to prevent emails with large attachments. '
             'A size of 0 disables the check.'))
 
+    def clean_acceptable_aliases(self):
+        # python's urlencode will drop this attribute completely if an empty
+        # list is passed with doseq=True. To make it work for us, we instead
+        # use an empty string to signify an empty value. In turn, Core will
+        # also consider an empty value to be empty list for list-of-strings
+        # field.
+        if not self.cleaned_data['acceptable_aliases']:
+            return EMPTY_STRING
+        for alias in self.cleaned_data['acceptable_aliases']:
+            if alias.startswith('^'):
+                try:
+                    re.compile(alias)
+                except re.error as e:
+                    raise forms.ValidationError(
+                        _('Invalid alias regexp: {}: {}').format(alias, e.msg))
+            else:
+                try:
+                    validate_email(alias)
+                except ValidationError:
+                    raise forms.ValidationError(
+                        _('Invalid alias email: {}').format(alias))
+        return self.cleaned_data['acceptable_aliases']
+
 
 class DigestSettingsForm(ListSettingsForm):
     """
@@ -405,7 +358,7 @@ class DMARCMitigationsForm(ListSettingsForm):
             ('no_mitigation', _('No DMARC mitigations')),
             ('munge_from', _('Replace From: with list address')),
             ('wrap_message',
-                _('Wrap the message in an outer message From: the list.')),
+             _('Wrap the message in an outer message From: the list.')),
             ('reject', _('Reject the message')),
             ('discard', _('Discard the message'))),
         help_text=_(
@@ -561,8 +514,6 @@ class AlterMessagesForm(ListSettingsForm):
         label=_('Pipeline'),
         widget=forms.Select(),
         required=False,
-        error_messages={
-            'required': _("Please choose a reply-to action.")},
         choices=lambda: ((p, p) for p in get_mailman_client()
                          .pipelines['pipelines']),
         help_text=_('Type of pipeline you want to use for this mailing list'))
@@ -684,7 +635,7 @@ class ListIdentityForm(ListSettingsForm):
             'other mailing lists, or in headers, and so forth. It should be '
             'as succinct as you can get it, while still identifying what the '
             'list is.'),
-        )
+    )
     info = forms.CharField(
         label=_('Information'),
         help_text=_('A longer description of this mailing list.'),
@@ -695,31 +646,16 @@ class ListIdentityForm(ListSettingsForm):
         required=False,
         help_text=_('Display name is the name shown in the web interface.')
     )
-    if get_complete_version() < (1, 9):
-        subject_prefix = forms.CharField(
-            label=_('Subject prefix'),
-            required=False,
-        )
-    else:
-        subject_prefix = forms.CharField(
-            label=_('Subject prefix'),
-            strip=False,
-            required=False,
-        )
+    subject_prefix = forms.CharField(
+        label=_('Subject prefix'),
+        required=False,
+    )
 
-
-class ListArchiverForm(forms.Form):
-    """
-    Select archivers for a list.
-    """
-    archivers = forms.MultipleChoiceField(
-        widget=forms.CheckboxSelectMultiple,
-        label=_('Activate archivers for this list'))
-
-    def __init__(self, archivers, *args, **kwargs):
-        super(ListArchiverForm, self).__init__(*args, **kwargs)
-        self.fields['archivers'].choices = sorted(
-            [(key, key) for key in archivers.keys()])
+    def clean_subject_prefix(self):
+        """
+        Strip the leading whitespaces from the subject_prefix form field.
+        """
+        return self.cleaned_data.get('subject_prefix', '').strip()
 
 
 class ListMassSubscription(forms.Form):
@@ -745,6 +681,7 @@ class ListMassRemoval(forms.Form):
     """
     emails = ListOfStringsField(
         label=_('Emails to Unsubscribe'),
+        help_text=_('Add one email address on each line'),
     )
 
     class Meta:
@@ -758,14 +695,18 @@ class ListMassRemoval(forms.Form):
 
 class ListAddBanForm(forms.Form):
     """Ban an email address for a list."""
+    # TODO maxking: This form should only accept valid emails or regular
+    # expressions. Anything else that doesn't look like a valid email address
+    # or regexp for email should not be a valid value for the field. However,
+    # checking for that might not be easy.
     email = forms.CharField(
         label=_('Add ban'),
         help_text=_(
             'You can ban a single email address or use a regular expression '
             'to match similar email addresses.'),
         error_messages={
-            'required': _('Please enter an email adddress.'),
-            'invalid': _('Please enter a valid email adddress.')})
+            'required': _('Please enter an email address.'),
+            'invalid': _('Please enter a valid email address.')})
 
 
 class ListHeaderMatchForm(forms.Form):
@@ -792,7 +733,7 @@ class ListHeaderMatchForm(forms.Form):
         required=False,
         choices=HM_ACTION_CHOICES,
         help_text=_('Action to take when a header matches')
-        )
+    )
 
 
 class ListHeaderMatchFormset(forms.BaseFormSet):
@@ -814,132 +755,6 @@ class ListHeaderMatchFormset(forms.BaseFormSet):
             orders.append(order)
 
 
-class UserPreferences(forms.Form):
-
-    """
-    Form handling the user's global, address and subscription based preferences
-    """
-
-    def __init__(self, *args, **kwargs):
-        self._preferences = kwargs.pop('preferences', None)
-        super(UserPreferences, self).__init__(*args, **kwargs)
-
-    @property
-    def initial(self):
-        # Redirect to the preferences, this allows setting the preferences
-        # after instanciation and it will also set the initial data.
-        return self._preferences or {}
-
-    @initial.setter
-    def initial(self, value):
-        pass
-
-    choices = ((True, _('Yes')), (False, _('No')))
-
-    delivery_mode_choices = (("regular", _('Regular')),
-                             ("plaintext_digests", _('Plain Text Digests')),
-                             ("mime_digests", _('Mime Digests')),
-                             ("summary_digests", _('Summary Digests')))
-    delivery_status_choices = (
-        ("enabled", _('Enabled')), ("by_user", _('Disabled')))
-    delivery_status = forms.ChoiceField(
-        widget=forms.RadioSelect,
-        choices=delivery_status_choices,
-        required=False,
-        label=_('Delivery status'),
-        help_text=_(
-            'Set this option to Enabled to receive messages posted to this '
-            'mailing list. Set it to Disabled if you want to stay subscribed, '
-            'but don\'t want mail delivered to you for a while (e.g. you\'re '
-            'going on vacation). If you disable mail delivery, don\'t forget '
-            'to re-enable it when you come back; it will not be automatically '
-            're-enabled.'))
-    delivery_mode = forms.ChoiceField(
-        widget=forms.Select(),
-        choices=delivery_mode_choices,
-        required=False,
-        label=_('Delivery mode'),
-        help_text=_(
-            'If you select summary digests , you\'ll get posts bundled '
-            'together (usually one per day but possibly more on busy lists), '
-            'instead of singly when they\'re sent. Your mail reader may or '
-            'may not support MIME digests. In general MIME digests are '
-            'preferred, but if you have a problem reading them, select '
-            'plain text digests.'))
-    receive_own_postings = forms.NullBooleanField(
-        widget=NullBooleanRadioSelect(choices=choices),
-        required=False,
-        label=_('Receive own postings'),
-        help_text=_(
-            'Ordinarily, you will get a copy of every message you post to the '
-            'list. If you don\'t want to receive this copy, set this option '
-            'to No.'
-            ))
-    acknowledge_posts = forms.NullBooleanField(
-        widget=NullBooleanRadioSelect(choices=choices),
-        required=False,
-        label=_('Acknowledge posts'),
-        help_text=_(
-            'Receive acknowledgement mail when you send mail to the list?'))
-    hide_address = forms.NullBooleanField(
-        widget=NullBooleanRadioSelect(choices=choices),
-        required=False,
-        label=_('Hide address'),
-        help_text=_(
-            'When someone views the list membership, your email address is '
-            'normally shown (in an obscured fashion to thwart spam '
-            'harvesters). '
-            'If you do not want your email address to show up on this '
-            'membership roster at all, select Yes for this option.'))
-    receive_list_copy = forms.NullBooleanField(
-        widget=NullBooleanRadioSelect(choices=choices),
-        required=False,
-        label=_('Receive list copies (possible duplicates)'),
-        help_text=_(
-            'When you are listed explicitly in the To: or Cc: headers of a '
-            'list message, you can opt to not receive another copy from the '
-            'mailing list. Select No to receive copies. '
-            'Select Yes to avoid receiving copies from the mailing list'))
-
-    class Meta:
-
-        """
-        Class to define the name of the fieldsets and what should be
-        included in each.
-        """
-        layout = [["User Preferences", "acknowledge_posts", "hide_address",
-                   "receive_list_copy", "receive_own_postings",
-                   "delivery_mode", "delivery_status"]]
-
-    def save(self):
-        if not self.changed_data:
-            return
-        for key in self.changed_data:
-            if self.cleaned_data[key] is not None:
-                # None: nothing set yet. Remember to remove this test
-                # when Mailman accepts None as a "reset to default"
-                # value.
-                self._preferences[key] = self.cleaned_data[key]
-        self._preferences.save()
-
-
-class UserPreferencesFormset(forms.BaseFormSet):
-
-    def __init__(self, *args, **kwargs):
-        self._preferences = kwargs.pop('preferences')
-        kwargs["initial"] = self._preferences
-        super(UserPreferencesFormset, self).__init__(*args, **kwargs)
-
-    def _construct_form(self, i, **kwargs):
-        form = super(UserPreferencesFormset, self)._construct_form(i, **kwargs)
-        form._preferences = self._preferences[i]
-        return form
-
-    def save(self):
-        for form in self.forms:
-            form.save()
-
-
 class MemberModeration(forms.Form):
     """
     Form handling the member's moderation_action.
@@ -947,23 +762,21 @@ class MemberModeration(forms.Form):
     moderation_action = forms.ChoiceField(
         widget=forms.Select(),
         label=_('Moderation'),
-        error_messages={
-            'required': _("Please choose a moderation action.")},
         required=False,
         choices=[(None, _('List default'))] + list(ACTION_CHOICES),
         help_text=_(
-            'Default action to take when this member posts to the list. '
-            'List default -- follow the list\'s default member action. '
+            'Default action to take when this member posts to the list. \n'
+            'List default -- follow the list\'s default member action. \n'
             'Hold -- This holds the message for approval by the list '
-            'moderators. '
+            'moderators. \n'
             'Reject -- this automatically rejects the message by sending a '
             'bounce notice to the post\'s author. The text of the bounce '
-            'notice can be configured by you. '
+            'notice can be configured by you. \n'
             'Discard -- this simply discards the message, with no notice '
-            'sent to the post\'s author. '
-            'Accept -- accepts any postings without any further checks. '
+            'sent to the post\'s author. \n'
+            'Accept -- accepts any postings without any further checks. \n'
             'Defer -- default processing, run additional checks and accept '
-            'the message. '))
+            'the message. \n'))
 
 
 class ChangeSubscriptionForm(forms.Form):
@@ -976,20 +789,3 @@ class ChangeSubscriptionForm(forms.Form):
             required=False,
             widget=forms.Select(),
             choices=((address, address) for address in user_emails))
-
-
-class MultipleChoiceForm(forms.Form):
-
-    class MultipleChoiceField(forms.MultipleChoiceField):
-
-        def validate(self, value):
-            pass
-
-    choices = MultipleChoiceField(
-        widget=forms.CheckboxSelectMultiple,
-    )
-
-    def clean_choices(self):
-        if len(self.cleaned_data['choices']) < 1:
-            raise forms.ValidationError(_('Make at least one selection'))
-        return self.cleaned_data['choices']

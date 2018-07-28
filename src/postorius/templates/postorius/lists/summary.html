@@ -13,7 +13,7 @@
 
     <p>{{ list.settings.description }}</p>
     {% if list.settings.info %}
-    <p><pre style="white-space: pre-wrap; word-break: normal;">{{ list.settings.info }}</pre></p>
+    <p><pre style="white-space: pre-wrap; word-break: normal; border: none; background: none;">{{ list.settings.info }}</pre></p>
     {% endif %}
     <p>{% trans 'To contact the list owners, use the following email address:' %} <em>{{ list.settings.owner_address }}</em></p>
 
@@ -46,7 +46,7 @@
             {% url 'user_list_options' list.list_id as user_list_options_url %}
             <p>
               {% blocktrans %}
-                You can manage your subscription <a href="{{ user_list_options_url }}">here</a>
+                You can manage your subscription on <a href="{{ user_list_options_url }}">your list options page</a>
               {% endblocktrans %}
             </p>
             <p>
@@ -100,7 +100,7 @@
     {% if user.is_authenticated %}
         {% if user.is_list_owner or user.is_superuser %}
             <hr />
-            <h4>{% trans 'List metrics' %}</h4>
+            <h3>{% trans 'List metrics' %}</h3>
             <dl class="dl-horizontal">
               <dt>{% trans 'Created at' %}</dt><dd>{{ list.settings.created_at }}</dd>
               <dt>{% trans 'Last post at' %}</dt><dd>{{ list.settings.last_post_at }}</dd>

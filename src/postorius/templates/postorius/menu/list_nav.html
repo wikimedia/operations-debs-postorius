@@ -5,14 +5,14 @@
 </div>
 
 {% if user.is_authenticated  %}
-<ul class="nav nav-pills">
-    <li role="presentation" class="{% nav_active_class current 'list_summary' %}"><a href="{% url 'list_summary' list.list_id %}">{% trans 'Info' %}</a></li>
+<ul class="nav nav-pills" role="tablist">
+    <li role="tab" class="{% nav_active_class current 'list_summary' %}"><a href="{% url 'list_summary' list.list_id %}">{% trans 'Info' %}</a></li>
     {% if user.is_superuser or user.is_list_owner or user.is_list_moderator %}
-        <li role="presentation" class="{% nav_active_class current 'list_subscription_requests' %}"><a href="{% url 'list_subscription_requests' list.list_id %}">{% trans 'Subscription requests' %}</a></li>
-        <li role="presentation" class="{% nav_active_class current 'list_held_messages' %}"><a href="{% url 'list_held_messages' list.list_id %}">{% trans 'Held messages' %}</a></li>
+        <li role="tab" class="{% nav_active_class current 'list_subscription_requests' %}"><a href="{% url 'list_subscription_requests' list.list_id %}">{% trans 'Subscription requests' %}</a></li>
+        <li role="tab" class="{% nav_active_class current 'list_held_messages' %}"><a href="{% url 'list_held_messages' list.list_id %}">{% trans 'Held messages' %}</a></li>
     {% endif %}
     {% if user.is_superuser or user.is_list_owner %}
-        <li role="presentation" class="{% nav_active_class current 'list_members' %} dropdown">
+        <li role="tab" class="{% nav_active_class current 'list_members' %} dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown"
                role="button" aria-haspopup="true" aria-expanded="false">
                 {% trans 'Members' %}<span class="caret"></span>
@@ -23,8 +23,9 @@
               <li><a href="{% url 'list_members' list.list_id 'owner' %}">{% trans 'Owners' %}</a></li>
             </ul>
         </li>
-        <li role="presentation" class="{% nav_active_class current 'list_settings' %}"><a href="{% url 'list_settings' list.list_id %}">{% trans 'Settings' %}</a></li>
-        <li role="presentation" class="{% nav_active_class current 'list_mass_ops' %} dropdown">
+        <li role="tab" class="{% nav_active_class current 'templates' %}"><a href="{% url 'list_template_list' list.list_id %}">{% trans 'Templates' %}</a></li>
+        <li role="tab" class="{% nav_active_class current 'list_settings' %}"><a href="{% url 'list_settings' list.list_id %}">{% trans 'Settings' %}</a></li>
+        <li role="tab" class="{% nav_active_class current 'list_mass_ops' %} dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown"
                role="button" aria-haspopup="true" aria-expanded="false">
                 {% trans 'Mass operations' %}<span class="caret"></span>
@@ -34,11 +35,12 @@
               <li><a href="{% url 'mass_removal' list.list_id %}">{% trans 'Mass removal' %}</a></li>
             </ul>
         </li>
-        <li role="presentation" class="{% nav_active_class current 'list_bans' %}"><a href="{% url 'list_bans' list.list_id %}">{% trans 'Banned addresses' %}</a></li>
-        <li role="presentation" class="{% nav_active_class current 'list_header_matches' %}"><a href="{% url 'list_header_matches' list.list_id %}">{% trans 'Header filters' %}</a></li>
-        <li role="presentation" class="{% nav_active_class current 'list_delete' %}"><a href="{% url 'list_delete' list.list_id %}">{% trans 'Delete list' %}</a></li>
+
+        <li role="tab" class="{% nav_active_class current 'list_bans' %}"><a href="{% url 'list_bans' list.list_id %}">{% trans 'Banned addresses' %}</a></li>
+        <li role="tab" class="{% nav_active_class current 'list_header_matches' %}"><a href="{% url 'list_header_matches' list.list_id %}">{% trans 'Header filters' %}</a></li>
+        <li role="tab" class="{% nav_active_class current 'list_delete' %}"><a href="{% url 'list_delete' list.list_id %}">{% trans 'Delete' %}</a></li>
     {% endif %}
 </ul>
 {% endif %}
-<h3>{{ title }} {% if subtitle %}<small>{{ subtitle }}</small>{% endif %}</h3>
+<h2>{{ title }} {% if subtitle %}<small>{{ subtitle }}</small>{% endif %}</h2>
 <br>

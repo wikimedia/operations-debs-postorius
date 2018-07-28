@@ -2,6 +2,8 @@
 Deployment
 ============
 
+Postorius support Python 3.5+ and Django 1.11+.
+
 .. note::
     This guide covers deployment options of Postorius.
 
@@ -124,6 +126,7 @@ postorius project directory and run:
 
 ::
 
+    $ mkdir locale
     $ python manage.py compilemessages
     $ python manage.py collectstatic
 

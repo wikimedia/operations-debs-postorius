@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2017-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -19,12 +19,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import mock
-try:
-    # For django 1.10+
-    from django.urls import reverse
-except ImportError:
-    # For django < 1.10
-    from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test import TestCase, RequestFactory
 
 from postorius.models import MailmanApiError
@@ -36,17 +31,20 @@ class TestMiddleware(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
 
+    @mock.patch('httplib2.Http.request')
     @mock.patch('postorius.views.list.list_index')
-    def test_middleware_request(self, mock_method):
+    def test_middleware_request(self, mock_request, mock_list_index):
         # Mock the view function to raise MailmanApiError and verify
         # the behavior of the middleware function.
-        mock_method.side_effect = MailmanApiError
+        mock_list_index.side_effect = MailmanApiError
         response = self.client.get(reverse('list_index'))
         # Check that correct error page is rendered.
-        self.assertTrue('Mailman REST API not available' in response.content)
-        mock_method.reset_mock()
+        self.assertEqual('Mailman REST API not available. Please start Mailman core.',    # noqa
+                         response.context['error'])
+        mock_list_index.reset_mock()
         # Check similar semantics with MailmanConnectionError from
         # mailmanclient.
-        mock_method.side_effect = MailmanConnectionError
+        mock_list_index.side_effect = MailmanConnectionError
         response = self.client.get(reverse('list_index'))
-        self.assertTrue('Mailman REST API not available' in response.content)
+        self.assertEqual('Mailman REST API not available. Please start Mailman core.',    # noqa
+                         response.context['error'])

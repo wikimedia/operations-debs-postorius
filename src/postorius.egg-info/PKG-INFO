@@ -1,12 +1,10 @@
-Metadata-Version: 1.1
+Metadata-Version: 1.2
 Name: postorius
-Version: 1.1.2
+Version: 1.2.1
 Summary: A web user interface for GNU Mailman
 Home-page:  https://gitlab.com/mailman/postorius
-Author: The Mailman GSOC Coders
-Author-email: UNKNOWN
+Maintainer: The Mailman GSOC Coders
 License: GPLv3
-Description-Content-Type: UNKNOWN
 Description: ===================================
         Postorius - web ui for GNU Mailman
         ===================================
@@ -82,4 +80,8 @@ Description: ===================================
         
 Keywords: email mailman django
 Platform: UNKNOWN
-Classifier: Programming Language :: Python
+Classifier: Framework :: Django
+Classifier: Development Status :: 4 - Beta
+Classifier: License :: OSI Approved :: GNU General Public License v3 (GPLv3)
+Classifier: Topic :: Communications :: Email :: Mailing List Servers
+Classifier: Programming Language :: Python :: 3

@@ -1,0 +1,395 @@
+interactions:
+- request:
+    body: mail_host=example.com
+    headers:
+      accept-encoding: ['gzip, deflate']
+      content-type: [application/x-www-form-urlencoded]
+    method: POST
+    uri: http://localhost:9001/3.0/domains
+  response:
+    body: {string: ''}
+    headers:
+      content-length: ['0']
+      content-type: [application/json; charset=UTF-8]
+      location: ['http://localhost:9001/3.0/domains/example.com']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: GET
+    uri: http://localhost:9001/3.0/domains/example.com
+  response:
+    body: {string: '{"alias_domain": null, "description": null, "http_etag": "\"492652d581dc93af101db450d81ae93a074bff49\"",
+        "mail_host": "example.com", "self_link": "http://localhost:9001/3.0/domains/example.com"}'}
+    headers:
+      content-length: ['194']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: fqdn_listname=foo%40example.com
+    headers:
+      accept-encoding: ['gzip, deflate']
+      content-type: [application/x-www-form-urlencoded]
+    method: POST
+    uri: http://localhost:9001/3.0/lists
+  response:
+    body: {string: ''}
+    headers:
+      content-length: ['0']
+      content-type: [application/json; charset=UTF-8]
+      location: ['http://localhost:9001/3.0/lists/foo.example.com']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: GET
+    uri: http://localhost:9001/3.0/queues
+  response:
+    body: {string: '{"entries": [{"count": 0, "directory": "/home/maxking/Documents/mm3/core/var/queue/archive",
+        "files": [], "http_etag": "\"c86609dd05b85d034b0528ca55ffaafe4eed239f\"",
+        "name": "archive", "self_link": "http://localhost:9001/3.0/queues/archive"},
+        {"count": 0, "directory": "/home/maxking/Documents/mm3/core/var/queue/bad",
+        "files": [], "http_etag": "\"1634a3abecf49cd62e21bff3a1c8144e6529d91b\"",
+        "name": "bad", "self_link": "http://localhost:9001/3.0/queues/bad"}, {"count":
+        0, "directory": "/home/maxking/Documents/mm3/core/var/queue/bounces", "files":
+        [], "http_etag": "\"77512be67765d90c5231c0320f12fb6d65a248fe\"", "name": "bounces",
+        "self_link": "http://localhost:9001/3.0/queues/bounces"}, {"count": 0, "directory":
+        "/home/maxking/Documents/mm3/core/var/queue/command", "files": [], "http_etag":
+        "\"e577140fb7eedb0558326b04f22d290d4ba8d710\"", "name": "command", "self_link":
+        "http://localhost:9001/3.0/queues/command"}, {"count": 0, "directory": "/home/maxking/Documents/mm3/core/var/queue/digest",
+        "files": [], "http_etag": "\"71f35a9359f385eea04630156dacec273cd157b5\"",
+        "name": "digest", "self_link": "http://localhost:9001/3.0/queues/digest"},
+        {"count": 0, "directory": "/home/maxking/Documents/mm3/core/var/queue/in",
+        "files": [], "http_etag": "\"4da83977cc2bf1b30177543a513d2437a2661daf\"",
+        "name": "in", "self_link": "http://localhost:9001/3.0/queues/in"}, {"count":
+        0, "directory": "/home/maxking/Documents/mm3/core/var/queue/nntp", "files":
+        [], "http_etag": "\"28c53fd6d520a2ea3455c5db7825c8b315e0bfad\"", "name": "nntp",
+        "self_link": "http://localhost:9001/3.0/queues/nntp"}, {"count": 0, "directory":
+        "/home/maxking/Documents/mm3/core/var/queue/out", "files": [], "http_etag":
+        "\"4493ef374cc5506aec20821a9c06fc28ddb52164\"", "name": "out", "self_link":
+        "http://localhost:9001/3.0/queues/out"}, {"count": 0, "directory": "/home/maxking/Documents/mm3/core/var/queue/pipeline",
+        "files": [], "http_etag": "\"27589f6dd86e14c06156c937d4278daaa7166305\"",
+        "name": "pipeline", "self_link": "http://localhost:9001/3.0/queues/pipeline"},
+        {"count": 13, "directory": "/home/maxking/Documents/mm3/core/var/queue/retry",
+        "files": ["1530486258.7939875+08503abe057a754811ce089a8591b0a94270351c", "1530486260.8119712+cb0c1c5e7e76fc5a5a342810bb8f905357f49966",
+        "1530486261.842922+00580e94d42838d1eb349afa4ac08d28ecd3f0a0", "1530486262.8618016+191fc7817c0d9b30dd5633313fd7eedb4fb13234",
+        "1530486263.8874354+6f649380172d5107807c795dfac7881a7795739a", "1530486264.8997989+1ff930de8bf56e64464bf363a5024512ecd0a1b5",
+        "1530486265.921588+e9279e44165656369f60c19ec2e04517fe75b75c", "1530486274.9633458+b6b16564b85c2163c8efcb5c21eecd3bddc32e49",
+        "1530486274.9735503+728c3bb440d0e82f4b389d69ee97599471cbc8cc", "1530486283.0258439+e58c369d9dff1e13387ee22d0d8ad8829a5a1bb4",
+        "1530486283.046023+0791afce05af5adc240cfe9d002863d5948302d4", "1530486283.0580077+adfa3637c27875b3240b5a92cfcde1addc719647",
+        "1530486283.0723732+d56c2255cb1f3aeb575ba6ced93cdd4a89e33571"], "http_etag":
+        "\"c94d209b56eb284d4c4a8e7f41cec763e7410a56\"", "name": "retry", "self_link":
+        "http://localhost:9001/3.0/queues/retry"}, {"count": 126, "directory": "/home/maxking/Documents/mm3/core/var/queue/shunt",
+        "files": ["1530482056.3996246+ff1b31b3c65a2487bb1f3941fa890beaa6e67516", "1530482059.4090166+54e80842624eba82b42e27436a0c338268f9bb56",
+        "1530482060.5784132+baba22789b13bd00466ba47b91d4fc61a146ff6d", "1530483535.30718+b99a9c13e37a8716b0d2f1427fd4efd9f29dfc3a",
+        "1530483539.317042+cf495342d5e25bb86eea76de56ca00f7228f1130", "1530483541.3250399+84e5a7ac318eb3b72b400a4c27f612c2844564d1",
+        "1530484240.1925406+720e020eb103a91972a30078d38754f477b892f7", "1530484244.202815+4f7eeb0e810e1a3f7264f50973f92c913d07305f",
+        "1530484246.210648+d7e736ef0489424c06f7a9d826657ca1d1a5dd7f", "1530484331.776975+2e3aedf3844072ad9cb7c1d81a193ef82aac6d73",
+        "1530484335.7876265+404a1a4ef32d535c4d7316ff7d0272f543464fee", "1530484337.102803+c3e9cfc60ef55677e07c49b27a3f7d893ff023ec",
+        "1530484766.5940366+f56b3e8e547dddde4b267df5272e32265572dce5", "1530484770.6147916+6911f61ea48e02be74493d6290c1b2dd0da4d6ea",
+        "1530484772.622632+a693cc270105e5316fbbdbc0019ca015775f8e79", "1530485125.5422149+12e44fb52ca8d8110255a804fff8abd92086e9cd",
+        "1530485127.555545+0c1d0ff31f8ead5e39eee7ea12fb17cbdf98eae3", "1530485128.5645576+ec9c469a9964f6feb24e993a09e440ba3c2222fb",
+        "1530485130.5758283+6c5f5456a81a203e3079e897f644ae584d790d6c", "1530485133.60383+4351ee87c670aaafd1b6d1da26e9a32808a49362",
+        "1530485134.6223946+8156ff80c492fd8f2e088ce49687b45c3144ec5f", "1530485146.6239905+cede9a07f0025c3c8f2bf693e194e09f2634d534",
+        "1530485147.6307733+ea765aab3a73486f34d4a8dc7a10fb4bdcba5330", "1530485147.6698906+3bbe126dd6e1404c9d644c36f3141dc5cd65f190",
+        "1530485147.6756184+a0fd71ac0340c9dd08ac4e2bfb7ce9035df4adff", "1530485156.689774+2d7b746365e01595923e7d74c59294234abe8308",
+        "1530485156.695232+71c24b8efaa7f1b937bf9b17d790df6df003e875", "1530485159.7040958+28a7472001d8a09942c2c566dc2f2a89cbe35585",
+        "1530485159.7102625+de5e158d80f9507aa69dfe0cac6b355d8ce5f04b", "1530485159.7178347+78b1563aa94896e977da82065b58d67c7f41706f",
+        "1530485174.723451+65d4fbd66744aab8633f994b755e9896a1984e55", "1530485174.7289681+ab08e5e7aa04a8ebd9f0163c481ff2d5bf99348c",
+        "1530485174.7355564+adeb897b211b62ff10094f4f763f34b74e8b3b76", "1530485174.7411447+63e6f3467835a03cb1f8e385c16bb601e7442e4d",
+        "1530485174.7479093+34c6a9467430837946c964ec07030d5674b0383b", "1530485174.753554+c13bbd06a348cf0806a4a7fb0ace9bfbe8771405",
+        "1530485174.758906+71369b1763eb26a48a435cca785b9a15ef5294de", "1530485185.8976164+46979177b64caa3ae4577a3e8e7b7e7d0291a665",
+        "1530485186.9055042+6f916013230abeb2376955a1a77c0ac0e8cbc2c8", "1530485204.8903983+b7736ea11ae10a126f736398cd6f80adb64a03a2",
+        "1530485212.0069895+eda5d8c8ff5ce88108ffba8dca2acce88a493eb9", "1530485212.012493+f1ed7f1440f496f91451b6ace200d5fcb773cd5b",
+        "1530485214.9100907+cd6ee2908ca27f49dead59bf16d37b44c1303d9d", "1530485215.04268+5b4c028b474dea838a552f374f9b8bcc1ab17a46",
+        "1530485217.0506117+f49296146c576295655d295c53cee3a639768b20", "1530485219.0585415+18172db55fb30df081fa4a40dedb3e4ba537ff45",
+        "1530485221.0747814+7ed521753b8c150c3291b07839b3170ce66a98e7", "1530485223.0812824+55ac2a7d5f2d37d4d27fdec1532bad1392b7c852",
+        "1530485225.0903883+1e4a131ebc49a2f4e035cb57cca7dd217480deed", "1530485227.9317932+5ee857754ac0590891baa703d6cfef0ddd637142",
+        "1530485228.1086211+01b682950031fdfa793340aad0cebb0f5cce143a", "1530485228.1141047+51504a3a86c24d21c8721200b6012c09fc9918b9",
+        "1530485228.1193588+af488e97afcc76e41bed16606313a4a79e9cce65", "1530485228.124617+19d9b37e94bf21350d64bd18b1d8bd732fcc83a9",
+        "1530485306.2073572+d16d3fb39a26fdbdf01bccaf8bdc2c7f1bb91900", "1530485311.2186356+7ff06c1465909c7ee36ed57419e3e1ca01ce2b46",
+        "1530485313.226578+0f1d8c5c6d7f9b82118255c35d03f12aa26a7927", "1530485479.0844219+1d618a21a9e5aae5529013a804f589cdb165912c",
+        "1530485479.090696+cf47ea788cfd80bdd92ed7cb4d282d8c8666ca31", "1530485479.0961618+e702f1e20c19041442cb2232c709f95f28c4c8ff",
+        "1530485479.1015825+4d8d3f680e0c8a6a0258dd1e78291e477514f559", "1530485479.1077209+b5e9cad4e9aacf3f627122473d0a18acaa5f8009",
+        "1530485479.1185274+d5ecab996ccaae176deb76c968f3d0c614a2bdd8", "1530485845.4182422+a927814335e4076968c0b901c61b99524aedf43a",
+        "1530485852.4475565+1fb1def63a5603989544b63fc98da8be2fd429de", "1530485852.4539304+faf9e9355962ea819bceda913e094ae1f4f92fd4",
+        "1530485852.4594505+84a7655cc28ae2c76a49b4d7e11f000f5c2ffe31", "1530485853.2561092+0cbe8e6f03b35641eddcb22837c278ef6254c243",
+        "1530485857.4805832+38f8ad6207c5f08213f5ea7d9673018acafdf63c", "1530485857.4964356+2e6dc3ef1a9095a333aaeed5af604842a9e40b5d",
+        "1530485858.5043576+de21c2ed9c38479d69ad8b84233fe1843df76be5", "1530485858.510181+7228c136f72627fc2016a018c32d5d8ed0cd1a44",
+        "1530485858.515554+bd23790554f29f852cd68f3347eb8109731a257a", "1530485865.62679+b9de08f33043156587a8bfaa8c86e42dd1bf9f38",
+        "1530485865.6407754+01cbd7bdaea8dc87af0968c01ef83040fec58180", "1530485872.4648936+c089a588c19ab26b0598a418a94ccb3cd0b744b4",
+        "1530485872.4702306+8f6fe7e3f80ec921e681f35f3910760a422d71f5", "1530485888.5325623+86260d9d02b4e1993969da92d854bf2a4f0e5414",
+        "1530485888.5379474+8bb3e63ec5fbead0073d3af6cd842c3bc4a9c112", "1530485889.5447645+4ac8472e4c41e2ee1cffac517dceeb2b924ecef3",
+        "1530485889.5500622+d2dc7fdb80c879caff996df1ab6c6427d3063ca4", "1530485890.5579126+e9ea4bf9031aa1be0d11352d2405e86d8f08d088",
+        "1530485891.7301965+35e499b130c6cce5a159be4515f6507a5ed41201", "1530485892.7369266+17b45c907d2ed5f5daeb1eca1c6eb441026d4e3e",
+        "1530485893.7435935+e8fb930a430f2faebffe9df72553c61f1f665f9c", "1530485896.6154912+38bbc81dce15d158d1981a7a215b88dc78d777f2",
+        "1530485896.6217442+c244a89aa9e145e173da7aa3f77c6cf7ff6eb742", "1530485896.6278021+c3cb6ffb787009d125a7b8f318a64e1ff06f7db6",
+        "1530485896.6337156+8a91cce7e0d0924499a532d26775136a03dfb503", "1530485896.6400054+476aa5612bf14ace603aa9d3d95305a558a96226",
+        "1530485915.782995+3b191ad7daae69103763c54659ba9e8eb7d9000a", "1530485916.6754372+3db11f8414e5c57f9f50973ae3695c74a0caad80",
+        "1530485917.8010237+929faac5d6d91be88ce182021bbfecf41a671096", "1530486220.2223387+08fb63f20a09d0bcab367d508d7bc7029bc089bf",
+        "1530486220.2546325+9bddeec31211c0a9bc2f1118e3ca0ec15d6d7257", "1530486220.2704911+25996f2e495f7735b9e0eca5ee9d51b45e456a48",
+        "1530486220.286744+30fbf404594b346f381474cd12625df9f0e68149", "1530486220.3023913+c9ec13fba7efa1d8b11fc5b0178170f386234b1b",
+        "1530486220.318366+961f831a4550cfa42672f17e3a0aa375c908fb56", "1530486220.3344202+3eadeedebec82a2a43fe5c3ed17a86a1341a288a",
+        "1530486220.3505313+ad035e263028931156df20a9279790b28753fa7f", "1530486220.367137+cb311b09f8b0230b1d49a063c7c2277c65e5f5fc",
+        "1530486220.383345+ec99e03d237c1a62840f7cf8fc3ef5691d76a7ac", "1530486220.3996902+9b8b15304b165c0d84ec2cd600f34d00f1a4041d",
+        "1530486220.4166265+c8c3330792f050954057191f9e9ebf99af629cee", "1530486220.4327552+88cd0441423b51342cce854f8526704e64a19c80",
+        "1530486220.4435384+1ad23601e2efc3df7c920111deb16bd1655930ee", "1530486220.4521961+77e9743a598071ca9b0025672547c026c7454fcf",
+        "1530486220.4608626+e72ef4be82bf84045a621478f4742cf03d2f1d6e", "1530486220.4675596+d8071e9aa8741b8964dd6fda201469ec3b4e5987",
+        "1530486220.4738228+85d8f8ae1ba1d77e1281bee5af43f1d8ff9b8119", "1530486270.9380205+b2c15560832b461626e824c0627365c5a1db4bc6",
+        "1530486270.9443536+e321993d76915f563ea48869c81dde6d6d03a234", "1530486271.7096417+93e3e1da8f7107f3384667cc4361033690a22309",
+        "1530486271.7152736+3f353489e2b0a0c0ce4d35545a201f2ae70eb171", "1530486276.9909656+a74f90a2be5393ceb4f66e9c22162771bdfd5442",
+        "1530486277.0030851+122d4265992d0d44d96f578fe0131aed133d21c1", "1530486277.0087264+1abec08e04f5dd9aa20652a97834ebd94fb76675",
+        "1530486284.083856+dbe6c0f4611674f351e74cb905433839822f359f", "1530486284.0896232+88cafec3a8a37984da50866f6909925ab678639c",
+        "1530486284.1016662+3842aeb1331ebae7bd58e0775dbe234fb1817f82", "1530486284.1162822+9cc2037cf2b9febf0fc6705c15406445392cd684",
+        "1530486284.122026+14feb075d348de7cb1e1dcf55d17203d9aff5d47", "1530486284.1279695+0c17e9180d70fd6631c7110951505b444ee8c373",
+        "1530486290.1491318+a31b3eb4d2ffc82125275d80a8a896bbc7750e7f", "1530486290.1572618+ecf30ad30a4b92f4e20c45b29a9e72fffd879717"],
+        "http_etag": "\"6f89e615c5451641119d8128015e0683590be392\"", "name": "shunt",
+        "self_link": "http://localhost:9001/3.0/queues/shunt"}, {"count": 0, "directory":
+        "/home/maxking/Documents/mm3/core/var/queue/virgin", "files": [], "http_etag":
+        "\"8a84e3c7199481bc9211b18c79e8a3f8008837a6\"", "name": "virgin", "self_link":
+        "http://localhost:9001/3.0/queues/virgin"}], "http_etag": "\"f61ce960880080938423cac88c7818dc1c5a01de\"",
+        "self_link": "http://localhost:9001/3.0/queues", "start": 0, "total_size":
+        12}'}
+    headers:
+      content-length: ['11582']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: list_id=foo.example.com&text=X-Account-Key%3A+account5%0AX-UIDL%3A+1348590469.25417.mrelay8-g25%0AX-Mozilla-Status%3A+0001%0AX-Mozilla-Status2%3A+00000000%0AX-Mozilla-Keys%3A+%0AReturn-Path%3A+%3Cdevel-bounces%40lists.fedoraproject.org%3E%0ADelivered-To%3A+free.fr-gauret%40free.fr%0AReceived%3A+%28qmail+25389+invoked+from+network%29%3B+25+Sep+2012+16%3A27%3A49+-0000%0AReceived%3A+from+mx16-g26.free.fr+%28HELO+bastion.fedoraproject.org%29+%28212.27.42.55%29%0A++by+mrelay8-g25.free.fr+with+SMTP%3B+25+Sep+2012+16%3A27%3A49+-0000%0AReceived%3A+from+bastion.fedoraproject.org+%28%5B209.132.181.2%5D%29%0A%09by+mx1-g20.free.fr+%28MXproxy%29%3B+Tue%2C+25+Sep+2012+18%3A27%3A49+%2B0200+%28CEST%29%0AX-ProXaD-SC%3A+state%3DHAM+score%3D0%0AReceived%3A+from+lists.fedoraproject.org+%28collab03.vpn.fedoraproject.org+%5B192.168.1.70%5D%29%0A%09by+bastion01.phx2.fedoraproject.org+%28Postfix%29+with+ESMTP+id+5247C2202E%3B%0A%09Tue%2C+25+Sep+2012+16%3A27%3A30+%2B0000+%28UTC%29%0AReceived%3A+from+collab03.fedoraproject.org+%28localhost+%5B127.0.0.1%5D%29%0A%09by+lists.fedoraproject.org+%28Postfix%29+with+ESMTP+id+D266040591%3B%0A%09Tue%2C+25+Sep+2012+16%3A27%3A29+%2B0000+%28UTC%29%0AX-Original-To%3A+devel%40lists.fedoraproject.org%0ADelivered-To%3A+devel%40lists.fedoraproject.org%0AReceived%3A+from+smtp-mm01.fedoraproject.org+%28smtp-mm01.fedoraproject.org%0A%09%5B80.239.156.217%5D%29%0A%09by+lists.fedoraproject.org+%28Postfix%29+with+ESMTP+id+6C99840591%0A%09for+%3Cdevel%40lists.fedoraproject.org%3E%3B%0A%09Tue%2C+25+Sep+2012+11%3A54%3A36+%2B0000+%28UTC%29%0AReceived%3A+from+mail.thelounge.net+%28mail.thelounge.net+%5B91.118.73.15%5D%29%0A%09by+smtp-mm01.fedoraproject.org+%28Postfix%29+with+ESMTP+id+AE85BC0080%0A%09for+%3Cdevel%40lists.fedoraproject.org%3E%3B%0A%09Tue%2C+25+Sep+2012+11%3A54%3A35+%2B0000+%28UTC%29%0AReceived%3A+from+rh.thelounge.net+%28rh.thelounge.net+%5B10.0.0.99%5D%29%0A%09%28using+TLSv1+with+cipher+DHE-RSA-CAMELLIA256-SHA+%28256%2F256+bits%29%29%0A%09%28No+client+certificate+requested%29%0A%09by+mail.thelounge.net+%28THELOUNGE+MTA%29+with+ESMTPSA+id+3XR10p4mGSz33%0A%09for+%3Cdevel%40lists.fedoraproject.org%3E%3B%0A%09Tue%2C+25+Sep+2012+13%3A54%3A34+%2B0200+%28CEST%29%0AMessage-ID%3A+%3C50619B7A.2030404%40thelounge.net%3E%0ADate%3A+Tue%2C+25+Sep+2012+13%3A54%3A34+%2B0200%0AFrom%3A+Reindl+Harald+%3Ch.reindl%40thelounge.net%3E%0AOrganization%3A+the+lounge+interactive+design%0AUser-Agent%3A+Mozilla%2F5.0+%28X11%3B+Linux+x86_64%3B%0A%09rv%3A15.0%29+Gecko%2F20120914+Thunderbird%2F15.0.1%0AMIME-Version%3A+1.0%0ATo%3A+Mailing-List+fedora-devel+%3Cdevel%40lists.fedoraproject.org%3E%0ASubject%3A+request%3A+remove+%22gd.tuwien.ac.at%22+from+mirror-lists%0AX-Enigmail-Version%3A+1.4.4%0AOpenPGP%3A+id%3D7F780279%3B%0A%09url%3Dhttp%3A%2F%2Farrakis.thelounge.net%2Fgpg%2Fh.reindl_thelounge.net.pub.txt%0AX-Mailman-Approved-At%3A+Tue%2C+25+Sep+2012+16%3A27%3A27+%2B0000%0AX-BeenThere%3A+devel%40lists.fedoraproject.org%0AX-Mailman-Version%3A+2.1.12%0APrecedence%3A+list%0AReply-To%3A+Development+discussions+related+to+Fedora%0A%09%3Cdevel%40lists.fedoraproject.org%3E%0AList-Id%3A+Development+discussions+related+to+Fedora%0A%09%3Cdevel.lists.fedoraproject.org%3E%0AList-Unsubscribe%3A+%3Chttps%3A%2F%2Fadmin.fedoraproject.org%2Fmailman%2Foptions%2Fdevel%3E%2C%0A%09%3Cmailto%3Adevel-request%40lists.fedoraproject.org%3Fsubject%3Dunsubscribe%3E%0AList-Archive%3A+%3Chttp%3A%2F%2Flists.fedoraproject.org%2Fpipermail%2Fdevel%2F%3E%0AList-Post%3A+%3Cmailto%3Adevel%40lists.fedoraproject.org%3E%0AList-Help%3A+%3Cmailto%3Adevel-request%40lists.fedoraproject.org%3Fsubject%3Dhelp%3E%0AList-Subscribe%3A+%3Chttps%3A%2F%2Fadmin.fedoraproject.org%2Fmailman%2Flistinfo%2Fdevel%3E%2C%0A%09%3Cmailto%3Adevel-request%40lists.fedoraproject.org%3Fsubject%3Dsubscribe%3E%0AContent-Type%3A+multipart%2Fmixed%3B+boundary%3D%22%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D8632363506430537088%3D%3D%22%0ASender%3A+devel-bounces%40lists.fedoraproject.org%0AErrors-To%3A+devel-bounces%40lists.fedoraproject.org%0A%0AThis+is+an+OpenPGP%2FMIME+signed+message+%28RFC+2440+and+3156%29%0A--%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D8632363506430537088%3D%3D%0AContent-Type%3A+multipart%2Fsigned%3B+micalg%3Dpgp-sha1%3B%0A+protocol%3D%22application%2Fpgp-signature%22%3B%0A+boundary%3D%22------------enig472FDA8B19C158E487EA5823%22%0A%0AThis+is+an+OpenPGP%2FMIME+signed+message+%28RFC+2440+and+3156%29%0A--------------enig472FDA8B19C158E487EA5823%0AContent-Type%3A+text%2Fplain%3B+charset%3DUTF-8%0AContent-Transfer-Encoding%3A+quoted-printable%0A%0AThis+is+a+test+message%0ANon-ascii+chars%3A+Hofm%3DC3%3DBChlgasse%0A%0A--------------enig472FDA8B19C158E487EA5823%0AContent-Type%3A+application%2Fpgp-signature%3B+name%3D%22signature.asc%22%0AContent-Description%3A+OpenPGP+digital+signature%0AContent-Disposition%3A+attachment%3B+filename%3D%22signature.asc%22%0A%0A-----BEGIN+PGP+SIGNATURE-----%0AVersion%3A+GnuPG+v1.4.12+%28GNU%2FLinux%29%0AComment%3A+Using+GnuPG+with+Mozilla+-+http%3A%2F%2Fwww.enigmail.net%2F%0A%0AiEYEARECAAYFAlBhm3oACgkQhmBjz394AnmMnQCcC%2B6tWcqE1dPQmIdRbLXgKGVp%0AEeUAn2OqtaXaXaQV7rx%2BSmOldmSzcFw4%0A%3DOEJv%0A-----END+PGP+SIGNATURE-----%0A%0A--------------enig472FDA8B19C158E487EA5823--%0A%0A--%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D8632363506430537088%3D%3D%0AContent-Type%3A+text%2Fplain%3B+charset%3D%22utf-8%22%0AMIME-Version%3A+1.0%0AContent-Transfer-Encoding%3A+base64%0AContent-Disposition%3A+inline%0A%0ALS0gCmRldmVsIG1haWxpbmcgbGlzdApkZXZlbEBsaXN0cy5mZWRvcmFwcm9qZWN0Lm9yZwpodHRw%0AczovL2FkbWluLmZlZG9yYXByb2plY3Qub3JnL21haWxtYW4vbGlzdGluZm8vZGV2ZWw%3D%0A%0A--%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D%3D8632363506430537088%3D%3D--%0A%0A%0A
+    headers:
+      accept-encoding: ['gzip, deflate']
+      content-type: [application/x-www-form-urlencoded]
+    method: POST
+    uri: http://localhost:9001/3.0/queues/in
+  response:
+    body: {string: ''}
+    headers:
+      content-length: ['0']
+      content-type: [application/json; charset=UTF-8]
+      location: ['http://localhost:9001/3.0/queues/in/1530486295.320375+e557526271a0a37b1bc81ebcd11785d918352076']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: GET
+    uri: http://localhost:9001/3.1/lists/foo.example.com
+  response:
+    body: {string: '{"display_name": "Foo", "fqdn_listname": "foo@example.com", "http_etag":
+        "\"4fb667c3d533cf6b2b6faa284a0d5d1302536524\"", "list_id": "foo.example.com",
+        "list_name": "foo", "mail_host": "example.com", "member_count": 0, "self_link":
+        "http://localhost:9001/3.1/lists/foo.example.com", "volume": 1}'}
+    headers:
+      content-length: ['294']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: GET
+    uri: http://localhost:9001/3.1/lists/foo@example.com/held/1
+  response:
+    body: {string: '{"_parsemsg": false, "envsender": "noreply@example.com", "hold_date":
+        "2005-08-01T07:49:23", "http_etag": "\"c49a3511da146bcb9300ab1f51bb6378c44c81f5\"",
+        "lang": "en", "listid": "foo.example.com", "member_moderation_action": "hold",
+        "message_id": "<50619B7A.2030404@thelounge.net>", "moderation_reasons": ["The
+        message is not from a list member"], "moderation_sender": "h.reindl@thelounge.net",
+        "msg": "X-Account-Key: account5\nX-UIDL: 1348590469.25417.mrelay8-g25\nX-Mozilla-Status:
+        0001\nX-Mozilla-Status2: 00000000\nX-Mozilla-Keys: \nReturn-Path: <devel-bounces@lists.fedoraproject.org>\nDelivered-To:
+        free.fr-gauret@free.fr\nReceived: (qmail 25389 invoked from network); 25 Sep
+        2012 16:27:49 -0000\nReceived: from mx16-g26.free.fr (HELO bastion.fedoraproject.org)
+        (212.27.42.55)\n  by mrelay8-g25.free.fr with SMTP; 25 Sep 2012 16:27:49 -0000\nReceived:
+        from bastion.fedoraproject.org ([209.132.181.2])\n\tby mx1-g20.free.fr (MXproxy);
+        Tue, 25 Sep 2012 18:27:49 +0200 (CEST)\nX-ProXaD-SC: state=HAM score=0\nReceived:
+        from lists.fedoraproject.org (collab03.vpn.fedoraproject.org [192.168.1.70])\n\tby
+        bastion01.phx2.fedoraproject.org (Postfix) with ESMTP id 5247C2202E;\n\tTue,
+        25 Sep 2012 16:27:30 +0000 (UTC)\nReceived: from collab03.fedoraproject.org
+        (localhost [127.0.0.1])\n\tby lists.fedoraproject.org (Postfix) with ESMTP
+        id D266040591;\n\tTue, 25 Sep 2012 16:27:29 +0000 (UTC)\nX-Original-To: devel@lists.fedoraproject.org\nDelivered-To:
+        devel@lists.fedoraproject.org\nReceived: from smtp-mm01.fedoraproject.org
+        (smtp-mm01.fedoraproject.org\n\t[80.239.156.217])\n\tby lists.fedoraproject.org
+        (Postfix) with ESMTP id 6C99840591\n\tfor <devel@lists.fedoraproject.org>;\n\tTue,
+        25 Sep 2012 11:54:36 +0000 (UTC)\nReceived: from mail.thelounge.net (mail.thelounge.net
+        [91.118.73.15])\n\tby smtp-mm01.fedoraproject.org (Postfix) with ESMTP id
+        AE85BC0080\n\tfor <devel@lists.fedoraproject.org>;\n\tTue, 25 Sep 2012 11:54:35
+        +0000 (UTC)\nReceived: from rh.thelounge.net (rh.thelounge.net [10.0.0.99])\n\t(using
+        TLSv1 with cipher DHE-RSA-CAMELLIA256-SHA (256/256 bits))\n\t(No client certificate
+        requested)\n\tby mail.thelounge.net (THELOUNGE MTA) with ESMTPSA id 3XR10p4mGSz33\n\tfor
+        <devel@lists.fedoraproject.org>;\n\tTue, 25 Sep 2012 13:54:34 +0200 (CEST)\nMessage-ID:
+        <50619B7A.2030404@thelounge.net>\nDate: Tue, 25 Sep 2012 13:54:34 +0200\nFrom:
+        Reindl Harald <h.reindl@thelounge.net>\nOrganization: the lounge interactive
+        design\nUser-Agent: Mozilla/5.0 (X11; Linux x86_64;\n\trv:15.0) Gecko/20120914
+        Thunderbird/15.0.1\nMIME-Version: 1.0\nTo: Mailing-List fedora-devel <devel@lists.fedoraproject.org>\nSubject:
+        request: remove \"gd.tuwien.ac.at\" from mirror-lists\nX-Enigmail-Version:
+        1.4.4\nOpenPGP: id=7F780279;\n\turl=http://arrakis.thelounge.net/gpg/h.reindl_thelounge.net.pub.txt\nX-Mailman-Approved-At:
+        Tue, 25 Sep 2012 16:27:27 +0000\nX-BeenThere: devel@lists.fedoraproject.org\nX-Mailman-Version:
+        2.1.12\nPrecedence: list\nReply-To: Development discussions related to Fedora\n\t<devel@lists.fedoraproject.org>\nList-Id:
+        Development discussions related to Fedora\n\t<devel.lists.fedoraproject.org>\nList-Unsubscribe:
+        <https://admin.fedoraproject.org/mailman/options/devel>,\n\t<mailto:devel-request@lists.fedoraproject.org?subject=unsubscribe>\nList-Archive:
+        <http://lists.fedoraproject.org/pipermail/devel/>\nList-Post: <mailto:devel@lists.fedoraproject.org>\nList-Help:
+        <mailto:devel-request@lists.fedoraproject.org?subject=help>\nList-Subscribe:
+        <https://admin.fedoraproject.org/mailman/listinfo/devel>,\n\t<mailto:devel-request@lists.fedoraproject.org?subject=subscribe>\nContent-Type:
+        multipart/mixed; boundary=\"===============8632363506430537088==\"\nSender:
+        devel-bounces@lists.fedoraproject.org\nErrors-To: devel-bounces@lists.fedoraproject.org\nX-Mailman-Rule-Hits:
+        nonmember-moderation\nX-Mailman-Rule-Misses: dmarc-mitigation; no-senders;
+        approved; emergency; loop; banned-address; member-moderation\nMessage-ID-Hash:
+        U6NNX5MZIV4L56FWDXTYGRFRUXO5KOHV\nX-Message-ID-Hash: U6NNX5MZIV4L56FWDXTYGRFRUXO5KOHV\n\nThis
+        is an OpenPGP/MIME signed message (RFC 2440 and 3156)\n--===============8632363506430537088==\nContent-Type:
+        multipart/signed; micalg=pgp-sha1;\n protocol=\"application/pgp-signature\";\n
+        boundary=\"------------enig472FDA8B19C158E487EA5823\"\n\nThis is an OpenPGP/MIME
+        signed message (RFC 2440 and 3156)\n--------------enig472FDA8B19C158E487EA5823\nContent-Type:
+        text/plain; charset=UTF-8\nContent-Transfer-Encoding: quoted-printable\n\nThis
+        is a test message\nNon-ascii chars: Hofm=C3=BChlgasse\n\n--------------enig472FDA8B19C158E487EA5823\nContent-Type:
+        application/pgp-signature; name=\"signature.asc\"\nContent-Description: OpenPGP
+        digital signature\nContent-Disposition: attachment; filename=\"signature.asc\"\n\n-----BEGIN
+        PGP SIGNATURE-----\nVersion: GnuPG v1.4.12 (GNU/Linux)\nComment: Using GnuPG
+        with Mozilla - http://www.enigmail.net/\n\niEYEARECAAYFAlBhm3oACgkQhmBjz394AnmMnQCcC+6tWcqE1dPQmIdRbLXgKGVp\nEeUAn2OqtaXaXaQV7rx+SmOldmSzcFw4\n=OEJv\n-----END
+        PGP SIGNATURE-----\n\n--------------enig472FDA8B19C158E487EA5823--\n\n--===============8632363506430537088==\nContent-Type:
+        text/plain; charset=\"utf-8\"\nMIME-Version: 1.0\nContent-Transfer-Encoding:
+        base64\nContent-Disposition: inline\n\nLS0gCmRldmVsIG1haWxpbmcgbGlzdApkZXZlbEBsaXN0cy5mZWRvcmFwcm9qZWN0Lm9yZwpodHRw\nczovL2FkbWluLmZlZG9yYXByb2plY3Qub3JnL21haWxtYW4vbGlzdGluZm8vZGV2ZWw=\n\n--===============8632363506430537088==--\n\n\n",
+        "original_size": 4736, "original_subject": "request: remove \"gd.tuwien.ac.at\"
+        from mirror-lists", "reason": "The message is not from a list member", "request_id":
+        1, "rule_hits": ["nonmember-moderation"], "rule_misses": ["dmarc-mitigation",
+        "no-senders", "approved", "emergency", "loop", "banned-address", "member-moderation"],
+        "self_link": "http://localhost:9001/3.1/lists/foo.example.com/held/1", "sender":
+        "h.reindl@thelounge.net", "subject": "request: remove \"gd.tuwien.ac.at\"
+        from mirror-lists", "version": 3}'}
+    headers:
+      content-length: ['5966']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: GET
+    uri: http://localhost:9001/3.1/lists/foo.example.com
+  response:
+    body: {string: '{"display_name": "Foo", "fqdn_listname": "foo@example.com", "http_etag":
+        "\"4fb667c3d533cf6b2b6faa284a0d5d1302536524\"", "list_id": "foo.example.com",
+        "list_name": "foo", "mail_host": "example.com", "member_count": 0, "self_link":
+        "http://localhost:9001/3.1/lists/foo.example.com", "volume": 1}'}
+    headers:
+      content-length: ['294']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: GET
+    uri: http://localhost:9001/3.1/lists/foo@example.com/held/1
+  response:
+    body: {string: '{"_parsemsg": false, "envsender": "noreply@example.com", "hold_date":
+        "2005-08-01T07:49:23", "http_etag": "\"c49a3511da146bcb9300ab1f51bb6378c44c81f5\"",
+        "lang": "en", "listid": "foo.example.com", "member_moderation_action": "hold",
+        "message_id": "<50619B7A.2030404@thelounge.net>", "moderation_reasons": ["The
+        message is not from a list member"], "moderation_sender": "h.reindl@thelounge.net",
+        "msg": "X-Account-Key: account5\nX-UIDL: 1348590469.25417.mrelay8-g25\nX-Mozilla-Status:
+        0001\nX-Mozilla-Status2: 00000000\nX-Mozilla-Keys: \nReturn-Path: <devel-bounces@lists.fedoraproject.org>\nDelivered-To:
+        free.fr-gauret@free.fr\nReceived: (qmail 25389 invoked from network); 25 Sep
+        2012 16:27:49 -0000\nReceived: from mx16-g26.free.fr (HELO bastion.fedoraproject.org)
+        (212.27.42.55)\n  by mrelay8-g25.free.fr with SMTP; 25 Sep 2012 16:27:49 -0000\nReceived:
+        from bastion.fedoraproject.org ([209.132.181.2])\n\tby mx1-g20.free.fr (MXproxy);
+        Tue, 25 Sep 2012 18:27:49 +0200 (CEST)\nX-ProXaD-SC: state=HAM score=0\nReceived:
+        from lists.fedoraproject.org (collab03.vpn.fedoraproject.org [192.168.1.70])\n\tby
+        bastion01.phx2.fedoraproject.org (Postfix) with ESMTP id 5247C2202E;\n\tTue,
+        25 Sep 2012 16:27:30 +0000 (UTC)\nReceived: from collab03.fedoraproject.org
+        (localhost [127.0.0.1])\n\tby lists.fedoraproject.org (Postfix) with ESMTP
+        id D266040591;\n\tTue, 25 Sep 2012 16:27:29 +0000 (UTC)\nX-Original-To: devel@lists.fedoraproject.org\nDelivered-To:
+        devel@lists.fedoraproject.org\nReceived: from smtp-mm01.fedoraproject.org
+        (smtp-mm01.fedoraproject.org\n\t[80.239.156.217])\n\tby lists.fedoraproject.org
+        (Postfix) with ESMTP id 6C99840591\n\tfor <devel@lists.fedoraproject.org>;\n\tTue,
+        25 Sep 2012 11:54:36 +0000 (UTC)\nReceived: from mail.thelounge.net (mail.thelounge.net
+        [91.118.73.15])\n\tby smtp-mm01.fedoraproject.org (Postfix) with ESMTP id
+        AE85BC0080\n\tfor <devel@lists.fedoraproject.org>;\n\tTue, 25 Sep 2012 11:54:35
+        +0000 (UTC)\nReceived: from rh.thelounge.net (rh.thelounge.net [10.0.0.99])\n\t(using
+        TLSv1 with cipher DHE-RSA-CAMELLIA256-SHA (256/256 bits))\n\t(No client certificate
+        requested)\n\tby mail.thelounge.net (THELOUNGE MTA) with ESMTPSA id 3XR10p4mGSz33\n\tfor
+        <devel@lists.fedoraproject.org>;\n\tTue, 25 Sep 2012 13:54:34 +0200 (CEST)\nMessage-ID:
+        <50619B7A.2030404@thelounge.net>\nDate: Tue, 25 Sep 2012 13:54:34 +0200\nFrom:
+        Reindl Harald <h.reindl@thelounge.net>\nOrganization: the lounge interactive
+        design\nUser-Agent: Mozilla/5.0 (X11; Linux x86_64;\n\trv:15.0) Gecko/20120914
+        Thunderbird/15.0.1\nMIME-Version: 1.0\nTo: Mailing-List fedora-devel <devel@lists.fedoraproject.org>\nSubject:
+        request: remove \"gd.tuwien.ac.at\" from mirror-lists\nX-Enigmail-Version:
+        1.4.4\nOpenPGP: id=7F780279;\n\turl=http://arrakis.thelounge.net/gpg/h.reindl_thelounge.net.pub.txt\nX-Mailman-Approved-At:
+        Tue, 25 Sep 2012 16:27:27 +0000\nX-BeenThere: devel@lists.fedoraproject.org\nX-Mailman-Version:
+        2.1.12\nPrecedence: list\nReply-To: Development discussions related to Fedora\n\t<devel@lists.fedoraproject.org>\nList-Id:
+        Development discussions related to Fedora\n\t<devel.lists.fedoraproject.org>\nList-Unsubscribe:
+        <https://admin.fedoraproject.org/mailman/options/devel>,\n\t<mailto:devel-request@lists.fedoraproject.org?subject=unsubscribe>\nList-Archive:
+        <http://lists.fedoraproject.org/pipermail/devel/>\nList-Post: <mailto:devel@lists.fedoraproject.org>\nList-Help:
+        <mailto:devel-request@lists.fedoraproject.org?subject=help>\nList-Subscribe:
+        <https://admin.fedoraproject.org/mailman/listinfo/devel>,\n\t<mailto:devel-request@lists.fedoraproject.org?subject=subscribe>\nContent-Type:
+        multipart/mixed; boundary=\"===============8632363506430537088==\"\nSender:
+        devel-bounces@lists.fedoraproject.org\nErrors-To: devel-bounces@lists.fedoraproject.org\nX-Mailman-Rule-Hits:
+        nonmember-moderation\nX-Mailman-Rule-Misses: dmarc-mitigation; no-senders;
+        approved; emergency; loop; banned-address; member-moderation\nMessage-ID-Hash:
+        U6NNX5MZIV4L56FWDXTYGRFRUXO5KOHV\nX-Message-ID-Hash: U6NNX5MZIV4L56FWDXTYGRFRUXO5KOHV\n\nThis
+        is an OpenPGP/MIME signed message (RFC 2440 and 3156)\n--===============8632363506430537088==\nContent-Type:
+        multipart/signed; micalg=pgp-sha1;\n protocol=\"application/pgp-signature\";\n
+        boundary=\"------------enig472FDA8B19C158E487EA5823\"\n\nThis is an OpenPGP/MIME
+        signed message (RFC 2440 and 3156)\n--------------enig472FDA8B19C158E487EA5823\nContent-Type:
+        text/plain; charset=UTF-8\nContent-Transfer-Encoding: quoted-printable\n\nThis
+        is a test message\nNon-ascii chars: Hofm=C3=BChlgasse\n\n--------------enig472FDA8B19C158E487EA5823\nContent-Type:
+        application/pgp-signature; name=\"signature.asc\"\nContent-Description: OpenPGP
+        digital signature\nContent-Disposition: attachment; filename=\"signature.asc\"\n\n-----BEGIN
+        PGP SIGNATURE-----\nVersion: GnuPG v1.4.12 (GNU/Linux)\nComment: Using GnuPG
+        with Mozilla - http://www.enigmail.net/\n\niEYEARECAAYFAlBhm3oACgkQhmBjz394AnmMnQCcC+6tWcqE1dPQmIdRbLXgKGVp\nEeUAn2OqtaXaXaQV7rx+SmOldmSzcFw4\n=OEJv\n-----END
+        PGP SIGNATURE-----\n\n--------------enig472FDA8B19C158E487EA5823--\n\n--===============8632363506430537088==\nContent-Type:
+        text/plain; charset=\"utf-8\"\nMIME-Version: 1.0\nContent-Transfer-Encoding:
+        base64\nContent-Disposition: inline\n\nLS0gCmRldmVsIG1haWxpbmcgbGlzdApkZXZlbEBsaXN0cy5mZWRvcmFwcm9qZWN0Lm9yZwpodHRw\nczovL2FkbWluLmZlZG9yYXByb2plY3Qub3JnL21haWxtYW4vbGlzdGluZm8vZGV2ZWw=\n\n--===============8632363506430537088==--\n\n\n",
+        "original_size": 4736, "original_subject": "request: remove \"gd.tuwien.ac.at\"
+        from mirror-lists", "reason": "The message is not from a list member", "request_id":
+        1, "rule_hits": ["nonmember-moderation"], "rule_misses": ["dmarc-mitigation",
+        "no-senders", "approved", "emergency", "loop", "banned-address", "member-moderation"],
+        "self_link": "http://localhost:9001/3.1/lists/foo.example.com/held/1", "sender":
+        "h.reindl@thelounge.net", "subject": "request: remove \"gd.tuwien.ac.at\"
+        from mirror-lists", "version": 3}'}
+    headers:
+      content-length: ['5966']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: GET
+    uri: http://localhost:9001/3.0/domains
+  response:
+    body: {string: '{"entries": [{"alias_domain": null, "description": null, "http_etag":
+        "\"492652d581dc93af101db450d81ae93a074bff49\"", "mail_host": "example.com",
+        "self_link": "http://localhost:9001/3.0/domains/example.com"}], "http_etag":
+        "\"5868fb6d2442c0d163e0edb2bfd7a92b6c812796\"", "start": 0, "total_size":
+        1}'}
+    headers:
+      content-length: ['299']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: DELETE
+    uri: http://localhost:9001/3.0/domains/example.com
+  response:
+    body: {string: ''}
+    headers:
+      Content-Length: ['0']
+    status: {code: 204, message: No Content}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: GET
+    uri: http://localhost:9001/3.0/users
+  response:
+    body: {string: '{"http_etag": "\"32223434a0f3af4cdc4673d1fbc5bac1f6d98fd3\"",
+        "start": 0, "total_size": 0}'}
+    headers:
+      content-length: ['90']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+version: 1

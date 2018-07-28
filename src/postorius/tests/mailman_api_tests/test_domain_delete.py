@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2016-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -15,12 +15,11 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import, print_function, unicode_literals
 
 from allauth.account.models import EmailAddress
-from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
+from django.urls import reverse
 from django_mailman3.models import MailDomain
 
 from postorius.tests.utils import ViewTestCase
@@ -80,6 +79,17 @@ class DomainDeleteTest(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(self.mm_client.domains), 1)
         self.assertEqual(len(self.mm_client.lists), 1)
+
+    def test_domain_delete_page_lists_all_mailinglists(self):
+        # Test that the domain delete page lists all the mailing lists
+        # associated with the domain.
+        self.client.login(username='testsu', password='testpass')
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(
+            'This would delete 1 lists, some of which are'
+            in str(response.content))
+        self.assertTrue('foo@example.com' in str(response.content))
 
     def test_domain_delete(self):
         # The domain should be deleted

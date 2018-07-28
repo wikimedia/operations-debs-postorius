@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import, unicode_literals
 
 from django import template
 
@@ -44,7 +43,7 @@ def get_list(mlist):
     return mlist if isinstance(mlist, MailingList) else List.objects.get(mlist)
 
 
-@register.assignment_tag
+@register.simple_tag
 def user_is_list_owner(user, mlist):
     """
     Given a User object and a MailingList object/identifier, returns True if
@@ -53,7 +52,7 @@ def user_is_list_owner(user, mlist):
     return user_is_in_list_roster(user, get_list(mlist), 'owners')
 
 
-@register.assignment_tag
+@register.simple_tag
 def user_is_list_moderator(user, mlist):
     """
     Given a User object and a MailingList object/identifier, return True if

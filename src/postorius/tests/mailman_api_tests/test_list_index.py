@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -15,9 +15,8 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import, print_function, unicode_literals
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from postorius.tests.utils import ViewTestCase
 
@@ -51,3 +50,10 @@ class ListIndexPageTest(ViewTestCase):
         self.assertNotIn(
             'baz.example.com',
             [ml.list_id for ml in response.context['lists']])
+
+    def test_list_index_post_redirects(self):
+        response = self.client.post(reverse('list_index'),
+                                    dict(list='foo.example.com'))
+        # This should redirect to the list's summary view.
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, '/postorius/lists/foo.example.com/')

@@ -14,7 +14,7 @@
 
     {% if formset|length == 0 %}
       <div>
-          <h4>{% trans 'No preferences available' %}</h4>
+          <h2>{% trans 'No preferences available' %}</h2>
       </div>
       <p>{% trans 'You are not yet subscribed to any lists, so you have no Mailman preferences.' %}</p>
     {% else %}
@@ -47,12 +47,14 @@
                             {% for field in form %}
                                 {% if field|fieldtype_is:'RadioSelect' %}
                                     <td class="text-center">
+                                        <fieldset name="{{ field.name }}" role="radiogroup" aria-label="{{ form.list_id }} {{ field.name }}">
                                     {% for choice in field %}
-                                        <label class="radio-inline">
+                                        <label class="radio-inline" for="{{ choice.id_for_label }}">
                                             {{ choice.tag }}
                                             {{ choice.choice_label }}
                                         </label>
                                     {% endfor %}
+                                        </fieldset>
                                     </td>
                                 {% else %}
                                     <td>{{ field|add_form_control }}</td>

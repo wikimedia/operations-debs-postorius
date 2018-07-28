@@ -20,8 +20,9 @@
                 <tr>
                     <th>{% trans 'Mail Host' %}</th>
                     <th>{% trans 'Description' %}</th>
+                    <th>{% trans 'Alias Domain' %}</th>
                     <th>{% trans 'Web Host' %}</th>
-                    <th>&nbsp;</th>
+                    <th>{% trans 'Action' %}</th>
                 </tr>
             </thead>
             <tbody>
@@ -29,8 +30,10 @@
                     <tr>
                         <td>{{ domain.mail_host }}</td>
                         <td>{% if domain.description %}{{ domain.description }}{% endif %}</td>
+                        <td>{% if domain.alias_domain %}{{ domain.alias_domain }}{% endif %}</td>
                         <td>{{ domain.site.name }} ({{ domain.site.domain }})</td>
                         <td>
+                            <a href="{% url 'domain_template_list' domain.mail_host %}" class="btn btn-xs btn-primary">{% trans 'Templates' %}</a>
                             <a href="{% url 'domain_edit' domain.mail_host %}" class="btn btn-xs btn-primary">{% trans 'Edit' %}</a>
                             <a href="{% url 'domain_delete' domain.mail_host %}" class="btn btn-xs btn-danger">{% trans 'Delete' %}</a>
                         </td>

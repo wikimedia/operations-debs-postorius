@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -18,11 +18,10 @@
 
 """Postorius view decorators."""
 
-from __future__ import absolute_import, unicode_literals
 
 from django.core.exceptions import PermissionDenied
 
-from postorius.auth.utils import set_user_access_props
+from postorius.auth.utils import set_list_access_props
 
 
 def list_owner_required(fn):
@@ -33,11 +32,11 @@ def list_owner_required(fn):
     def wrapper(*args, **kwargs):
         user = args[0].user
         list_id = kwargs['list_id']
-        if not user.is_authenticated():
+        if not user.is_authenticated:
             raise PermissionDenied
         if user.is_superuser:
             return fn(*args, **kwargs)
-        set_user_access_props(user, list_id)
+        set_list_access_props(user, list_id)
         if user.is_list_owner:
             return fn(*args, **kwargs)
         else:
@@ -53,11 +52,11 @@ def list_moderator_required(fn):
     def wrapper(*args, **kwargs):
         user = args[0].user
         list_id = kwargs['list_id']
-        if not user.is_authenticated():
+        if not user.is_authenticated:
             raise PermissionDenied
         if user.is_superuser:
             return fn(*args, **kwargs)
-        set_user_access_props(user, list_id)
+        set_list_access_props(user, list_id)
         if user.is_list_owner or user.is_list_moderator:
             return fn(*args, **kwargs)
         else:
