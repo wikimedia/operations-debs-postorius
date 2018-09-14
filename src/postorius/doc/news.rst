@@ -18,6 +18,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 
 
+1.2.2
+=====
+(2018-08-30)
+* Add support for Python 3.7 with Django 2.0+
+* Index page only shows related lists for signed-in users with option to
+  filter based on role.
+* Expose respond_to_post_requests in Postorius. (Closes #223)
+
+
 1.2.1
 =====
 (2018-07-11)

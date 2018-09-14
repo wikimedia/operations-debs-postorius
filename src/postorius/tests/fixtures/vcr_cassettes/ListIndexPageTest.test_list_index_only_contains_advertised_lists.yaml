@@ -104,7 +104,7 @@ interactions:
         "no_mitigation", "dmarc_mitigate_unconditionally": false, "dmarc_moderation_notice":
         "", "dmarc_wrapped_message_text": "", "filter_content": false, "first_strip_reply_to":
         false, "footer_uri": "", "fqdn_listname": "baz@example.com", "goodbye_message_uri":
-        "", "header_uri": "", "http_etag": "\"a7c109429073d9827180f7f1fdc855cdb90c2821\"",
+        "", "header_uri": "", "http_etag": "\"ce9815dc9b443db8f993fa41f29a23c50f57d4ad\"",
         "include_rfc2369_headers": true, "info": "", "join_address": "baz-join@example.com",
         "last_post_at": null, "leave_address": "baz-leave@example.com", "list_name":
         "baz", "mail_host": "example.com", "max_message_size": 40, "moderator_password":
@@ -214,7 +214,7 @@ interactions:
         "no_mitigation", "dmarc_mitigate_unconditionally": false, "dmarc_moderation_notice":
         "", "dmarc_wrapped_message_text": "", "filter_content": false, "first_strip_reply_to":
         false, "footer_uri": "", "fqdn_listname": "bar@example.com", "goodbye_message_uri":
-        "", "header_uri": "", "http_etag": "\"25edfabe10f2f6afede64d713c4eadf78ab22400\"",
+        "", "header_uri": "", "http_etag": "\"61665db35121c952cd42ae9af704229d35735d57\"",
         "include_rfc2369_headers": true, "info": "", "join_address": "bar-join@example.com",
         "last_post_at": null, "leave_address": "bar-leave@example.com", "list_name":
         "bar", "mail_host": "example.com", "max_message_size": 40, "moderator_password":
@@ -250,7 +250,7 @@ interactions:
         "no_mitigation", "dmarc_mitigate_unconditionally": false, "dmarc_moderation_notice":
         "", "dmarc_wrapped_message_text": "", "filter_content": false, "first_strip_reply_to":
         false, "footer_uri": "", "fqdn_listname": "foo@example.com", "goodbye_message_uri":
-        "", "header_uri": "", "http_etag": "\"34e76ae06d4d1fba1572e3396847b3fcd1d7740d\"",
+        "", "header_uri": "", "http_etag": "\"35e56ed9bf4c8cfbac28d06d3be58ded3e16423d\"",
         "include_rfc2369_headers": true, "info": "", "join_address": "foo-join@example.com",
         "last_post_at": null, "leave_address": "foo-leave@example.com", "list_name":
         "foo", "mail_host": "example.com", "max_message_size": 40, "moderator_password":

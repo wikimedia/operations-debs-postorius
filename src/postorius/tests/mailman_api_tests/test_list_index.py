@@ -16,6 +16,8 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from allauth.account.models import EmailAddress
+from django.contrib.auth.models import User
 from django.urls import reverse
 
 from postorius.tests.utils import ViewTestCase
@@ -29,6 +31,14 @@ class ListIndexPageTest(ViewTestCase):
         self.domain = self.mm_client.create_domain('example.com')
         self.foo_list = self.domain.create_list('foo')
         self.bar_list = self.domain.create_list('bar')
+
+        self.user = User.objects.create_user('user', 'user@example.com', 'pwd')
+        self.superuser = User.objects.create_superuser(
+            'su', 'su@example.com', 'pwd')
+
+        for user in (self.user, self.superuser):
+            EmailAddress.objects.create(
+                user=user, email=user.email, verified=True)
 
     def test_list_index_contains_the_lists(self):
         # The list index page should contain the lists
@@ -57,3 +67,123 @@ class ListIndexPageTest(ViewTestCase):
         # This should redirect to the list's summary view.
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, '/postorius/lists/foo.example.com/')
+
+    def test_list_index_unadvertized(self):
+        # Test that superuser can see unadvertized lists.
+        baz_list = self.domain.create_list('baz')
+        baz_list.settings['advertised'] = False
+        baz_list.settings.save()
+        # Superuser should be able to see all lists.
+        self.client.login(username='su', password='pwd')
+        url = reverse('list_index') + '?all-lists'
+        response = self.client.get(url)
+        self.assertEqual(len(response.context['lists']), 3)
+        self.assertTrue(
+            b'Only admins see unadvertised lists in the list index.' in
+            response.content)
+
+    def test_list_index_all_lists(self):
+        # Test that list index page for a logged-in user.
+        self.client.login(username='user', password='pwd')
+        url = reverse('list_index')
+        response = self.client.get(url)
+        # Since this user isn't related to any list, their index page will
+        # redirect to all-lists.
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, '/postorius/lists/?all-lists')
+        response = self.client.get(response.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['lists']), 2)
+        # Now, if we subscribe the user to a list, it will show only that list.
+        self.foo_list.subscribe(
+            self.user.email, pre_confirmed=True, pre_verified=True)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['lists']), 1)
+        # List that you are owners and moderators for should also show up.
+        self.bar_list.add_owner(self.user.email)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['lists']), 2)
+
+    def test_list_index_owner_only(self):
+        # Test that filtering by list-owner role works.
+        self.client.login(username='user', password='pwd')
+        url = reverse('list_index')
+        response = self.client.get(url + '?role=owner')
+        # Current user is not an owner of any list.
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['lists']), 0)
+        # Let's make them an owner of a list and see if it shows up.
+        self.foo_list.add_owner(self.user.email)
+        response = self.client.get(url + '?role=owner')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['lists']), 1)
+        # Test all lists are available on all-list page.
+        response = self.client.get(url + '?all-lists')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['lists']), 2)
+
+    def test_list_index_moderator_only(self):
+        # Test that filtering by list-moderator role works.
+        self.client.login(username='user', password='pwd')
+        url = reverse('list_index')
+        response = self.client.get(url + '?role=moderator')
+        # Current user is not an owner of any list.
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['lists']), 0)
+        # Let's make them an moderator of a list and see if it shows up.
+        self.foo_list.add_moderator(self.user.email)
+        response = self.client.get(url + '?role=moderator')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['lists']), 1)
+        # Test all lists are available on all-list page.
+        response = self.client.get(url + '?all-lists')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['lists']), 2)
+
+    def test_list_index_subscriber_only(self):
+        # Test that filtering by list-moderator role works.
+        self.client.login(username='user', password='pwd')
+        url = reverse('list_index')
+        response = self.client.get(url + '?role=member')
+        # Current user is not an owner of any list.
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['lists']), 0)
+        # Let's make them an moderator of a list and see if it shows up.
+        self.foo_list.subscribe(
+            self.user.email, pre_confirmed=True, pre_verified=True)
+        response = self.client.get(url + '?role=member')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['lists']), 1)
+        # Test all lists are available on all-list page.
+        response = self.client.get(url + '?all-lists')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['lists']), 2)
+
+    def test_list_index_multiple_roles(self):
+        # Test that filtering by list-moderator role works.
+        self.client.login(username='user', password='pwd')
+        url = reverse('list_index')
+        # Current user is not an owner of any list.
+        self.foo_list.subscribe(
+            self.user.email, pre_confirmed=True, pre_verified=True)
+        self.foo_list.add_owner(self.user.email)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        # Make sure that lists aren't repeated if the user has multiple roles
+        # in the same mailing list.
+        self.assertEqual(len(response.context['lists']), 1)
+
+    def test_list_index_multiple_addresses(self):
+        EmailAddress.objects.create(
+            user=self.user, email='test-email2@example.com', verified=True)
+        self.foo_list.subscribe(
+            'test-email2@example.com', pre_confirmed=True, pre_verified=True)
+        self.client.login(username='user', password='pwd')
+        url = reverse('list_index')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        # Make sure that memberships of other email addresses than primary one
+        # showup here.
+        self.assertEqual(len(response.context['lists']), 1)

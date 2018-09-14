@@ -12,7 +12,28 @@
         <h1>{% trans 'Mailing Lists' %}</h1>
     </div>
 
+    <div class="row">
+    {% if user.is_authenticated %}
+        <div class="dropdown page-left col-md-4">
+          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+            Filter by Role
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+            <li><a href="?role=owner">Owner</a></li>
+            <li><a href="?role=moderator">Moderator</a></li>
+            <li><a href="?role=member">Member</a></li>
+            <li><a href="?all-lists">All</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          {% if role  %}
+             <h4> Role {{ role | title }} </h4>
+          {% endif %}
+        </div>
+    {% endif %}
     {% if user.is_superuser %}
+      <div class="col-md-4">
         <p class="text-right">
             {% if domain_count < 1 %}
                 <a class="btn btn-success" href="{% url 'domain_new' %}">{% trans 'Create New Domain' %}</a>
@@ -20,7 +41,10 @@
                 <a class="btn btn-success" href="{% url 'list_new' %}">{% trans 'Create New List' %}</a>
             {% endif %}
         </p>
+      </div>
     {% endif %}
+    </div>
+
     {% if lists|length > 0 %}
         <div class="table-responsive">
             <table class="table table-bordered table-striped">
@@ -45,6 +69,10 @@
                 </tbody>
             </table>
         </div>
+        {% if not all_lists and not role %}
+            <small>* {% trans 'Only lists that you are owner,moderator or subscriber for are shown here.' %} Click to <a href="?all-lists"> see all lists</a>.</small>
+            <br/>
+        {% endif %}
         {% if user.is_superuser %}
             <small>* {% trans 'Only admins see unadvertised lists in the list index.' %}</small>
         {% endif %}

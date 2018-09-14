@@ -79,5 +79,6 @@ class ListDeleteTest(ViewTestCase):
         # The domain should be deleted
         self.client.login(username='testowner', password='testpass')
         response = self.client.post(self.url)
-        self.assertRedirects(response, reverse('list_index'))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('list_index'))
         self.assertEqual(len(self.mm_client.lists), 0)
