@@ -1,7 +1,8 @@
-Test-Command: python2.7 $(which django-admin) test --pythonpath=example_project --settings=test_settings postorius
+Test-Command: for python3 in $(shell py3versions -r); do $python3 $(which django-admin) test --pythonpath=example_project --settings=test_settings postorius; done
 Depends: @,
-         python-bs4,
-         python-mock,
-         python-vcr
+         python3-all,
+         python3-bs4,
+         python3-mock,
+         python3-vcr
 Restrictions: build-needed,
               allow-stderr

@@ -1,5 +1,6 @@
 postorius (1.2.1-1) UNRELEASED; urgency=medium
 
+  [ Pierre-Elliott Bécue ]
   * New upstream release 1.2.1
     - Comes with full python3 suppors
   * d/control:
@@ -8,8 +9,16 @@ postorius (1.2.1-1) UNRELEASED; urgency=medium
     - Bump Standards-Version to 4.1.5. No change required
 
   [ Jonas Meurer ]
+
   * d/control:
     - Bump standards-version to 4.2.1, no changes required
+    - Add versioned (build-)depends on python3-mailmanclient >= 3.2.0
+    - Update (Build-)Depends to python3 packages
+  * d/rules:
+    - Migrate build system to python3
+    - Remove pycache files after running testsuite
+  * d/source/lintian-overrides:
+    - remove obsolete python2 lintian overrides
 
  -- Jonas Meurer <jonas@freesources.org>  Fri, 14 Sep 2018 15:25:31 +0200
 

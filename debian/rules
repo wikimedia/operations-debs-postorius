@@ -5,36 +5,37 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 export PYBUILD_NAME = postorius
 
 %:
-	dh $@ --with python2,sphinxdoc --buildsystem=pybuild
+	dh $@ --with python3,sphinxdoc --buildsystem=pybuild
 
 override_dh_auto_test:
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 	ln -s ../src/postorius example_project/postorius
 	set -e; \
-	for python in $(shell pyversions -r); do \
-		$$python $(shell which django-admin) test --pythonpath=example_project --settings=test_settings postorius; \
+	for python3 in $(shell py3versions -r); do \
+		$$python3 $(shell which django-admin) test --pythonpath=example_project --settings=test_settings postorius; \
 	done
 	rm example_project/postorius
+	find example_project src/postorius -name '__pycache__' -type d -print | xargs rm -r
 endif
 
 override_dh_auto_build:
 	PYTHONPATH=. sphinx-build -b html -E -N src/postorius/doc build/sphinx/html
 	dh_auto_build
 
-override_dh_auto_install:
-	dh_auto_install
+override_dh_python3:
+	dh_python3
 	# Don't embed bootstrap/jquery JS scripts
-	find debian/python-django-postorius -name 'jquery-1.11.3.min.js' -type f -exec \
+	find debian/python3-django-postorius -name 'jquery-1.11.3.min.js' -type f -exec \
 		ln -sf /usr/share/javascript/jquery/jquery.min.js {} \;
-	find debian/python-django-postorius -name 'bootstrap.min.js' -type f -exec \
+	find debian/python3-django-postorius -name 'bootstrap.min.js' -type f -exec \
 		ln -sf /usr/share/javascript/bootstrap/js/bootstrap.min.js {} \;
-	find debian/python-django-postorius -name 'glyphicons-halflings-regular.ttf' -type f -exec \
+	find debian/python3-django-postorius -name 'glyphicons-halflings-regular.ttf' -type f -exec \
 		ln -sf /usr/share/glewlwyd/webapp/fonts/glyphicons-halflings-regular.ttf {} \;
 	# Move static files outside of the lib directory
-	mv debian/python-django-postorius/usr/lib/python2.7/dist-packages/postorius/static \
-		debian/python-django-postorius/usr/share/python-django-postorius/
-	ln -sf /usr/share/python-django-postorius/static \
-		debian/python-django-postorius/usr/lib/python2.7/dist-packages/postorius/static
+	mv debian/python3-django-postorius/usr/lib/python3/dist-packages/postorius/static \
+		debian/python3-django-postorius/usr/share/python3-django-postorius/
+	dh_link usr/share/python3-django-postorius/static \
+		usr/lib/python3/dist-packages/postorius/static
 
 override_dh_installchangelogs:
 	dh_installchangelogs src/postorius/doc/news.rst

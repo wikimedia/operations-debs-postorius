@@ -1,15 +1,16 @@
 Source: postorius
-Section: python
-Priority: optional
 Maintainer: Debian Mailman Team <pkg-mailman-hackers@lists.alioth.debian.org>
 Uploaders: Pierre-Elliott Bécue <becue@crans.org>,
            Jonas Meurer <jonas@freesources.org>
-Build-Depends: debhelper (>= 11),
+Section: python
+Priority: optional
+Build-Depends: debhelper (>= 11~),
                dh-python,
                python3-all,
                python3-bs4,
                python3-django (>= 1:1.11),
                python3-django-mailman3 (>= 1.2.0),
+               python3-mailmanclient (>= 3.2.0),
                python3-mock,
                python3-setuptools,
                python3-vcr,
@@ -20,7 +21,7 @@ Homepage: https://gitlab.com/mailman/postorius
 Vcs-Browser: https://salsa.debian.org/mailman-team/postorius
 Vcs-Git: https://salsa.debian.org/mailman-team/postorius.git
 
-Package: python-django-postorius
+Package: python3-django-postorius
 Architecture: all
 Depends: libjs-jquery,
          libjs-bootstrap,
@@ -28,10 +29,10 @@ Depends: libjs-jquery,
          python3-django,
          python3-django-allauth,
          python3-django-mailman3 (>= 1.2.0),
-         python3-mailmanclient,
+         python3-mailmanclient (>= 3.2.0),
          python3-sphinx-rtd-theme,
          ${misc:Depends},
-         ${python:Depends}
+         ${python3:Depends}
 Recommends: mailman3-web
 Description: Web user interface to access GNU Mailman3
  The Postorius Django app provides a web user interface
