@@ -34,6 +34,8 @@ Depends: libjs-jquery,
          ${misc:Depends},
          ${python3:Depends}
 Recommends: mailman3-web
+Conflicts: python-django-postorius
+Replaces: python-django-postorius
 Description: Web user interface to access GNU Mailman3
  The Postorius Django app provides a web user interface
  to access GNU Mailman3, and manage it. This interface
