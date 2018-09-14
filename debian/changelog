@@ -1,4 +1,4 @@
-postorius (1.2.1-1) UNRELEASED; urgency=medium
+postorius (1.2.2-1) UNRELEASED; urgency=medium
 
   [ Pierre-Elliott Bécue ]
   * New upstream release 1.2.1
@@ -9,7 +9,7 @@ postorius (1.2.1-1) UNRELEASED; urgency=medium
     - Bump Standards-Version to 4.1.5. No changes required
 
   [ Jonas Meurer ]
-
+  * New upstream release 1.2.2
   * d/control:
     - Bump standards-version to 4.2.1, no changes required
     - Add versioned (build-)depends on python3-mailmanclient >= 3.2.0
@@ -20,7 +20,7 @@ postorius (1.2.1-1) UNRELEASED; urgency=medium
   * d/source/lintian-overrides:
     - remove obsolete python2 lintian overrides
 
- -- Jonas Meurer <jonas@freesources.org>  Fri, 14 Sep 2018 15:25:31 +0200
+ -- Jonas Meurer <jonas@freesources.org>  Fri, 14 Sep 2018 22:38:17 +0200
 
 postorius (1.1.2-3) unstable; urgency=medium
 
