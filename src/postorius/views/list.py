@@ -594,25 +594,82 @@ def list_new(request, template='postorius/lists/new.html'):
     return render(request, template, {'form': form})
 
 
-def list_index(request, template='postorius/index.html'):
-    """Show a table of all public mailing lists.
+def _unique_lists(lists):
+    """Return unique lists from a list of mailing lists."""
+    return {mlist.list_id: mlist for mlist in lists}.values()
+
+
+@login_required
+def list_index_authenticated(request):
+    """Index page for authenticated users.
+
+    Index page for authenticated users is slightly different than
+    un-authenticated ones. Authenticated users will see all their memberships
+    in the index page.
+
+    This view is not paginated and will show all the lists.
+
     """
+    role = request.GET.get('role', None)
+    client = get_mailman_client()
+    choosable_domains = _get_choosable_domains(request)
+
+    # Get all the verified addresses of the user.
+    user_emails = EmailAddress.objects.filter(
+        user=request.user, verified=True).order_by(
+            "email").values_list("email", flat=True)
+
+    # Get all the mailing lists for the current user.
+    all_lists = []
+    for user_email in user_emails:
+        try:
+            all_lists.extend(client.find_lists(user_email, role=role))
+        except HTTPError:
+            # No lists exist with the given role for the given user.
+            pass
+    # If the user has no list that they are subscriber/owner/moderator of, we
+    # just redirect them to the index page with all lists.
+    if len(all_lists) == 0 and role is None:
+        return redirect(reverse('list_index') + '?all-lists')
+    # Render the list index page.
+    context = {
+        'lists': _unique_lists(all_lists),
+        'domain_count': len(choosable_domains),
+        'role': role
+    }
+    return render(
+        request,
+        'postorius/index.html',
+        context
+    )
+
+
+def list_index(request, template='postorius/index.html'):
+    """Show a table of all public mailing lists."""
     # TODO maxking: Figure out why does this view accept POST request and why
     # can't it be just a GET with list parameter.
     if request.method == 'POST':
         return redirect("list_summary", list_id=request.POST["list"])
+    # If the user is logged-in, show them only related lists in the index,
+    # except role is present in requests.GET.
+    if request.user.is_authenticated and 'all-lists' not in request.GET:
+        return list_index_authenticated(request)
 
     def _get_list_page(count, page):
         client = get_mailman_client()
         advertised = not request.user.is_superuser
         return client.get_list_page(
             advertised=advertised, count=count, page=page)
+
     lists = paginate(
         _get_list_page, request.GET.get('page'), request.GET.get('count'),
         paginator_class=MailmanPaginator)
+
     choosable_domains = _get_choosable_domains(request)
+
     return render(request, template,
                   {'lists': lists,
+                   'all_lists': True,
                    'domain_count': len(choosable_domains)})
 
 

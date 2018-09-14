@@ -234,14 +234,16 @@ class TestListIdentityForm(TestCase):
             'description': 'This is the most desirable organization',
             'info': 'This is a larger description of this mailing list.',
             'display_name': 'Most Desirable Mailing List',
-            'subject_prefix': '[Most Desirable]               ',
+            'subject_prefix': '  [Most Desirable]               ',
         }, mlist=None)
         self.assertFalse(form.is_valid())
         self.assertTrue('advertised' in form.errors)
         self.assertEqual(['Select a valid choice. abcd is not one of the available choices.'],  # noqa
                          form.errors['advertised'])
+        # We shouldn't be removing trailing whitespaces, but we
+        # should remove the leading ones.
         self.assertEqual(form.cleaned_data['subject_prefix'],
-                         '[Most Desirable]')
+                         '[Most Desirable]               ')
 
 
 class TestListMassSubscription(TestCase):

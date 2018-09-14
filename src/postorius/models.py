@@ -34,7 +34,7 @@ from django.utils.six.moves.urllib.error import HTTPError
 from django.utils.translation import ugettext_lazy as _
 from mailmanclient import MailmanConnectionError
 
-from postorius.utils import get_mailman_client
+from postorius.utils import get_mailman_client, LANGUAGES
 from postorius.template_list import TEMPLATES_LIST
 
 logger = logging.getLogger(__name__)
@@ -248,7 +248,7 @@ class EmailTemplate(models.Model):
         )
     )
     language = models.CharField(
-        max_length=5, choices=settings.LANGUAGES,
+        max_length=5, choices=LANGUAGES,
         help_text=_('Language for the template, this should be the list\'s preferred language.'),     # noqa: E501
         blank=True)
     craeted_at = models.DateTimeField(auto_now_add=True)

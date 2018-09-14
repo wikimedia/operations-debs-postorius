@@ -19,9 +19,16 @@
 
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.http import Http404
 from django.urls import reverse_lazy
 from django.views.generic import RedirectView
-from django.views.defaults import page_not_found, server_error
+from django.views.defaults import server_error
+
+
+def not_found(request):
+    """A test view to return 404 error to test 400.html"""
+    raise Http404('Page not Found.')
+
 
 urlpatterns = [
     url(r'^$', RedirectView.as_view(
@@ -33,7 +40,7 @@ urlpatterns = [
     # Add some testing routes to test 400/500 error pages without having to
     # introduce errors.
     url(r'500/$', server_error),
-    url(r'400/$', page_not_found),
+    url(r'400/$', not_found),
     # Django admin
     url(r'^admin/', admin.site.urls),
 ]

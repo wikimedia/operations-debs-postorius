@@ -55,14 +55,91 @@ interactions:
       location: ['http://localhost:9001/3.0/lists/bar.example.com']
     status: {code: 201, message: Created}
 - request:
+    body: fqdn_listname=baz%40example.com
+    headers:
+      accept-encoding: ['gzip, deflate']
+      content-type: [application/x-www-form-urlencoded]
+    method: POST
+    uri: http://localhost:9001/3.0/lists
+  response:
+    body: {string: ''}
+    headers:
+      content-length: ['0']
+      content-type: [application/json; charset=UTF-8]
+      location: ['http://localhost:9001/3.0/lists/baz.example.com']
+    status: {code: 201, message: Created}
+- request:
     body: null
     headers:
       accept-encoding: ['gzip, deflate']
     method: GET
-    uri: http://localhost:9001/3.0/lists?advertised=true&count=0&page=1
+    uri: http://localhost:9001/3.0/lists/baz.example.com
   response:
-    body: {string: '{"http_etag": "\"f14dfdb06627a6336a504885e036239a5b208434\"",
-        "start": 0, "total_size": 2}'}
+    body: {string: '{"display_name": "Baz", "fqdn_listname": "baz@example.com", "http_etag":
+        "\"4eec713d151af9d161047a5e3b814c05b6c958f0\"", "list_id": "baz.example.com",
+        "list_name": "baz", "mail_host": "example.com", "member_count": 0, "self_link":
+        "http://localhost:9001/3.0/lists/baz.example.com", "volume": 1}'}
+    headers:
+      content-length: ['294']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: GET
+    uri: http://localhost:9001/3.0/lists/baz@example.com/config
+  response:
+    body: {string: '{"acceptable_aliases": [], "admin_immed_notify": true, "admin_notify_mchanges":
+        false, "administrivia": true, "advertised": true, "allow_list_posts": true,
+        "anonymous_list": false, "archive_policy": "public", "autorespond_owner":
+        "none", "autorespond_postings": "none", "autorespond_requests": "none", "autoresponse_grace_period":
+        "90d", "autoresponse_owner_text": "", "autoresponse_postings_text": "", "autoresponse_request_text":
+        "", "bounces_address": "baz-bounces@example.com", "collapse_alternatives":
+        true, "convert_html_to_plaintext": false, "created_at": "2005-08-01T07:49:23",
+        "default_member_action": "defer", "default_nonmember_action": "hold", "description":
+        "", "digest_footer_uri": "", "digest_header_uri": "", "digest_last_sent_at":
+        null, "digest_send_periodic": true, "digest_size_threshold": 30.0, "digest_volume_frequency":
+        "monthly", "digests_enabled": true, "display_name": "Baz", "dmarc_mitigate_action":
+        "no_mitigation", "dmarc_mitigate_unconditionally": false, "dmarc_moderation_notice":
+        "", "dmarc_wrapped_message_text": "", "filter_content": false, "first_strip_reply_to":
+        false, "footer_uri": "", "fqdn_listname": "baz@example.com", "goodbye_message_uri":
+        "", "header_uri": "", "http_etag": "\"ce9815dc9b443db8f993fa41f29a23c50f57d4ad\"",
+        "include_rfc2369_headers": true, "info": "", "join_address": "baz-join@example.com",
+        "last_post_at": null, "leave_address": "baz-leave@example.com", "list_name":
+        "baz", "mail_host": "example.com", "max_message_size": 40, "moderator_password":
+        null, "next_digest_number": 1, "no_reply_address": "noreply@example.com",
+        "owner_address": "baz-owner@example.com", "post_id": 1, "posting_address":
+        "baz@example.com", "posting_pipeline": "default-posting-pipeline", "reply_goes_to_list":
+        "no_munging", "reply_to_address": "", "request_address": "baz-request@example.com",
+        "require_explicit_destination": true, "respond_to_post_requests": true, "send_welcome_message":
+        true, "subject_prefix": "[Baz] ", "subscription_policy": "confirm", "volume":
+        1, "welcome_message_uri": ""}'}
+    headers:
+      content-length: ['2033']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: advertised=False
+    headers:
+      accept-encoding: ['gzip, deflate']
+      content-type: [application/x-www-form-urlencoded]
+    method: PATCH
+    uri: http://localhost:9001/3.0/lists/baz@example.com/config
+  response:
+    body: {string: ''}
+    headers:
+      Content-Length: ['0']
+    status: {code: 204, message: No Content}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: GET
+    uri: http://localhost:9001/3.0/lists?count=0&page=1
+  response:
+    body: {string: '{"http_etag": "\"9b7e7bcb17b5ee5b2903bcc7f30d5684988fc7c7\"",
+        "start": 0, "total_size": 3}'}
     headers:
       content-length: ['90']
       content-type: [application/json; charset=UTF-8]
@@ -72,19 +149,23 @@ interactions:
     headers:
       accept-encoding: ['gzip, deflate']
     method: GET
-    uri: http://localhost:9001/3.0/lists?advertised=true&count=10&page=1
+    uri: http://localhost:9001/3.0/lists?count=10&page=1
   response:
     body: {string: '{"entries": [{"display_name": "Bar", "fqdn_listname": "bar@example.com",
         "http_etag": "\"ca42a69a3bab5619e147cc6cbbfca16115976764\"", "list_id": "bar.example.com",
         "list_name": "bar", "mail_host": "example.com", "member_count": 0, "self_link":
         "http://localhost:9001/3.0/lists/bar.example.com", "volume": 1}, {"display_name":
-        "Foo", "fqdn_listname": "foo@example.com", "http_etag": "\"698a819bbb6b902096a8c5543cc7fac2328960d5\"",
-        "list_id": "foo.example.com", "list_name": "foo", "mail_host": "example.com",
-        "member_count": 0, "self_link": "http://localhost:9001/3.0/lists/foo.example.com",
-        "volume": 1}], "http_etag": "\"70914f3f48a7570173531843e3ca4768008a9428\"",
-        "start": 0, "total_size": 2}'}
+        "Baz", "fqdn_listname": "baz@example.com", "http_etag": "\"4eec713d151af9d161047a5e3b814c05b6c958f0\"",
+        "list_id": "baz.example.com", "list_name": "baz", "mail_host": "example.com",
+        "member_count": 0, "self_link": "http://localhost:9001/3.0/lists/baz.example.com",
+        "volume": 1}, {"display_name": "Foo", "fqdn_listname": "foo@example.com",
+        "http_etag": "\"698a819bbb6b902096a8c5543cc7fac2328960d5\"", "list_id": "foo.example.com",
+        "list_name": "foo", "mail_host": "example.com", "member_count": 0, "self_link":
+        "http://localhost:9001/3.0/lists/foo.example.com", "volume": 1}], "http_etag":
+        "\"fb7d703f95b91b3fafaab12b60bbc4ecaf4c37b7\"", "start": 0, "total_size":
+        3}'}
     headers:
-      content-length: ['695']
+      content-length: ['991']
       content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
@@ -150,6 +231,42 @@ interactions:
         1, "welcome_message_uri": ""}'}
     headers:
       content-length: ['2033']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: GET
+    uri: http://localhost:9001/3.0/lists/baz@example.com/config
+  response:
+    body: {string: '{"acceptable_aliases": [], "admin_immed_notify": true, "admin_notify_mchanges":
+        false, "administrivia": true, "advertised": false, "allow_list_posts": true,
+        "anonymous_list": false, "archive_policy": "public", "autorespond_owner":
+        "none", "autorespond_postings": "none", "autorespond_requests": "none", "autoresponse_grace_period":
+        "90d", "autoresponse_owner_text": "", "autoresponse_postings_text": "", "autoresponse_request_text":
+        "", "bounces_address": "baz-bounces@example.com", "collapse_alternatives":
+        true, "convert_html_to_plaintext": false, "created_at": "2005-08-01T07:49:23",
+        "default_member_action": "defer", "default_nonmember_action": "hold", "description":
+        "", "digest_footer_uri": "", "digest_header_uri": "", "digest_last_sent_at":
+        null, "digest_send_periodic": true, "digest_size_threshold": 30.0, "digest_volume_frequency":
+        "monthly", "digests_enabled": true, "display_name": "Baz", "dmarc_mitigate_action":
+        "no_mitigation", "dmarc_mitigate_unconditionally": false, "dmarc_moderation_notice":
+        "", "dmarc_wrapped_message_text": "", "filter_content": false, "first_strip_reply_to":
+        false, "footer_uri": "", "fqdn_listname": "baz@example.com", "goodbye_message_uri":
+        "", "header_uri": "", "http_etag": "\"6f27a99871b3dba330637f5e3a925983e23e4a7f\"",
+        "include_rfc2369_headers": true, "info": "", "join_address": "baz-join@example.com",
+        "last_post_at": null, "leave_address": "baz-leave@example.com", "list_name":
+        "baz", "mail_host": "example.com", "max_message_size": 40, "moderator_password":
+        null, "next_digest_number": 1, "no_reply_address": "noreply@example.com",
+        "owner_address": "baz-owner@example.com", "post_id": 1, "posting_address":
+        "baz@example.com", "posting_pipeline": "default-posting-pipeline", "reply_goes_to_list":
+        "no_munging", "reply_to_address": "", "request_address": "baz-request@example.com",
+        "require_explicit_destination": true, "respond_to_post_requests": true, "send_welcome_message":
+        true, "subject_prefix": "[Baz] ", "subscription_policy": "confirm", "volume":
+        1, "welcome_message_uri": ""}'}
+    headers:
+      content-length: ['2034']
       content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:

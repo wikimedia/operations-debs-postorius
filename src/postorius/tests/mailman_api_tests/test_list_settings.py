@@ -161,6 +161,24 @@ class ListSettingsTest(ViewTestCase):
         self.assertEqual(m_list.settings['subject_prefix'], '')
         self.assertEqual(m_list.settings['description'], '')
 
+    def test_respond_to_post_requests(self):
+        self.assertTrue(self.foo_list.settings['respond_to_post_requests'])
+        self.client.login(username='testsu', password='testpass')
+        url = reverse('list_settings',
+                      args=('foo.example.com', 'automatic_responses'))
+        response = self.client.post(
+            url,
+            {'respond_to_post_requests': False,
+             'autorespond_owner': 'none',
+             'autorespond_postings': 'none',
+             'autorespond_requests': 'none',
+             'send_welcome_message': True,
+             'autoresponse_grace_period': '20d'})
+        self.assertRedirects(response, url)
+        self.assertHasSuccessMessage(response)
+        mlist = List.objects.get(fqdn_listname='foo.example.com')
+        self.assertFalse(mlist.settings['respond_to_post_requests'])
+
     def test_list_subscription_requests(self):
         self.client.login(username='testowner', password='testpass')
         url = reverse('list_subscription_requests', args=('foo.example.com',))

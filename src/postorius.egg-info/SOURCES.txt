@@ -53,6 +53,7 @@ src/postorius/migrations/0003_drop_addressconfirmationprofile.py
 src/postorius/migrations/0004_create_email_template.py
 src/postorius/migrations/0005_auto_20180707_1107.py
 src/postorius/migrations/0006_auto_20180711_1359.py
+src/postorius/migrations/0007_auto_20180712_0536.py
 src/postorius/migrations/__init__.py
 src/postorius/static/postorius/css/style.css
 src/postorius/static/postorius/img/favicon.ico
@@ -89,7 +90,6 @@ src/postorius/templates/postorius/domain/template_add.html
 src/postorius/templates/postorius/domain/template_delete.html
 src/postorius/templates/postorius/domain/template_index.html
 src/postorius/templates/postorius/errors/generic.html
-src/postorius/templates/postorius/lists/archival_options.html
 src/postorius/templates/postorius/lists/bans.html
 src/postorius/templates/postorius/lists/confirm_delete.html
 src/postorius/templates/postorius/lists/confirm_remove_role.html
@@ -126,6 +126,7 @@ src/postorius/tests/test_error_pages.py
 src/postorius/tests/test_list_forms.py
 src/postorius/tests/test_member_forms.py
 src/postorius/tests/test_membership_helpers.py
+src/postorius/tests/test_migration.py
 src/postorius/tests/test_template_api_view.py
 src/postorius/tests/test_urls.py
 src/postorius/tests/test_user_forms.py
@@ -195,9 +196,16 @@ src/postorius/tests/fixtures/vcr_cassettes/ListHeaderMatchesTest.test_page_not_a
 src/postorius/tests/fixtures/vcr_cassettes/ListHeaderMatchesTest.test_page_not_accessible_if_not_logged_in.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListHeaderMatchesTest.test_same_order.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListHeaderMatchesTest.test_show_existing.yaml
+src/postorius/tests/fixtures/vcr_cassettes/ListIndexPageTest.test_list_index_all_lists.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListIndexPageTest.test_list_index_contains_the_lists.yaml
+src/postorius/tests/fixtures/vcr_cassettes/ListIndexPageTest.test_list_index_moderator_only.yaml
+src/postorius/tests/fixtures/vcr_cassettes/ListIndexPageTest.test_list_index_multiple_addresses.yaml
+src/postorius/tests/fixtures/vcr_cassettes/ListIndexPageTest.test_list_index_multiple_roles.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListIndexPageTest.test_list_index_only_contains_advertised_lists.yaml
+src/postorius/tests/fixtures/vcr_cassettes/ListIndexPageTest.test_list_index_owner_only.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListIndexPageTest.test_list_index_post_redirects.yaml
+src/postorius/tests/fixtures/vcr_cassettes/ListIndexPageTest.test_list_index_subscriber_only.yaml
+src/postorius/tests/fixtures/vcr_cassettes/ListIndexPageTest.test_list_index_unadvertized.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListMembersAccessTest.test_not_accessible_for_moderator.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListMembersAccessTest.test_page_accessible_for_owner.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListMembersAccessTest.test_page_accessible_for_superuser.yaml
@@ -224,6 +232,7 @@ src/postorius/tests/fixtures/vcr_cassettes/ListSettingsTest.test_page_accessible
 src/postorius/tests/fixtures/vcr_cassettes/ListSettingsTest.test_page_not_accessible_for_unprivileged_users.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListSettingsTest.test_page_not_accessible_if_not_logged_in.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListSettingsTest.test_remove_all_subscribers.yaml
+src/postorius/tests/fixtures/vcr_cassettes/ListSettingsTest.test_respond_to_post_requests.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListSummaryPageTest.test_list_metrics_displayed_to_owner.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListSummaryPageTest.test_list_metrics_displayed_to_superuser.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListSummaryPageTest.test_list_metrics_not_displayed_to_moderator.yaml
