@@ -2,11 +2,11 @@ postorius (1.2.1-1) UNRELEASED; urgency=medium
 
   [ Pierre-Elliott Bécue ]
   * New upstream release 1.2.1
-    - Comes with full python3 suppors
+    - Comes with full python3 support
   * d/control:
     - Updated (Build-)?Dependencies due to python3 migration
     - Drop X-Python-Version
-    - Bump Standards-Version to 4.1.5. No change required
+    - Bump Standards-Version to 4.1.5. No changes required
 
   [ Jonas Meurer ]
 
