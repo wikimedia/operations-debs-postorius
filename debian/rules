@@ -24,6 +24,12 @@ override_dh_auto_build:
 
 override_dh_python3:
 	dh_python3
+	# Move static files outside of the lib directory
+	mkdir -p debian/python3-django-postorius/usr/share/python3-django-postorius
+	mv debian/python3-django-postorius/usr/lib/python3/dist-packages/postorius/static \
+		debian/python3-django-postorius/usr/share/python3-django-postorius/
+	dh_link usr/share/python3-django-postorius/static \
+		usr/lib/python3/dist-packages/postorius/static
 	# Don't embed bootstrap/jquery JS scripts
 	find debian/python3-django-postorius -name 'jquery-1.11.3.min.js' -type f -exec \
 		ln -sf /usr/share/javascript/jquery/jquery.min.js {} \;
@@ -31,11 +37,6 @@ override_dh_python3:
 		ln -sf /usr/share/javascript/bootstrap/js/bootstrap.min.js {} \;
 	find debian/python3-django-postorius -name 'glyphicons-halflings-regular.ttf' -type f -exec \
 		ln -sf /usr/share/glewlwyd/webapp/fonts/glyphicons-halflings-regular.ttf {} \;
-	# Move static files outside of the lib directory
-	mv debian/python3-django-postorius/usr/lib/python3/dist-packages/postorius/static \
-		debian/python3-django-postorius/usr/share/python3-django-postorius/
-	dh_link usr/share/python3-django-postorius/static \
-		usr/lib/python3/dist-packages/postorius/static
 
 override_dh_installchangelogs:
 	dh_installchangelogs src/postorius/doc/news.rst
