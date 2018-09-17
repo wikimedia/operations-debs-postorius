@@ -24,8 +24,10 @@ override_dh_auto_build:
 
 override_dh_python3:
 	dh_python3
-	# Move static files outside of the lib directory
+	# Due to bug #908999, dh_python3 removes the empty directory
+	# 'usr/share/python3-django-postorius', so run mkdir manually.
 	mkdir -p debian/python3-django-postorius/usr/share/python3-django-postorius
+	# Move static files outside of the lib directory
 	mv debian/python3-django-postorius/usr/lib/python3/dist-packages/postorius/static \
 		debian/python3-django-postorius/usr/share/python3-django-postorius/
 	dh_link usr/share/python3-django-postorius/static \
