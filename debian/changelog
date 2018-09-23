@@ -1,3 +1,10 @@
+postorius (1.2.2-2) unstable; urgency=medium
+
+  * d/tests/control:
+    - Fix test command to actually run tests (drop "shell").
+
+ -- Jonas Meurer <jonas@freesources.org>  Sun, 23 Sep 2018 19:56:03 +0200
+
 postorius (1.2.2-1) unstable; urgency=medium
 
   [ Pierre-Elliott Bécue ]

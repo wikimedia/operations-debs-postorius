@@ -1,4 +1,4 @@
-Test-Command: for python3 in $(shell py3versions -r); do $python3 $(which django-admin) test --pythonpath=example_project --settings=test_settings postorius; done
+Test-Command: for python3 in $(py3versions -r); do $python3 $(which django-admin) test --pythonpath=example_project --settings=test_settings postorius; done
 Depends: @,
          python3-all,
          python3-bs4,
