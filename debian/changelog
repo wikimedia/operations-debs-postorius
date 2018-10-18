@@ -1,10 +1,11 @@
-postorius (1.2.2-3) UNRELEASED; urgency=medium
+postorius (1.2.2-3) unstable; urgency=medium
 
   * d/control:
     - Use ${sphinxdoc:Depends} instead of an explicit dependency on
       python3-sphinx-rtd-theme (Closes: #891374)
+    - Add my Debian address to the uploaders field instead of my Crans one.
 
- -- Pierre-Elliott Bécue <peb@debian.org>  Thu, 18 Oct 2018 11:03:38 +0200
+ -- Pierre-Elliott Bécue <peb@debian.org>  Thu, 18 Oct 2018 11:12:24 +0200
 
 postorius (1.2.2-2) unstable; urgency=medium
 
