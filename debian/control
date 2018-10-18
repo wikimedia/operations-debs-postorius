@@ -30,9 +30,9 @@ Depends: libjs-jquery,
          python3-django-allauth,
          python3-django-mailman3 (>= 1.2.0),
          python3-mailmanclient (>= 3.2.0),
-         python3-sphinx-rtd-theme,
          ${misc:Depends},
-         ${python3:Depends}
+         ${python3:Depends},
+         ${sphinxdoc:Depends}
 Recommends: mailman3-web
 Conflicts: python-django-postorius
 Replaces: python-django-postorius
