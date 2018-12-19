@@ -22,6 +22,7 @@ import urllib
 from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
+from django.conf import settings
 from django.urls import reverse
 from django_mailman3.models import MailDomain
 
@@ -457,6 +458,9 @@ class TestTemplateAPIView(ViewTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, b'This is some new data.')
+        self.assertRegex(response["Content-Type"],
+                         'charset=' + settings.DEFAULT_CHARSET)
+        self.assertNotRegex(response["Content-Type"], 'charset=$')
 
     def test_get_one_list_template_via_API(self):
         # Test that we can get a list level template from API.
@@ -478,3 +482,6 @@ class TestTemplateAPIView(ViewTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.content, b'This is some other new data.')
+        self.assertRegex(response["Content-Type"],
+                         'charset=' + settings.DEFAULT_CHARSET)
+        self.assertNotRegex(response["Content-Type"], 'charset=$')

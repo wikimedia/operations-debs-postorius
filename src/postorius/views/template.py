@@ -19,6 +19,7 @@
 
 from django.core.exceptions import MultipleObjectsReturned
 from django.db import IntegrityError
+from django.conf import settings
 from django.http import Http404, HttpResponseBadRequest, HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
@@ -190,5 +191,8 @@ def get_template_data(request, context, identifier, name):
     except MultipleObjectsReturned:
         raise HttpResponseBadRequest('Multiple Templates exist')
 
+    content_type = 'text/plain'
+    if settings.DEFAULT_CHARSET:
+        content_type += '; charset=' + settings.DEFAULT_CHARSET
     return HttpResponse(template.data,
-                        content_type='text/plain')
+                        content_type=content_type)
