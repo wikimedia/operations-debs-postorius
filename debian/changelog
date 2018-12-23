@@ -1,9 +1,11 @@
-postorius (1.2.2-4) UNRELEASED; urgency=medium
+postorius (1.2.2-4) unstable; urgency=medium
 
   * d/control:
     - Bump Standards-Version to 4.3.0, no changes required
+  * d/p/0002-Template-API-set-encoding.patch:
+    - Backport upstream patch to fix template encoding 
 
- -- Jonas Meurer <jonas@freesources.org>  Sun, 23 Dec 2018 23:25:46 +0100
+ -- Jonas Meurer <jonas@freesources.org>  Sun, 23 Dec 2018 23:27:41 +0100
 
 postorius (1.2.2-3) unstable; urgency=medium
 
