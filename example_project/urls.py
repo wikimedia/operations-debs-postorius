@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -19,17 +19,28 @@
 
 from django.conf.urls import include, url
 from django.contrib import admin
-from django.core.urlresolvers import reverse_lazy
+from django.http import Http404
+from django.urls import reverse_lazy
 from django.views.generic import RedirectView
+from django.views.defaults import server_error
+
+
+def not_found(request):
+    """A test view to return 404 error to test 400.html"""
+    raise Http404('Page not Found.')
+
 
 urlpatterns = [
     url(r'^$', RedirectView.as_view(
         url=reverse_lazy('list_index'),
         permanent=True)),
     url(r'^postorius/', include('postorius.urls')),
-    #url(r'^hyperkitty/', include('hyperkitty.urls')),
     url(r'', include('django_mailman3.urls')),
     url(r'^accounts/', include('allauth.urls')),
+    # Add some testing routes to test 400/500 error pages without having to
+    # introduce errors.
+    url(r'500/$', server_error),
+    url(r'400/$', not_found),
     # Django admin
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
 ]

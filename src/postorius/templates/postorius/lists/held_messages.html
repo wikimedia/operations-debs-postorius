@@ -54,7 +54,7 @@
                     </td>
                     <td>{{ msg.sender }}</td>
                     <td>{{ msg.reason }}</td>
-                    <td>{{ msg.hold_date }}</td>
+                    <td>{{ msg.hold_date|date:"DATETIME_FORMAT" }}</td>
                   </tr>
                 {% endfor %}
               </tbody>

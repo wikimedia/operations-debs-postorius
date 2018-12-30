@@ -1,0 +1,60 @@
+Message-ID: <505E5185.5040208@libero.it>
+Date: Sun, 23 Sep 2012 02:02:13 +0200
+From: gil <puntogil@libero.it>
+User-Agent: Mozilla/5.0 (X11; Linux i686;
+	rv:15.0) Gecko/20120827 Thunderbird/15.0
+MIME-Version: 1.0
+To: foo@example.com
+Subject: gradle 1.0
+Content-Type: multipart/mixed; boundary="------------030501050807030508020004"
+X-BeenThere: devel@lists.fedoraproject.org
+X-Mailman-Version: 2.1.12
+Precedence: list
+Reply-To: Development discussions related to Fedora
+	<devel@lists.fedoraproject.org>
+List-Id: Development discussions related to Fedora
+	<devel.lists.fedoraproject.org>
+List-Unsubscribe: <https://admin.fedoraproject.org/mailman/options/devel>,
+	<mailto:devel-request@lists.fedoraproject.org?subject=unsubscribe>
+List-Archive: <http://lists.fedoraproject.org/pipermail/devel/>
+List-Post: <mailto:devel@lists.fedoraproject.org>
+List-Help: <mailto:devel-request@lists.fedoraproject.org?subject=help>
+List-Subscribe: <https://admin.fedoraproject.org/mailman/listinfo/devel>,
+	<mailto:devel-request@lists.fedoraproject.org?subject=subscribe>
+Sender: devel-bounces@lists.fedoraproject.org
+Errors-To: devel-bounces@lists.fedoraproject.org
+
+This is a multi-part message in MIME format.
+--------------030501050807030508020004
+Content-Type: text/plain; charset=ISO-8859-15; format=flowed
+Content-Transfer-Encoding: 7bit
+
+This is a test message.
+
+
+--------------030501050807030508020004
+Content-Type: text/x-vcard; charset=utf-8;
+ name="puntogil.vcf"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="puntogil.vcf"
+
+begin:vcard
+fn:gil
+n:;gil
+version:2.1
+end:vcard
+
+
+--------------030501050807030508020004
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+LS0gCmRldmVsIG1haWxpbmcgbGlzdApkZXZlbEBsaXN0cy5mZWRvcmFwcm9qZWN0Lm9yZwpodHRw
+czovL2FkbWluLmZlZG9yYXByb2plY3Qub3JnL21haWxtYW4vbGlzdGluZm8vZGV2ZWw=
+
+--------------030501050807030508020004--
+
+

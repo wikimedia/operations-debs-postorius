@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -41,16 +41,19 @@ setup(
     keywords='email mailman django',
     url=" https://gitlab.com/mailman/postorius",
     classifiers=[
-        "Programming Language :: Python",
+        "Framework :: Django",
+        "Development Status :: 4 - Beta",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+        "Topic :: Communications :: Email :: Mailing List Servers",
+        "Programming Language :: Python :: 3",
     ],
     packages=find_packages('src'),
     package_dir={'': 'src'},
     include_package_data=True,
     install_requires=[
-        'Django>=1.8',
-        'Django<1.12',
-        'django-mailman3',
-        'mailmanclient~=3.1.1a1'
+        'Django>=1.11,<2.2',
+        'django-mailman3>=1.2.0a1',
+        'mailmanclient>=3.2.0b2'
     ],
     tests_require=[
         "mock",

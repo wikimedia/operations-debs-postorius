@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016 by the Free Software Foundation, Inc.
+# Copyright (C) 2016-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -20,7 +20,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from allauth.account.models import EmailAddress
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django_mailman3.models import MailDomain
@@ -79,5 +79,6 @@ class ListDeleteTest(ViewTestCase):
         # The domain should be deleted
         self.client.login(username='testowner', password='testpass')
         response = self.client.post(self.url)
-        self.assertRedirects(response, reverse('list_index'))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('list_index'))
         self.assertEqual(len(self.mm_client.lists), 0)

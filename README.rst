@@ -16,7 +16,7 @@ Postorius - web ui for GNU Mailman
 .. image:: http://img.shields.io/pypi/dm/postorius.svg
     :target: https://pypi.python.org/pypi/postorius
 
-Copyright (C) 1998-2017 by the Free Software Foundation, Inc.
+Copyright (C) 1998-2018 by the Free Software Foundation, Inc.
 
 The Postorius Django app provides a web user interface to
 access GNU Mailman.
@@ -37,10 +37,12 @@ along with mailman.client. If not, see <http://www.gnu.org/licenses/>.
 Requirements
 ============
 
-Postorius requires Python 2.7 or newer and mailmanclient,
-the official Python bindings for GNU Mailman.
-The minimum Django version is 1.8.
-Postorius needs a running version of GNU Mailman version 3.
+Postorius requires Python 3.5 or newer and mailmanclient, the official Python
+bindings for GNU Mailman.
+
+The minimum Django version is 1.11.
+
+Postorius needs a running version of GNU Mailman version 3.2
 
 
 NEWS/Changelog

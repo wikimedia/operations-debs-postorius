@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2016-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -15,11 +15,10 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import, print_function, unicode_literals
 
 from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.test.utils import override_settings
 # Temporarily disabled with test_rpeferences_none
 # from mock import patch
@@ -38,6 +37,7 @@ class MailmanUserTest(ViewTestCase):
         super(MailmanUserTest, self).setUp()
         self.domain = self.mm_client.create_domain('example.com')
         self.foo_list = self.domain.create_list('foo')
+        self.foo_list.send_welcome_message = False
         self.user = User.objects.create_user(
             'user', 'user@example.com', 'testpass')
         EmailAddress.objects.create(
@@ -53,7 +53,7 @@ class MailmanUserTest(ViewTestCase):
     def test_subscriptions_logged_in(self):
         self.client.login(username='user', password='testpass')
         response = self.client.get(reverse('ps_user_profile'))
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_address_based_preferences(self):
         self.client.login(username='user', password='testpass')
@@ -131,7 +131,7 @@ class MailmanUserTest(ViewTestCase):
     def test_presence_of_form_in_user_global_settings(self):
         self.client.login(username='user', password='testpass')
         response = self.client.get(reverse('user_mailmansettings'))
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertIsInstance(response.context['form'], UserPreferences)
 
     def test_presence_of_form_in_user_subscription_preferences(self):
@@ -139,9 +139,9 @@ class MailmanUserTest(ViewTestCase):
         self.foo_list.subscribe(self.user.email, pre_verified=True,
                                 pre_confirmed=True, pre_approved=True)
         response = self.client.get(reverse('user_subscription_preferences'))
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertIsNotNone(response.context['formset'])
-        self.assertEquals(len(response.context['formset']), 1)
+        self.assertEqual(len(response.context['formset']), 1)
 
     def test_presence_of_form_in_user_list_options(self):
         self.client.login(username='user', password='testpass')
@@ -149,7 +149,7 @@ class MailmanUserTest(ViewTestCase):
                                 pre_confirmed=True, pre_approved=True)
         response = self.client.get(reverse('user_list_options',
                                            args=[self.foo_list.list_id]))
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertIsInstance(response.context['form'],
                               UserPreferences)
         self.assertIsInstance(response.context['change_subscription_form'],
@@ -168,5 +168,5 @@ class MailmanUserTest(ViewTestCase):
         # Check response
         response = self.client.get(reverse('user_list_options',
                                            args=[self.foo_list.list_id]))
-        self.assertEquals(response.status_code, 200)
-        self.assertTrue('anotheremail@example.com' in response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'anotheremail@example.com')

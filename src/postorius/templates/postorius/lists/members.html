@@ -10,7 +10,7 @@
 
 {% block content %}
 
-    {% list_nav 'list_members' page_title %}
+    {% list_nav 'list_members' page_title page_subtitle %}
 
     {% if role != 'subscriber' %}
         <form action="{% url 'list_members' list.list_id role %}" method="post" class="form-inline margin-bottom">
@@ -21,6 +21,13 @@
                 {% endif %}
                 {{ member_form.email.label_tag }}
                 {{ member_form.email|add_form_control }}
+            </div>
+            <div class="form-group {% if member_form.display_name.errors %}has-error{% endif %}">
+                {% if member_form.display_name.errors %}
+                    <div class="alert alert-danger">{{ member_form.display_name.errors }}</div>
+                {% endif %}
+                {{ member_form.display_name.label_tag }}
+                {{ member_form.display_name|add_form_control }}
             </div>
             <button type="submit" class="btn btn-default">{{ form_action }}</button>
         </form>
@@ -33,9 +40,9 @@
         <div class="pull-left margin-bottom">
             <form action="{% url 'list_members' list.list_id role %}" method="get" class="form-inline">
                 <div class="input-group">
-                    <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="{% trans 'Search members...' %}" />
+                    <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="{% trans 'Search members...' %}" aria-label="Search box" />
                     <span class="input-group-btn">
-                        <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+                        <button class="btn btn-default" type="submit" aria-label="Search"><span class="glyphicon glyphicon-search"></span></button>
                     </span>
                 </div>
             </form>
@@ -61,7 +68,7 @@
                         <tr>
                             <th colspan="2">
                               {% if role == 'subscriber' %}
-                                    <input type="checkbox" id="all-members-checkbox"/>
+                                    <input type="checkbox" id="all-members-checkbox" aria-label="Select all members" />
                               {% endif %}
                               {% trans 'Address' %}
                             </th>
@@ -74,15 +81,25 @@
                                   <td>
                                     <label class="checkbox-inline">
                                     <input type="checkbox" class="member-checkbox" name="choices" id="id_choices_{{ forloop.counter0 }}" value="{{ member.email }}" />
-                                    {{ member.email }}
+                                        {% if member.display_name %}
+                                            "{{ member.display_name }}" &lt;{{ member.email }}&gt;
+                                        {% else %}
+                                            {{ member.email }}
+                                        {% endif %}
                                     </label>
                                   </td>
                                   <td>
                                     <a href="{% url 'list_member_options' list.list_id member.email %}">{% trans 'Member Options' %}</a>
                                   </td>
                                 {% else %}
-                                    <td>{{ member }}</td>
-                                    <td><a href="{% url 'remove_role' list.list_id role member %}" class="btn btn-xs btn-danger">{% trans 'Delete' %}</a></td>
+                                    <td>
+                                        {% if member.display_name %}
+                                            "{{ member.display_name }}" &lt;{{ member.email }}&gt;
+                                        {% else %}
+                                            {{ member.email }}
+                                        {% endif %}
+                                    </td>
+                                    <td><a href="{% url 'remove_role' list.list_id role member.email %}" class="btn btn-xs btn-danger">{% trans 'Delete' %}</a></td>
                                 {% endif %}
                             </tr>
                         {% endfor %}

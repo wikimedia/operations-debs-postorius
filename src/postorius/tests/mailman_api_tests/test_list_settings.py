@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2016-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -17,11 +17,9 @@
 
 """Tests for list settings"""
 
-from __future__ import absolute_import, print_function, unicode_literals
-
 from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from postorius.views.list import SETTINGS_FORMS
 from postorius.models import List
@@ -133,11 +131,11 @@ class ListSettingsTest(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         form = response.context["form"]
         self.assertEqual(
-            form.initial['first_strip_reply_to'], 'False')
+            form.initial['first_strip_reply_to'], False)
         post_data = dict(
-            (key, unicode(self.foo_list.settings[key]))
+            (key, self.foo_list.settings[key])
             for key in form.fields)
-        post_data['first_strip_reply_to'] = 'True'
+        post_data['first_strip_reply_to'] = True
         response = self.client.post(url, post_data)
         self.assertRedirects(response, url)
         self.assertHasSuccessMessage(response)
@@ -162,3 +160,87 @@ class ListSettingsTest(ViewTestCase):
         m_list = List.objects.get(fqdn_listname='foo.example.com')
         self.assertEqual(m_list.settings['subject_prefix'], '')
         self.assertEqual(m_list.settings['description'], '')
+
+    def test_respond_to_post_requests(self):
+        self.assertTrue(self.foo_list.settings['respond_to_post_requests'])
+        self.client.login(username='testsu', password='testpass')
+        url = reverse('list_settings',
+                      args=('foo.example.com', 'automatic_responses'))
+        response = self.client.post(
+            url,
+            {'respond_to_post_requests': False,
+             'autorespond_owner': 'none',
+             'autorespond_postings': 'none',
+             'autorespond_requests': 'none',
+             'send_welcome_message': True,
+             'autoresponse_grace_period': '20d'})
+        self.assertRedirects(response, url)
+        self.assertHasSuccessMessage(response)
+        mlist = List.objects.get(fqdn_listname='foo.example.com')
+        self.assertFalse(mlist.settings['respond_to_post_requests'])
+
+    def test_list_subscription_requests(self):
+        self.client.login(username='testowner', password='testpass')
+        url = reverse('list_subscription_requests', args=('foo.example.com',))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        # Since there are no pending subscription requests, this page should be
+        # empty.
+        self.assertContains(response, '<small>(0)</small>')
+        self.assertTrue(
+            b'There are currently no subscription requests for this list.'
+            in response.content)
+        self.assertNotContains(response, '<div class="paginator">')
+        # Now we set the subscription policy to moderate so that all
+        # subscriptions are held for moderator approval.
+        self.foo_list.settings['subscription_policy'] = 'moderate'
+        self.foo_list.settings.save()
+        self.foo_list.subscribe('test@example.com')
+        self.foo_list.subscribe('owner@example.com')
+        self.foo_list.subscribe('moderator@example.com')
+        # Now there should be three subscription requests pending.
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        for email in ('test@example.com', 'owner@example.com',
+                      'moderator@example.com'):
+            self.assertTrue(email in str(response.content))
+        self.assertContains(response, '<small>(3)</small>')
+        # Verify that the list is paginated
+        self.assertContains(response, '<div class="paginator">')
+
+    def test_handle_subscription_request(self):
+        self.client.login(username='testowner', password='testpass')
+        self.foo_list.settings['subscription_policy'] = 'moderate'
+        self.foo_list.settings.save()
+        self.foo_list.subscribe('test@example.com', pre_verified=True)
+        # There should be one pending subscription request.
+        self.assertEqual(len(self.foo_list.requests), 1)
+        token = self.foo_list.requests[0]['token']
+        url = reverse('handle_subscription_request',
+                      args=('foo.example.com', token, 'accept'))
+        response = self.client.get(url)
+        # On success, user is redirected to list_subscription_requests page.
+        self.assertTrue(response.status_code, 302)
+        self.assertTrue(response.url,
+                        '/postorius/lists/foo.example.com/subscription_requests')  # noqa
+        self.assertEqual(len(self.foo_list.requests), 0)
+
+    def test_remove_all_subscribers(self):
+        self.client.login(username='testowner', password='testpass')
+        # Let's add 10 subscribers to the list.
+        for each in range(10):
+            self.foo_list.subscribe('test-{}@example.com'.format(each),
+                                    pre_verified=True,
+                                    pre_approved=True,
+                                    pre_confirmed=True)
+        self.assertEqual(len(self.foo_list.members), 10)
+        # First lets see the correct form is rendered when we GET
+        url = reverse('unsubscribe_all', args=('foo.example.com',))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(b'Confirm Removal of All Members' in response.content)
+        # If we POST to the above url, we will unsubscribe all the users.
+        self.assertEqual(len(self.foo_list.members), 10)
+        # Now, let's remove all the subscribers
+        self.client.post(url)
+        self.assertEqual(len(self.foo_list.members), 0)

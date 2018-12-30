@@ -44,7 +44,7 @@
                                 {% if field|fieldtype_is:'RadioSelect' %}
                                     <td class="text-center">
                                         {% for choice in field %}
-                                            <label class="radio-inline">
+                                            <label class="radio-inline" for="{{ choice.id_for_label }}">
                                                 {{ choice.tag }}
                                                 {{ choice.choice_label }}
                                             </label>

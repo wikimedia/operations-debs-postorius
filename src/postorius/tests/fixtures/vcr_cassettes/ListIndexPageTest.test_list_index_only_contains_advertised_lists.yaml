@@ -20,10 +20,10 @@ interactions:
     method: GET
     uri: http://localhost:9001/3.0/domains/example.com
   response:
-    body: {string: '{"description": null, "http_etag": "\"d150abd34fabbcef42a2c654bfac81aa04ea4d6f\"",
+    body: {string: '{"alias_domain": null, "description": null, "http_etag": "\"492652d581dc93af101db450d81ae93a074bff49\"",
         "mail_host": "example.com", "self_link": "http://localhost:9001/3.0/domains/example.com"}'}
     headers:
-      content-length: ['172']
+      content-length: ['194']
       content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
@@ -104,7 +104,7 @@ interactions:
         "no_mitigation", "dmarc_mitigate_unconditionally": false, "dmarc_moderation_notice":
         "", "dmarc_wrapped_message_text": "", "filter_content": false, "first_strip_reply_to":
         false, "footer_uri": "", "fqdn_listname": "baz@example.com", "goodbye_message_uri":
-        "", "header_uri": "", "http_etag": "\"fe5309889ac337876489795ca375251cdae4d6b6\"",
+        "", "header_uri": "", "http_etag": "\"ce9815dc9b443db8f993fa41f29a23c50f57d4ad\"",
         "include_rfc2369_headers": true, "info": "", "join_address": "baz-join@example.com",
         "last_post_at": null, "leave_address": "baz-leave@example.com", "list_name":
         "baz", "mail_host": "example.com", "max_message_size": 40, "moderator_password":
@@ -112,10 +112,11 @@ interactions:
         "owner_address": "baz-owner@example.com", "post_id": 1, "posting_address":
         "baz@example.com", "posting_pipeline": "default-posting-pipeline", "reply_goes_to_list":
         "no_munging", "reply_to_address": "", "request_address": "baz-request@example.com",
-        "send_welcome_message": true, "subject_prefix": "[Baz] ", "subscription_policy":
-        "confirm", "volume": 1, "welcome_message_uri": ""}'}
+        "require_explicit_destination": true, "respond_to_post_requests": true, "send_welcome_message":
+        true, "subject_prefix": "[Baz] ", "subscription_policy": "confirm", "volume":
+        1, "welcome_message_uri": ""}'}
     headers:
-      content-length: ['1961']
+      content-length: ['2033']
       content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
@@ -168,14 +169,15 @@ interactions:
     headers:
       accept-encoding: ['gzip, deflate']
     method: GET
-    uri: http://localhost:9001/3.0/domains
+    uri: http://localhost:9001/3.1/domains
   response:
-    body: {string: '{"entries": [{"description": null, "http_etag": "\"d150abd34fabbcef42a2c654bfac81aa04ea4d6f\"",
-        "mail_host": "example.com", "self_link": "http://localhost:9001/3.0/domains/example.com"}],
-        "http_etag": "\"2ec9679269ad1f741705a62db0162f5585ae5c3c\"", "start": 0, "total_size":
+    body: {string: '{"entries": [{"alias_domain": null, "description": null, "http_etag":
+        "\"0955c4a2fe5c37a019be0fef3abbb952cdc328a4\"", "mail_host": "example.com",
+        "self_link": "http://localhost:9001/3.1/domains/example.com"}], "http_etag":
+        "\"1e663058af97d883994a9d1e950813e682b77a73\"", "start": 0, "total_size":
         1}'}
     headers:
-      content-length: ['277']
+      content-length: ['299']
       content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
@@ -183,12 +185,12 @@ interactions:
     headers:
       accept-encoding: ['gzip, deflate']
     method: GET
-    uri: http://localhost:9001/3.0/domains/example.com
+    uri: http://localhost:9001/3.1/domains/example.com
   response:
-    body: {string: '{"description": null, "http_etag": "\"d150abd34fabbcef42a2c654bfac81aa04ea4d6f\"",
-        "mail_host": "example.com", "self_link": "http://localhost:9001/3.0/domains/example.com"}'}
+    body: {string: '{"alias_domain": null, "description": null, "http_etag": "\"0955c4a2fe5c37a019be0fef3abbb952cdc328a4\"",
+        "mail_host": "example.com", "self_link": "http://localhost:9001/3.1/domains/example.com"}'}
     headers:
-      content-length: ['172']
+      content-length: ['194']
       content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
@@ -212,7 +214,7 @@ interactions:
         "no_mitigation", "dmarc_mitigate_unconditionally": false, "dmarc_moderation_notice":
         "", "dmarc_wrapped_message_text": "", "filter_content": false, "first_strip_reply_to":
         false, "footer_uri": "", "fqdn_listname": "bar@example.com", "goodbye_message_uri":
-        "", "header_uri": "", "http_etag": "\"895743948ea7c1888f9f26d2b9671d31a296d19c\"",
+        "", "header_uri": "", "http_etag": "\"61665db35121c952cd42ae9af704229d35735d57\"",
         "include_rfc2369_headers": true, "info": "", "join_address": "bar-join@example.com",
         "last_post_at": null, "leave_address": "bar-leave@example.com", "list_name":
         "bar", "mail_host": "example.com", "max_message_size": 40, "moderator_password":
@@ -220,10 +222,11 @@ interactions:
         "owner_address": "bar-owner@example.com", "post_id": 1, "posting_address":
         "bar@example.com", "posting_pipeline": "default-posting-pipeline", "reply_goes_to_list":
         "no_munging", "reply_to_address": "", "request_address": "bar-request@example.com",
-        "send_welcome_message": true, "subject_prefix": "[Bar] ", "subscription_policy":
-        "confirm", "volume": 1, "welcome_message_uri": ""}'}
+        "require_explicit_destination": true, "respond_to_post_requests": true, "send_welcome_message":
+        true, "subject_prefix": "[Bar] ", "subscription_policy": "confirm", "volume":
+        1, "welcome_message_uri": ""}'}
     headers:
-      content-length: ['1961']
+      content-length: ['2033']
       content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
@@ -247,7 +250,7 @@ interactions:
         "no_mitigation", "dmarc_mitigate_unconditionally": false, "dmarc_moderation_notice":
         "", "dmarc_wrapped_message_text": "", "filter_content": false, "first_strip_reply_to":
         false, "footer_uri": "", "fqdn_listname": "foo@example.com", "goodbye_message_uri":
-        "", "header_uri": "", "http_etag": "\"e7dcff2fb96bc944d9ee69aacc36879cb06b1b6e\"",
+        "", "header_uri": "", "http_etag": "\"35e56ed9bf4c8cfbac28d06d3be58ded3e16423d\"",
         "include_rfc2369_headers": true, "info": "", "join_address": "foo-join@example.com",
         "last_post_at": null, "leave_address": "foo-leave@example.com", "list_name":
         "foo", "mail_host": "example.com", "max_message_size": 40, "moderator_password":
@@ -255,10 +258,11 @@ interactions:
         "owner_address": "foo-owner@example.com", "post_id": 1, "posting_address":
         "foo@example.com", "posting_pipeline": "default-posting-pipeline", "reply_goes_to_list":
         "no_munging", "reply_to_address": "", "request_address": "foo-request@example.com",
-        "send_welcome_message": true, "subject_prefix": "[Foo] ", "subscription_policy":
-        "confirm", "volume": 1, "welcome_message_uri": ""}'}
+        "require_explicit_destination": true, "respond_to_post_requests": true, "send_welcome_message":
+        true, "subject_prefix": "[Foo] ", "subscription_policy": "confirm", "volume":
+        1, "welcome_message_uri": ""}'}
     headers:
-      content-length: ['1961']
+      content-length: ['2033']
       content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:
@@ -268,12 +272,13 @@ interactions:
     method: GET
     uri: http://localhost:9001/3.0/domains
   response:
-    body: {string: '{"entries": [{"description": null, "http_etag": "\"d150abd34fabbcef42a2c654bfac81aa04ea4d6f\"",
-        "mail_host": "example.com", "self_link": "http://localhost:9001/3.0/domains/example.com"}],
-        "http_etag": "\"2ec9679269ad1f741705a62db0162f5585ae5c3c\"", "start": 0, "total_size":
+    body: {string: '{"entries": [{"alias_domain": null, "description": null, "http_etag":
+        "\"492652d581dc93af101db450d81ae93a074bff49\"", "mail_host": "example.com",
+        "self_link": "http://localhost:9001/3.0/domains/example.com"}], "http_etag":
+        "\"5868fb6d2442c0d163e0edb2bfd7a92b6c812796\"", "start": 0, "total_size":
         1}'}
     headers:
-      content-length: ['277']
+      content-length: ['299']
       content-type: [application/json; charset=UTF-8]
     status: {code: 200, message: OK}
 - request:

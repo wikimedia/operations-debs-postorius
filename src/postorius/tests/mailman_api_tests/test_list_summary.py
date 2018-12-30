@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -15,11 +15,10 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import, print_function, unicode_literals
 
 from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from postorius.tests.utils import ViewTestCase
 from postorius.forms import ListAnonymousSubscribe
@@ -72,9 +71,9 @@ class ListSummaryPageTest(ViewTestCase):
         response = self.client.get(reverse('list_summary',
                                            args=('foo@example.com', )))
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('You have a subscription request pending. '
-                        'If you don\'t hear back soon, '
-                        'please contact the list owners.' in response.content)
+        self.assertContains(response, 'You have a subscription request '
+                                      'pending. If you don\'t hear back soon, '
+                                      'please contact the list owners.')
         self.assertNotContains(response, 'Unsubscribe')
         self.assertNotContains(response, 'Subscribe')
 
@@ -87,7 +86,7 @@ class ListSummaryPageTest(ViewTestCase):
         response = self.client.get(reverse('list_summary',
                                            args=('foo@example.com', )))
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('Unsubscribe' in response.content)
+        self.assertContains(response, 'Unsubscribe')
 
     def test_list_summary_owner(self):
         # Response must contain the administration menu
@@ -97,7 +96,7 @@ class ListSummaryPageTest(ViewTestCase):
         self.client.login(username='testuser', password='testpass')
         response = self.client.get(reverse('list_summary',
                                    args=('foo@example.com', )))
-        self.assertContains(response, 'Delete list</a>')
+        self.assertContains(response, 'Delete</a>')
 
     def test_list_summary_moderator(self):
         # Response must contain the administration menu
@@ -108,7 +107,7 @@ class ListSummaryPageTest(ViewTestCase):
         response = self.client.get(reverse('list_summary',
                                    args=('foo@example.com', )))
         self.assertContains(response, 'Held messages</a>')
-        self.assertNotContains(response, 'Delete list</a>')
+        self.assertNotContains(response, 'Delete</a>')
 
     def test_list_summary_is_admin_secondary_owner(self):
         # Response must contain the administration menu
@@ -122,7 +121,7 @@ class ListSummaryPageTest(ViewTestCase):
         self.client.login(username='testuser', password='testpass')
         response = self.client.get(reverse('list_summary',
                                    args=('foo@example.com', )))
-        self.assertContains(response, 'Delete list</a>')
+        self.assertContains(response, 'Delete</a>')
 
     def test_list_summary_is_admin_secondary_moderator(self):
         # Response must contain the administration menu
@@ -138,7 +137,7 @@ class ListSummaryPageTest(ViewTestCase):
                                    args=('foo@example.com', )))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Held messages</a>')
-        self.assertNotContains(response, 'Delete list</a>')
+        self.assertNotContains(response, 'Delete</a>')
 
     def test_metrics_not_displayed_to_anonymous(self):
         response = self.client.get(reverse('list_summary',

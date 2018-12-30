@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2017 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2018 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import, unicode_literals
 
 from allauth.account.models import EmailAddress
 from django.contrib.auth.models import AnonymousUser, User
@@ -52,6 +51,12 @@ def create_user():
     EmailAddress.objects.create(
         user=user, email=user.email, verified=True)
     return user
+
+
+class MockMember():
+
+    def __init__(self, email):
+        self.email = email
 
 
 class ListOwnerRequiredTest(TestCase):
@@ -95,7 +100,7 @@ class ListOwnerRequiredTest(TestCase):
     def test_non_list_owner(self, mock_get_list):
         """Should raise PermissionDenied if user is not a list owner."""
         # prepare mock list object
-        self.mock_list.owners = ['geddy@rush.it']
+        self.mock_list.owners = [MockMember('geddy@rush.it')]
         mock_get_list.return_value = self.mock_list
         # prepare request
         request = self.request_factory.get(
@@ -108,7 +113,7 @@ class ListOwnerRequiredTest(TestCase):
     def test_list_owner(self, mock_get_list):
         """Should return fn return value if user is the list owner."""
         # prepare mock list object
-        self.mock_list.owners = ['les@primus.org']
+        self.mock_list.owners = [MockMember('les@primus.org')]
         mock_get_list.return_value = self.mock_list
         # prepare request
         request = self.request_factory.get(
@@ -160,7 +165,7 @@ class ListModeratorRequiredTest(TestCase):
     def test_non_list_moderator(self, mock_get_list):
         """Should raise PermissionDenied if user is not a list owner."""
         # prepare mock list object
-        self.mock_list.moderators = ['geddy@rush.it']
+        self.mock_list.moderators = [MockMember('geddy@rush.it')]
         mock_get_list.return_value = self.mock_list
         # prepare request
         request = self.request_factory.get(
@@ -173,7 +178,7 @@ class ListModeratorRequiredTest(TestCase):
     def test_list_owner(self, mock_get_list):
         """Should return fn return value if user is the list owner."""
         # prepare mock list object
-        self.mock_list.owners = ['les@primus.org']
+        self.mock_list.owners = [MockMember('les@primus.org')]
         mock_get_list.return_value = self.mock_list
         # prepare request
         request = self.request_factory.get(
@@ -187,7 +192,7 @@ class ListModeratorRequiredTest(TestCase):
     def test_list_moderator(self, mock_get_list):
         """Should return fn return value if user is the list moderator."""
         # prepare mock list object
-        self.mock_list.moderators = ['les@primus.org']
+        self.mock_list.moderators = [MockMember('les@primus.org')]
         mock_get_list.return_value = self.mock_list
         # prepare request
         request = self.request_factory.get(
