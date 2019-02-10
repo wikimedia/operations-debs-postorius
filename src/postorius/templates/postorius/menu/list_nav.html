@@ -15,10 +15,11 @@
         <li role="tab" class="{% nav_active_class current 'list_members' %} dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown"
                role="button" aria-haspopup="true" aria-expanded="false">
-                {% trans 'Members' %}<span class="caret"></span>
+                {% trans 'Users' %}<span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
-              <li><a href="{% url 'list_members' list.list_id 'subscriber' %}">{% trans 'Subscribers' %}</a></li>
+              <li><a href="{% url 'list_members' list.list_id 'member' %}">{% trans 'Members' %}</a></li>
+              <li><a href="{% url 'list_members' list.list_id 'nonmember' %}">{% trans 'Non-Members' %}</a></li>              
               <li><a href="{% url 'list_members' list.list_id 'moderator' %}">{% trans 'Moderators' %}</a></li>
               <li><a href="{% url 'list_members' list.list_id 'owner' %}">{% trans 'Owners' %}</a></li>
             </ul>

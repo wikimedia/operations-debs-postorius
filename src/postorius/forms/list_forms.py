@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 2017-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -290,7 +290,7 @@ class MessageAcceptanceForm(ListSettingsForm):
             'the message.'))
     default_nonmember_action = forms.ChoiceField(
         widget=forms.RadioSelect(),
-        label=_('Default action to take when a non-member posts to the'
+        label=_('Default action to take when a non-member posts to the '
                 'list'),
         error_messages={
             'required': _("Please choose a default non-member action.")},
@@ -309,6 +309,14 @@ class MessageAcceptanceForm(ListSettingsForm):
             'The maximum allowed message size. '
             'This can be used to prevent emails with large attachments. '
             'A size of 0 disables the check.'))
+    max_num_recipients = forms.IntegerField(
+        min_value=0,
+        label=_('Maximum number of recipients'),
+        required=False,
+        help_text=_(
+            'The maximum number of recipients for a message. '
+            'This can be used to prevent mass mailings from being accepted. '
+            'A value of 0 disables the check.'))
 
     def clean_acceptable_aliases(self):
         # python's urlencode will drop this attribute completely if an empty
@@ -476,7 +484,8 @@ class AlterMessagesForm(ListSettingsForm):
         choices=(
             ('no_munging', _('No Munging')),
             ('point_to_list', _('Reply goes to list')),
-            ('explicit_header', _('Explicit Reply-to header set'))),
+            ('explicit_header', _('Explicit Reply-to header set')),
+            ('explicit_header_only', _('Explicit Reply-to set; no Cc added'))),
         help_text=_(
             'Where are replies to list messages directed? No Munging is '
             'strongly recommended for most mailing lists. \nThis option '
@@ -485,10 +494,13 @@ class AlterMessagesForm(ListSettingsForm):
             'Reply-To: header is '
             'added by Mailman, although if one is present in the original '
             'message, it is not stripped. Setting this value to either Reply '
-            'to List or Explicit Reply causes Mailman to insert a specific '
-            'Reply-To: header in all messages, overriding the header in the '
-            'original message if necessary (Explicit Reply inserts the value '
-            'of reply_to_address). There are many reasons not to introduce or '
+            'to List, Explicit Reply, or Reply Only causes Mailman to insert '
+            'a specific Reply-To: header in all messages, overriding the '
+            'header in the original message if necessary '
+            '(Explicit Reply inserts the value of reply_to_address). '
+            'Explicit Reply-to set; no Cc added is useful for'
+            'announce-only lists where you want to avoid someone replying '
+            'to the list address. There are many reasons not to introduce or '
             'override the Reply-To: header. One is that some posters depend '
             'on their own Reply-To: settings to convey their valid return '
             'address. Another is that modifying Reply-To: makes it much more '

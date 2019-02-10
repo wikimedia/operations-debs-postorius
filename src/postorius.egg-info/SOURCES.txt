@@ -1,6 +1,7 @@
 COPYING
 MANIFEST.in
 README.rst
+setup.cfg
 setup.py
 tox.ini
 example_project/README.rst
@@ -136,6 +137,8 @@ src/postorius/tests/fixtures/vcr_cassettes/AddModeratorTest.test_new_moderator_a
 src/postorius/tests/fixtures/vcr_cassettes/AddRemoveOwnerTest.test_add_remove_owner.yaml
 src/postorius/tests/fixtures/vcr_cassettes/AddRemoveOwnerTest.test_remove_owner_as_owner_self_last.yaml
 src/postorius/tests/fixtures/vcr_cassettes/AddRemoveOwnerTest.test_remove_owner_by_owner.yaml
+src/postorius/tests/fixtures/vcr_cassettes/AnonymousSubscribeTest.test_anonymous_subscribe.yaml
+src/postorius/tests/fixtures/vcr_cassettes/AnonymousSubscribeTest.test_anonymous_subscribe_get.yaml
 src/postorius/tests/fixtures/vcr_cassettes/DomainCreationTest.test_new_domain_created_with_owner.yaml
 src/postorius/tests/fixtures/vcr_cassettes/DomainCreationTest.test_only_redirect_if_domain_creation_is_successful.yaml
 src/postorius/tests/fixtures/vcr_cassettes/DomainCreationTest.test_permission_denied.yaml
@@ -211,8 +214,10 @@ src/postorius/tests/fixtures/vcr_cassettes/ListMembersAccessTest.test_page_acces
 src/postorius/tests/fixtures/vcr_cassettes/ListMembersAccessTest.test_page_accessible_for_superuser.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListMembersAccessTest.test_page_not_accessible_for_unprivileged_users.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListMembersAccessTest.test_page_not_accessible_if_not_logged_in.yaml
+src/postorius/tests/fixtures/vcr_cassettes/ListMembersOptionsTest.test_get_nonmember_options.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListMembersOptionsTest.test_moderation_action.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListMembersOptionsTest.test_nonexistent_member_returns_404.yaml
+src/postorius/tests/fixtures/vcr_cassettes/ListMembersOptionsTest.test_nonmember_moderation_action.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListMembersOptionsTest.test_not_accessible_for_moderator.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListMembersOptionsTest.test_page_accessible_for_owner.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListMembersOptionsTest.test_page_accessible_for_superuser.yaml
@@ -220,12 +225,18 @@ src/postorius/tests/fixtures/vcr_cassettes/ListMembersOptionsTest.test_page_not_
 src/postorius/tests/fixtures/vcr_cassettes/ListMembersOptionsTest.test_page_not_accessible_if_not_logged_in.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListMembersTest.test_search_members_1.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListMembersTest.test_show_members_page.yaml
+src/postorius/tests/fixtures/vcr_cassettes/ListNonMembersTest.test_add_nonmember.yaml
+src/postorius/tests/fixtures/vcr_cassettes/ListNonMembersTest.test_nonmember_delete.yaml
+src/postorius/tests/fixtures/vcr_cassettes/ListNonMembersTest.test_nonmember_options_valid.yaml
+src/postorius/tests/fixtures/vcr_cassettes/ListNonMembersTest.test_search_nonmembers.yaml
+src/postorius/tests/fixtures/vcr_cassettes/ListNonMembersTest.test_show_nonmembers.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListSettingsTest.test_archivers.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListSettingsTest.test_archiving_policy.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListSettingsTest.test_bug_117.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListSettingsTest.test_handle_subscription_request.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListSettingsTest.test_list_identity_allow_empty_prefix_and_desc.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListSettingsTest.test_list_subscription_requests.yaml
+src/postorius/tests/fixtures/vcr_cassettes/ListSettingsTest.test_message_acceptance.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListSettingsTest.test_not_accessible_for_moderator.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListSettingsTest.test_page_accessible_for_owner.yaml
 src/postorius/tests/fixtures/vcr_cassettes/ListSettingsTest.test_page_accessible_for_superuser.yaml
@@ -304,6 +315,7 @@ src/postorius/tests/fixtures/vcr_cassettes/TestSystemInformationPage.test_system
 src/postorius/tests/fixtures/vcr_cassettes/TestTemplateAPIView.test_get_one_domain_template_via_API.yaml
 src/postorius/tests/fixtures/vcr_cassettes/TestTemplateAPIView.test_get_one_list_template_via_API.yaml
 src/postorius/tests/mailman_api_tests/__init__.py
+src/postorius/tests/mailman_api_tests/test_anonymous_subscribe.py
 src/postorius/tests/mailman_api_tests/test_domain_delete.py
 src/postorius/tests/mailman_api_tests/test_domain_edit.py
 src/postorius/tests/mailman_api_tests/test_domain_index.py

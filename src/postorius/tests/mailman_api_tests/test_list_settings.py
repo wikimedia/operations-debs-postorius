@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 2016-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -20,6 +20,7 @@
 from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.utils import six
 
 from postorius.views.list import SETTINGS_FORMS
 from postorius.models import List
@@ -191,13 +192,22 @@ class ListSettingsTest(ViewTestCase):
             b'There are currently no subscription requests for this list.'
             in response.content)
         self.assertNotContains(response, '<div class="paginator">')
+        # We set subscription policy to 'confirm', which should wait for the
+        # user approval.
+        self.foo_list.settings['subscription_policy'] = 'confirm'
+        self.foo_list.settings.save()
+        self.foo_list.subscribe('someone@example.com', pre_verified=True)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        # Check that the request is not shown in pending subscription requests.
+        self.assertTrue('someone@example.com' not in str(response.content))
         # Now we set the subscription policy to moderate so that all
         # subscriptions are held for moderator approval.
         self.foo_list.settings['subscription_policy'] = 'moderate'
         self.foo_list.settings.save()
-        self.foo_list.subscribe('test@example.com')
-        self.foo_list.subscribe('owner@example.com')
-        self.foo_list.subscribe('moderator@example.com')
+        self.foo_list.subscribe('test@example.com', pre_verified=True)
+        self.foo_list.subscribe('owner@example.com', pre_verified=True)
+        self.foo_list.subscribe('moderator@example.com', pre_verified=True)
         # Now there should be three subscription requests pending.
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -244,3 +254,44 @@ class ListSettingsTest(ViewTestCase):
         # Now, let's remove all the subscribers
         self.client.post(url)
         self.assertEqual(len(self.foo_list.members), 0)
+
+    def test_message_acceptance(self):
+        initial_values = {
+            'acceptable_aliases': [],
+            'require_explicit_destination': True,
+            'administrivia': True,
+            'default_member_action': 'defer',
+            'default_nonmember_action': 'hold',
+            'max_message_size': 40,
+            'max_num_recipients': 10,
+        }
+        self.client.login(username='testsu', password='testpass')
+        url = reverse('list_settings',
+                      args=('foo.example.com', 'message_acceptance'))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        for field, value in six.iteritems(initial_values):
+            self.assertEqual(
+                self.foo_list.settings[field], value,
+                'Field: {}'.format(field))
+            self.assertEqual(
+                response.context["form"].initial[field], value,
+                'Field: {}'.format(field))
+        updated_values = {
+            'acceptable_aliases': ['bar@example.com'],
+            'require_explicit_destination': False,
+            'administrivia': False,
+            'default_member_action': 'accept',
+            'default_nonmember_action': 'accept',
+            'max_message_size': 100,
+            'max_num_recipients': 100,
+        }
+        response = self.client.post(url, updated_values)
+        self.assertRedirects(response, url)
+        self.assertHasSuccessMessage(response)
+        # Get a new list object to avoid caching
+        m_list = List.objects.get(fqdn_listname='foo.example.com')
+        for field, value in six.iteritems(updated_values):
+            self.assertEqual(
+                m_list.settings[field], value,
+                'Field: {}'.format(field))
