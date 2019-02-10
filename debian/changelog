@@ -1,3 +1,12 @@
+postorius (1.2.4-1) unstable; urgency=medium
+
+  * New upstream release 1.2.4
+    - (Build-)Depends on python3-mailmanclient >= 3.2.2
+  * d/p/0002-Template-API-set-encoding.patch:
+    - Remove, got incorporated upstream
+
+ -- Jonas Meurer <jonas@freesources.org>  Mon, 11 Feb 2019 01:09:05 +0100
+
 postorius (1.2.2-4) unstable; urgency=medium
 
   * d/control:
