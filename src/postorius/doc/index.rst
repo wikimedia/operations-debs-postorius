@@ -1,11 +1,4 @@
-Postorius - The New Mailman Web UI
-==================================
-
-Copyright (C) 2009-2018 by the Free Software Foundation, Inc.
-
-This is Postorius, the new official web interface for the GNU Mailman 3
-list management system.
-
+.. include:: ../../../README.rst
 
 Table of Contents
 -----------------

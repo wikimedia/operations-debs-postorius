@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -47,101 +47,139 @@ from postorius.forms import (
 from postorius.models import Domain, List, Mailman404Error, Style
 from postorius.auth.decorators import (
     list_owner_required, list_moderator_required, superuser_required)
+from postorius.auth.mixins import ListOwnerMixin
 from postorius.views.generic import MailingListView
 
 
 logger = logging.getLogger(__name__)
 
 
-@login_required
-@list_owner_required
-def list_members_view(request, list_id, role=None):
-    """Display all members of a given list."""
-    if role not in ['owner', 'moderator', 'subscriber']:
-        return redirect('list_members', list_id, 'subscriber')
-    mailing_list = List.objects.get_or_404(fqdn_listname=list_id)
-    if request.method == 'POST':
-        if role == 'subscriber':
-            form = MultipleChoiceForm(request.POST)
-            if form.is_valid():
-                members = form.cleaned_data['choices']
-                for member in members:
-                    mailing_list.unsubscribe(member)
-                messages.success(request, _('The selected members'
-                                            ' have been unsubscribed'))
-                return redirect('list_members', list_id, role)
-        else:
-            member_form = MemberForm(request.POST)
-            if member_form.is_valid():
-                try:
-                    getattr(mailing_list, 'add_%s' % role)(
-                        member_form.cleaned_data['email'],
-                        display_name=member_form.cleaned_data['display_name'])
-                    messages.success(
-                        request, _('%(email)s has been added'
-                                   ' with the role %(role)s')
-                        % {'email': member_form.cleaned_data['email'],
-                           'role': role})
-                    return redirect('list_members', list_id, role)
-                except HTTPError as e:
-                    messages.error(request, e.msg.decode())
-    else:
-        form = MultipleChoiceForm()
-        member_form = MemberForm()
-    context = {
-        'list': mailing_list,
-        'role': role,
-    }
-    if role == 'subscriber':
-        context['page_title'] = _('List subscribers')
+class ListMembersViews(ListOwnerMixin, MailingListView):
+
+    # List of allowed roles for the memberships. The string value matches the
+    # exact value Core's REST API expects.
+    allowed_roles = ['owner', 'moderator', 'member', 'nonmember']
+
+    def _prepare_query(self, request):
+        """Prepare regex based query to search partial email addresses.
+
+        Core's `members/find` API allows searching for memberships based on
+        regex. This methods prepares a valid regex to pass on the the REST API.
+        """
         if request.GET.get('q'):
-            query = context['query'] = request.GET['q']
+            query = request.GET['q']
             if "*" not in query:
                 query = '*{}*'.format(query)
-
-            # Proxy the find_members method to insert the query
-            def find_method(count, page):
-                return mailing_list.find_members(query, count=count, page=page)
         else:
-            find_method = mailing_list.get_member_page
+            query = ''
+
+        return query
+
+    def get(self, request, list_id, role):
+        """Handle GET for Member view.
+
+        This includes all the membership roles (self.allowed_roles).
+        """
+        member_form = MemberForm()
+        # If the role is misspelled, redirect to the default subscribers.
+        if role not in self.allowed_roles:
+            return redirect('list_members', list_id, 'member')
+        context = dict()
+        context['list'] = self.mailing_list
+        context['role'] = role
+        context['member_form'] = member_form
+        context['page_title'] = _('List {}s'.format(role.capitalize()))
+        context['query'] = self._prepare_query(request)
+
+        def find_method(count, page):
+            return self.mailing_list.find_members(
+                context['query'], role=role, count=count, page=page)
+
         context['members'] = paginate(
             find_method,
-            request.GET.get('page'),
+            request.GET.get('page', 1),
             request.GET.get('count', 25),
             paginator_class=MailmanPaginator)
-        context['page_subtitle'] = '(%d)' % context['members'].paginator.count
-        if mailing_list.member_count == 0:
-            context['empty_error'] = _('List has no Subscribers')
+        context['page_subtitle'] = '({})'.format(
+            context['members'].paginator.count)
+        context['form_action'] = _('Add {}'.format(role))
+        if context['query']:
+            context['empty_error'] = _(
+                'No {}s were found matching the search.'.format(role))
         else:
-            context['empty_error'] =\
-                _('No member was found matching the search')
-        context['form'] = form
-    else:
-        context['member_form'] = member_form
-        if role == 'owner':
-            context['page_title'] = _('List owners')
-            context['page_subtitle'] = '(%d)' % len(mailing_list.owners)
-            context['members'] = mailing_list.owners
-            context['form_action'] = _('Add owner')
-        elif role == 'moderator':
-            context['page_title'] = _('List moderators')
-            context['page_subtitle'] = '(%d)' % len(mailing_list.moderators)
-            context['members'] = mailing_list.moderators
-            context['empty_error'] = _('List has no moderators')
-            context['form_action'] = _('Add moderator')
-    return render(request, 'postorius/lists/members.html', context)
+            context['empty_error'] = _('List has no {}s'.format(role))
+
+        return render(request, 'postorius/lists/members.html', context)
+
+    def _member_post(self, request, role):
+        """Handle POST for members. Unsubscribe all the members selected."""
+        form = MultipleChoiceForm(request.POST)
+        if form.is_valid():
+            members = form.cleaned_data['choices']
+            for member in members:
+                self.mailing_list.unsubscribe(member)
+            messages.success(
+                request,
+                _('The selected members have been unsubscribed'))
+        return redirect('list_members', self.mailing_list.list_id, role)
+
+    def _non_member_post(self, request, role):
+        """Handle POST for membership roles owner, moderator and non-member.
+
+        Add memberships if the form is valid otherwise redirect to list_members
+        page with an error message.
+        """
+        member_form = MemberForm(request.POST)
+        if member_form.is_valid():
+            try:
+                self.mailing_list.add_role(
+                    role=role,
+                    address=member_form.cleaned_data['email'],
+                    display_name=member_form.cleaned_data['display_name'])
+                messages.success(
+                    request,
+                    _('%(email)s has been added with the role %(role)s'.format(
+                        email=member_form.cleaned_data['email'],
+                        role=role)))
+            except HTTPError as e:
+                messages.error(request, e.msg.decode())
+        else:
+            messages.error(request, member_form.errorsg)
+        return redirect('list_members', self.mailing_list.list_id, role)
+
+    def post(self, request, list_id, role=None):
+        """Handle POST for list members page.
+
+        List members page have more than one forms, depending on the membership
+        type.
+
+        - Regular subscribers have a MultipleChoiceForm, which returns a list
+          of emails that needs to be unsubscribed from the MailingList. This is
+          handled by :func:`self._member_post` method.
+
+        - Owners, moderators and non-members have a MemberForm which allows
+          adding new members with the given roles. This is handled by
+          :func:`self._non_member_post` method.
+
+        """
+        if role not in self.allowed_roles:
+            return redirect('list_members', list_id, 'member')
+
+        if role in ('member'):
+            return self._member_post(request, role)
+        else:
+            return self._non_member_post(request, role)
 
 
 @login_required
 @list_owner_required
 def list_member_options(request, list_id, email):
     template_name = 'postorius/lists/memberoptions.html'
-    client = get_mailman_client()
     mm_list = List.objects.get_or_404(fqdn_listname=list_id)
     try:
-        mm_member = client.get_member(list_id, email)
+        mm_member = mm_list.find_members(address=email)[0]
         member_prefs = mm_member.preferences
-    except ValueError:
+    except (ValueError, IndexError):
         raise Http404(_('Member does not exist'))
     except Mailman404Error:
         return render(request, template_name, {'nolists': 'true'})
@@ -205,13 +243,13 @@ class ListSummaryView(MailingListView):
                 'hyperkitty_enabled': False}
         if self.mailing_list.settings['archive_policy'] == 'public':
             data['public_archive'] = True
-        if getattr(settings, 'TESTING', False) and \
-                'hyperkitty' not in settings.INSTALLED_APPS:
+        if (getattr(settings, 'TESTING', False) and               # noqa: W504
+                'hyperkitty' not in settings.INSTALLED_APPS):
             # avoid systematic test failure when HyperKitty is installed
             # (missing VCR request, see below).
             list(self.mailing_list.archivers)
-        if ('hyperkitty' in settings.INSTALLED_APPS and
-                'hyperkitty' in self.mailing_list.archivers and
+        if ('hyperkitty' in settings.INSTALLED_APPS and           # noqa: W504
+                'hyperkitty' in self.mailing_list.archivers and   # noqa: W504
                 self.mailing_list.archivers['hyperkitty']):
             data['hyperkitty_enabled'] = True
         if request.user.is_authenticated:
@@ -270,7 +308,7 @@ class ChangeSubscriptionView(MailingListView):
                     # confirmation is needed.
                     response = self.mailing_list.subscribe(
                         email, pre_confirmed=True)
-                    if (type(response) == dict and
+                    if (type(response) == dict and                # noqa: W504
                             response.get('token_owner') == 'moderator'):
                         messages.success(
                             request, _('Your request to change the email for'
@@ -308,7 +346,7 @@ class ListSubscribeView(MailingListView):
                 email = request.POST.get('email')
                 response = self.mailing_list.subscribe(
                     email, pre_verified=True, pre_confirmed=True)
-                if (type(response) == dict and
+                if (type(response) == dict and                    # noqa: W504
                         response.get('token_owner') == 'moderator'):
                     messages.success(
                         request, _('Your subscription request has been'
@@ -697,7 +735,9 @@ def list_subscription_requests(request, list_id):
     """Shows a list of subscription requests.
     """
     m_list = List.objects.get_or_404(fqdn_listname=list_id)
-    requests = m_list.requests
+    requests = [req
+                for req in m_list.requests
+                if req['token_owner'] == 'moderator']
     paginated_requests = paginate(
         requests,
         request.GET.get('page'),

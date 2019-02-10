@@ -1,0 +1,509 @@
+interactions:
+- request:
+    body: mail_host=example.com
+    headers:
+      accept-encoding: ['gzip, deflate']
+      content-type: [application/x-www-form-urlencoded]
+    method: POST
+    uri: http://localhost:9001/3.0/domains
+  response:
+    body: {string: ''}
+    headers:
+      content-length: ['0']
+      content-type: [application/json; charset=UTF-8]
+      location: ['http://localhost:9001/3.0/domains/example.com']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: GET
+    uri: http://localhost:9001/3.0/domains/example.com
+  response:
+    body: {string: '{"alias_domain": null, "description": null, "http_etag": "\"492652d581dc93af101db450d81ae93a074bff49\"",
+        "mail_host": "example.com", "self_link": "http://localhost:9001/3.0/domains/example.com"}'}
+    headers:
+      content-length: ['194']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: fqdn_listname=foo%40example.com
+    headers:
+      accept-encoding: ['gzip, deflate']
+      content-type: [application/x-www-form-urlencoded]
+    method: POST
+    uri: http://localhost:9001/3.0/lists
+  response:
+    body: {string: ''}
+    headers:
+      content-length: ['0']
+      content-type: [application/json; charset=UTF-8]
+      location: ['http://localhost:9001/3.0/lists/foo.example.com']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: GET
+    uri: http://localhost:9001/3.0/lists/foo.example.com
+  response:
+    body: {string: '{"description": "", "display_name": "Foo", "fqdn_listname": "foo@example.com",
+        "http_etag": "\"490ba5a3f1642771810284491327932ca01ce4f2\"", "list_id": "foo.example.com",
+        "list_name": "foo", "mail_host": "example.com", "member_count": 0, "self_link":
+        "http://localhost:9001/3.0/lists/foo.example.com", "volume": 1}'}
+    headers:
+      content-length: ['313']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: display_name=None&list_id=foo.example.com&role=owner&subscriber=owner%40example.com
+    headers:
+      accept-encoding: ['gzip, deflate']
+      content-type: [application/x-www-form-urlencoded]
+    method: POST
+    uri: http://localhost:9001/3.0/members
+  response:
+    body: {string: ''}
+    headers:
+      content-length: ['0']
+      content-type: [application/json; charset=UTF-8]
+      location: ['http://localhost:9001/3.0/members/98']
+    status: {code: 201, message: Created}
+- request:
+    body: display_name=None&list_id=foo.example.com&role=moderator&subscriber=moderator%40example.com
+    headers:
+      accept-encoding: ['gzip, deflate']
+      content-type: [application/x-www-form-urlencoded]
+    method: POST
+    uri: http://localhost:9001/3.0/members
+  response:
+    body: {string: ''}
+    headers:
+      content-length: ['0']
+      content-type: [application/json; charset=UTF-8]
+      location: ['http://localhost:9001/3.0/members/99']
+    status: {code: 201, message: Created}
+- request:
+    body: email=test%40example.com
+    headers:
+      accept-encoding: ['gzip, deflate']
+      content-type: [application/x-www-form-urlencoded]
+    method: POST
+    uri: http://localhost:9001/3.0/users
+  response:
+    body: {string: ''}
+    headers:
+      content-length: ['0']
+      content-type: [application/json; charset=UTF-8]
+      location: ['http://localhost:9001/3.0/users/100']
+    status: {code: 201, message: Created}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: GET
+    uri: http://localhost:9001/3.0/users/100
+  response:
+    body: {string: '{"created_on": "2005-08-01T07:49:23", "http_etag": "\"ef506d31c68e52721747b45288fe0b40a5704d67\"",
+        "is_server_owner": false, "password": "$6$rounds=656000$6q5zO8vTYBeXUfCi$hMeKM5mylFtXCAjpvGHSZOji0ZJl.ACm/uFZuoG9mFwoPKdwzrpv6js3Wb.grslc2hw4konMDYQBArJKXto5S1",
+        "self_link": "http://localhost:9001/3.0/users/100", "user_id": 100}'}
+    headers:
+      content-length: ['328']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: GET
+    uri: http://localhost:9001/3.0/users/100/addresses
+  response:
+    body: {string: '{"entries": [{"email": "test@example.com", "http_etag": "\"c767bad905fd754c891e2e720a5d2ba5ac34186f\"",
+        "original_email": "test@example.com", "registered_on": "2005-08-01T07:49:23",
+        "self_link": "http://localhost:9001/3.0/addresses/test@example.com", "user":
+        "http://localhost:9001/3.0/users/100"}], "http_etag": "\"218125f6a5ce2e744767fd28e6eec05a45dd7996\"",
+        "start": 0, "total_size": 1}'}
+    headers:
+      content-length: ['389']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: POST
+    uri: http://localhost:9001/3.0/addresses/test@example.com/verify
+  response:
+    body: {string: ''}
+    headers:
+      Content-Length: ['0']
+    status: {code: 204, message: No Content}
+- request:
+    body: display_name=None&list_id=foo.example.com&pre_approved=True&pre_confirmed=True&pre_verified=True&subscriber=test%40example.com
+    headers:
+      accept-encoding: ['gzip, deflate']
+      content-type: [application/x-www-form-urlencoded]
+    method: POST
+    uri: http://localhost:9001/3.0/members
+  response:
+    body: {string: ''}
+    headers:
+      content-length: ['0']
+      content-type: [application/json; charset=UTF-8]
+      location: ['http://localhost:9001/3.0/members/100']
+    status: {code: 201, message: Created}
+- request:
+    body: display_name=None&list_id=foo.example.com&role=nonmember&subscriber=nonmember%40example.com
+    headers:
+      accept-encoding: ['gzip, deflate']
+      content-type: [application/x-www-form-urlencoded]
+    method: POST
+    uri: http://localhost:9001/3.0/members
+  response:
+    body: {string: ''}
+    headers:
+      content-length: ['0']
+      content-type: [application/json; charset=UTF-8]
+      location: ['http://localhost:9001/3.0/members/101']
+    status: {code: 201, message: Created}
+- request:
+    body: list_id=foo.example.com&subscriber=nonmember%40example.com
+    headers:
+      accept-encoding: ['gzip, deflate']
+      content-type: [application/x-www-form-urlencoded]
+    method: POST
+    uri: http://localhost:9001/3.0/members/find?list_id=foo.example.com&subscriber=nonmember%40example.com
+  response:
+    body: {string: '{"entries": [{"address": "http://localhost:9001/3.0/addresses/nonmember@example.com",
+        "delivery_mode": "regular", "display_name": "None", "email": "nonmember@example.com",
+        "http_etag": "\"492bb764056c1e75607200044e8b8123ccc0ed87\"", "list_id": "foo.example.com",
+        "member_id": 101, "role": "nonmember", "self_link": "http://localhost:9001/3.0/members/101",
+        "user": "http://localhost:9001/3.0/users/101"}], "http_etag": "\"cd40607f52493d28321e820dc1d13ceca1a3e775\"",
+        "start": 0, "total_size": 1}'}
+    headers:
+      content-length: ['494']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: GET
+    uri: http://localhost:9001/3.1/lists/foo.example.com
+  response:
+    body: {string: '{"description": "", "display_name": "Foo", "fqdn_listname": "foo@example.com",
+        "http_etag": "\"e6ac860d8568e6317a6f5469d706d502e3d4cacb\"", "list_id": "foo.example.com",
+        "list_name": "foo", "mail_host": "example.com", "member_count": 1, "self_link":
+        "http://localhost:9001/3.1/lists/foo.example.com", "volume": 1}'}
+    headers:
+      content-length: ['313']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: list_id=foo.example.com&subscriber=nonmember%40example.com
+    headers:
+      accept-encoding: ['gzip, deflate']
+      content-type: [application/x-www-form-urlencoded]
+    method: POST
+    uri: http://localhost:9001/3.1/members/find?list_id=foo.example.com&subscriber=nonmember%40example.com
+  response:
+    body: {string: '{"entries": [{"address": "http://localhost:9001/3.1/addresses/nonmember@example.com",
+        "delivery_mode": "regular", "display_name": "None", "email": "nonmember@example.com",
+        "http_etag": "\"01bb1f80d129c930cc35587d27c9e92a9f5d4877\"", "list_id": "foo.example.com",
+        "member_id": "00000000000000000000000000000065", "role": "nonmember", "self_link":
+        "http://localhost:9001/3.1/members/00000000000000000000000000000065", "user":
+        "http://localhost:9001/3.1/users/00000000000000000000000000000065"}], "http_etag":
+        "\"97a0f571698d569771d87dd981ab5e9893daccfb\"", "start": 0, "total_size":
+        1}'}
+    headers:
+      content-length: ['583']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: moderation_action=hold
+    headers:
+      accept-encoding: ['gzip, deflate']
+      content-type: [application/x-www-form-urlencoded]
+    method: PATCH
+    uri: http://localhost:9001/3.1/members/00000000000000000000000000000065
+  response:
+    body: {string: ''}
+    headers:
+      Content-Length: ['0']
+    status: {code: 204, message: No Content}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: GET
+    uri: http://localhost:9001/3.1/lists/foo.example.com
+  response:
+    body: {string: '{"description": "", "display_name": "Foo", "fqdn_listname": "foo@example.com",
+        "http_etag": "\"e6ac860d8568e6317a6f5469d706d502e3d4cacb\"", "list_id": "foo.example.com",
+        "list_name": "foo", "mail_host": "example.com", "member_count": 1, "self_link":
+        "http://localhost:9001/3.1/lists/foo.example.com", "volume": 1}'}
+    headers:
+      content-length: ['313']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: list_id=foo.example.com&subscriber=nonmember%40example.com
+    headers:
+      accept-encoding: ['gzip, deflate']
+      content-type: [application/x-www-form-urlencoded]
+    method: POST
+    uri: http://localhost:9001/3.1/members/find?list_id=foo.example.com&subscriber=nonmember%40example.com
+  response:
+    body: {string: '{"entries": [{"address": "http://localhost:9001/3.1/addresses/nonmember@example.com",
+        "delivery_mode": "regular", "display_name": "None", "email": "nonmember@example.com",
+        "http_etag": "\"03265cbf7233abe3237049d5fe10416ea9757157\"", "list_id": "foo.example.com",
+        "member_id": "00000000000000000000000000000065", "moderation_action": "hold",
+        "role": "nonmember", "self_link": "http://localhost:9001/3.1/members/00000000000000000000000000000065",
+        "user": "http://localhost:9001/3.1/users/00000000000000000000000000000065"}],
+        "http_etag": "\"21c9319e7f9db9c95e159452b492a5d74c7fbf6c\"", "start": 0, "total_size":
+        1}'}
+    headers:
+      content-length: ['612']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: GET
+    uri: http://localhost:9001/3.1/members/00000000000000000000000000000065/preferences
+  response:
+    body: {string: '{"delivery_mode": "regular", "http_etag": "\"67030a141b2b215fb36b6c22974fac7cb0095005\"",
+        "preferred_language": "en", "self_link": "http://localhost:9001/3.1/members/00000000000000000000000000000065/preferences"}'}
+    headers:
+      content-length: ['212']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: list_id=foo.example.com&subscriber=nonmember%40example.com
+    headers:
+      accept-encoding: ['gzip, deflate']
+      content-type: [application/x-www-form-urlencoded]
+    method: POST
+    uri: http://localhost:9001/3.0/members/find?list_id=foo.example.com&subscriber=nonmember%40example.com
+  response:
+    body: {string: '{"entries": [{"address": "http://localhost:9001/3.0/addresses/nonmember@example.com",
+        "delivery_mode": "regular", "display_name": "None", "email": "nonmember@example.com",
+        "http_etag": "\"521ff3e565a04909cc13758f7234301da88bff12\"", "list_id": "foo.example.com",
+        "member_id": 101, "moderation_action": "hold", "role": "nonmember", "self_link":
+        "http://localhost:9001/3.0/members/101", "user": "http://localhost:9001/3.0/users/101"}],
+        "http_etag": "\"24ce2b9afd905321399c0b65914df98210e6dd77\"", "start": 0, "total_size":
+        1}'}
+    headers:
+      content-length: ['523']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: GET
+    uri: http://localhost:9001/3.1/lists/foo.example.com
+  response:
+    body: {string: '{"description": "", "display_name": "Foo", "fqdn_listname": "foo@example.com",
+        "http_etag": "\"e6ac860d8568e6317a6f5469d706d502e3d4cacb\"", "list_id": "foo.example.com",
+        "list_name": "foo", "mail_host": "example.com", "member_count": 1, "self_link":
+        "http://localhost:9001/3.1/lists/foo.example.com", "volume": 1}'}
+    headers:
+      content-length: ['313']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: list_id=foo.example.com&subscriber=nonmember%40example.com
+    headers:
+      accept-encoding: ['gzip, deflate']
+      content-type: [application/x-www-form-urlencoded]
+    method: POST
+    uri: http://localhost:9001/3.1/members/find?list_id=foo.example.com&subscriber=nonmember%40example.com
+  response:
+    body: {string: '{"entries": [{"address": "http://localhost:9001/3.1/addresses/nonmember@example.com",
+        "delivery_mode": "regular", "display_name": "None", "email": "nonmember@example.com",
+        "http_etag": "\"03265cbf7233abe3237049d5fe10416ea9757157\"", "list_id": "foo.example.com",
+        "member_id": "00000000000000000000000000000065", "moderation_action": "hold",
+        "role": "nonmember", "self_link": "http://localhost:9001/3.1/members/00000000000000000000000000000065",
+        "user": "http://localhost:9001/3.1/users/00000000000000000000000000000065"}],
+        "http_etag": "\"21c9319e7f9db9c95e159452b492a5d74c7fbf6c\"", "start": 0, "total_size":
+        1}'}
+    headers:
+      content-length: ['612']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: moderation_action=
+    headers:
+      accept-encoding: ['gzip, deflate']
+      content-type: [application/x-www-form-urlencoded]
+    method: PATCH
+    uri: http://localhost:9001/3.1/members/00000000000000000000000000000065
+  response:
+    body: {string: ''}
+    headers:
+      Content-Length: ['0']
+    status: {code: 204, message: No Content}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: GET
+    uri: http://localhost:9001/3.1/lists/foo.example.com
+  response:
+    body: {string: '{"description": "", "display_name": "Foo", "fqdn_listname": "foo@example.com",
+        "http_etag": "\"e6ac860d8568e6317a6f5469d706d502e3d4cacb\"", "list_id": "foo.example.com",
+        "list_name": "foo", "mail_host": "example.com", "member_count": 1, "self_link":
+        "http://localhost:9001/3.1/lists/foo.example.com", "volume": 1}'}
+    headers:
+      content-length: ['313']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: list_id=foo.example.com&subscriber=nonmember%40example.com
+    headers:
+      accept-encoding: ['gzip, deflate']
+      content-type: [application/x-www-form-urlencoded]
+    method: POST
+    uri: http://localhost:9001/3.1/members/find?list_id=foo.example.com&subscriber=nonmember%40example.com
+  response:
+    body: {string: '{"entries": [{"address": "http://localhost:9001/3.1/addresses/nonmember@example.com",
+        "delivery_mode": "regular", "display_name": "None", "email": "nonmember@example.com",
+        "http_etag": "\"01bb1f80d129c930cc35587d27c9e92a9f5d4877\"", "list_id": "foo.example.com",
+        "member_id": "00000000000000000000000000000065", "role": "nonmember", "self_link":
+        "http://localhost:9001/3.1/members/00000000000000000000000000000065", "user":
+        "http://localhost:9001/3.1/users/00000000000000000000000000000065"}], "http_etag":
+        "\"97a0f571698d569771d87dd981ab5e9893daccfb\"", "start": 0, "total_size":
+        1}'}
+    headers:
+      content-length: ['583']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: GET
+    uri: http://localhost:9001/3.1/members/00000000000000000000000000000065/preferences
+  response:
+    body: {string: '{"delivery_mode": "regular", "http_etag": "\"67030a141b2b215fb36b6c22974fac7cb0095005\"",
+        "preferred_language": "en", "self_link": "http://localhost:9001/3.1/members/00000000000000000000000000000065/preferences"}'}
+    headers:
+      content-length: ['212']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: list_id=foo.example.com&subscriber=nonmember%40example.com
+    headers:
+      accept-encoding: ['gzip, deflate']
+      content-type: [application/x-www-form-urlencoded]
+    method: POST
+    uri: http://localhost:9001/3.0/members/find?list_id=foo.example.com&subscriber=nonmember%40example.com
+  response:
+    body: {string: '{"entries": [{"address": "http://localhost:9001/3.0/addresses/nonmember@example.com",
+        "delivery_mode": "regular", "display_name": "None", "email": "nonmember@example.com",
+        "http_etag": "\"492bb764056c1e75607200044e8b8123ccc0ed87\"", "list_id": "foo.example.com",
+        "member_id": 101, "role": "nonmember", "self_link": "http://localhost:9001/3.0/members/101",
+        "user": "http://localhost:9001/3.0/users/101"}], "http_etag": "\"cd40607f52493d28321e820dc1d13ceca1a3e775\"",
+        "start": 0, "total_size": 1}'}
+    headers:
+      content-length: ['494']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: GET
+    uri: http://localhost:9001/3.0/domains
+  response:
+    body: {string: '{"entries": [{"alias_domain": null, "description": null, "http_etag":
+        "\"492652d581dc93af101db450d81ae93a074bff49\"", "mail_host": "example.com",
+        "self_link": "http://localhost:9001/3.0/domains/example.com"}], "http_etag":
+        "\"5868fb6d2442c0d163e0edb2bfd7a92b6c812796\"", "start": 0, "total_size":
+        1}'}
+    headers:
+      content-length: ['299']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: DELETE
+    uri: http://localhost:9001/3.0/domains/example.com
+  response:
+    body: {string: ''}
+    headers:
+      Content-Length: ['0']
+    status: {code: 204, message: No Content}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: GET
+    uri: http://localhost:9001/3.0/users
+  response:
+    body: {string: '{"entries": [{"created_on": "2005-08-01T07:49:23", "display_name":
+        "None", "http_etag": "\"e3b2f4dc66325690fe69932b6b1c2dc5b09363e5\"", "is_server_owner":
+        false, "self_link": "http://localhost:9001/3.0/users/98", "user_id": 98},
+        {"created_on": "2005-08-01T07:49:23", "display_name": "None", "http_etag":
+        "\"6583213ae056eb3620d48975c7c6d1b95c13b7f4\"", "is_server_owner": false,
+        "self_link": "http://localhost:9001/3.0/users/99", "user_id": 99}, {"created_on":
+        "2005-08-01T07:49:23", "http_etag": "\"ef506d31c68e52721747b45288fe0b40a5704d67\"",
+        "is_server_owner": false, "password": "$6$rounds=656000$6q5zO8vTYBeXUfCi$hMeKM5mylFtXCAjpvGHSZOji0ZJl.ACm/uFZuoG9mFwoPKdwzrpv6js3Wb.grslc2hw4konMDYQBArJKXto5S1",
+        "self_link": "http://localhost:9001/3.0/users/100", "user_id": 100}, {"created_on":
+        "2005-08-01T07:49:23", "display_name": "None", "http_etag": "\"925669c5ad5fd06c66047ca36a2be2ff2701b9f2\"",
+        "is_server_owner": false, "self_link": "http://localhost:9001/3.0/users/101",
+        "user_id": 101}], "http_etag": "\"95557f96eb59e5e26cdca1fa964b48c4f7620653\"",
+        "start": 0, "total_size": 4}'}
+    headers:
+      content-length: ['1083']
+      content-type: [application/json; charset=UTF-8]
+    status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: DELETE
+    uri: http://localhost:9001/3.0/users/100
+  response:
+    body: {string: ''}
+    headers:
+      Content-Length: ['0']
+    status: {code: 204, message: No Content}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: DELETE
+    uri: http://localhost:9001/3.0/users/101
+  response:
+    body: {string: ''}
+    headers:
+      Content-Length: ['0']
+    status: {code: 204, message: No Content}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: DELETE
+    uri: http://localhost:9001/3.0/users/98
+  response:
+    body: {string: ''}
+    headers:
+      Content-Length: ['0']
+    status: {code: 204, message: No Content}
+- request:
+    body: null
+    headers:
+      accept-encoding: ['gzip, deflate']
+    method: DELETE
+    uri: http://localhost:9001/3.0/users/99
+  response:
+    body: {string: ''}
+    headers:
+      Content-Length: ['0']
+    status: {code: 204, message: No Content}
+version: 1

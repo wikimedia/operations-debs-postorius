@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -53,7 +53,7 @@ setup(
     install_requires=[
         'Django>=1.11,<2.2',
         'django-mailman3>=1.2.0a1',
-        'mailmanclient>=3.2.0b2'
+        'mailmanclient>=3.2.1'
     ],
     tests_require=[
         "mock",

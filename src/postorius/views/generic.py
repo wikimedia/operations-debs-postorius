@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -42,11 +42,11 @@ class MailingListView(TemplateView, MailmanClientMixin):
 
     Sets self.mailing_list to list object if list_id is in **kwargs.
     """
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         # This should be overridden by the subclass.
         return HttpResponse(status=405)
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         # This should be overridden by the subclass.
         return HttpResponse(status=405)
 
