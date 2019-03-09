@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 2017-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -62,7 +62,7 @@ class NullBooleanRadioSelect(forms.RadioSelect):
 class SiteModelChoiceField(forms.ModelChoiceField):
 
     def label_from_instance(self, obj):
-            return "%s (%s)" % (obj.name, obj.domain)
+        return "%s (%s)" % (obj.name, obj.domain)
 
 
 class MultipleChoiceForm(forms.Form):

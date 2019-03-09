@@ -1,19 +1,11 @@
-postorius (1.2.2-4~bpo9+2) stretch-backports; urgency=medium
+postorius (1.2.4-1) unstable; urgency=medium
 
-  * d/p/0003-Use-sphinx-theme-classic-to-avoid-dependency-on-sphi.patch:
-    - Patch doc/conf.py to use sphinx html theme 'classic'. Avoids dependency
-      on sphinx-rtd-theme-common, which is unavailable in stretch(-backports).
+  * New upstream release 1.2.4
+    - (Build-)Depends on python3-mailmanclient >= 3.2.2
+  * d/p/0002-Template-API-set-encoding.patch:
+    - Remove, got incorporated upstream
 
- -- Jonas Meurer <jonas@freesources.org>  Fri, 04 Jan 2019 16:15:36 +0100
-
-postorius (1.2.2-4~bpo9+1) stretch-backports; urgency=medium
-
-  * Rebuild for stretch-backports.
-  * d/rules:
-    - Remove logic to remove included fonts-glewlwyd files, as it's not
-      packaged for stretch-backports.
-
- -- Jonas Meurer <jonas@freesources.org>  Sun, 30 Dec 2018 21:51:40 +0100
+ -- Jonas Meurer <jonas@freesources.org>  Mon, 11 Feb 2019 01:09:05 +0100
 
 postorius (1.2.2-4) unstable; urgency=medium
 

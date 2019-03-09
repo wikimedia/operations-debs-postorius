@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -31,7 +31,7 @@ list_patterns = [
     url(r'^csv_view/$', list_views.csv_view, name='csv_view'),
     url(r'^members/options/(?P<email>.+)$', list_views.list_member_options,
         name='list_member_options'),
-    url(r'^members/(?P<role>\w+)/$', list_views.list_members_view,
+    url(r'^members/(?P<role>\w+)/$', list_views.ListMembersViews.as_view(),
         name='list_members'),
     url(r'^$', list_views.ListSummaryView.as_view(),
         name='list_summary'),
@@ -83,7 +83,7 @@ list_patterns = [
 ]
 
 urlpatterns = [
-    url(r'^$', list_views.list_index),
+    url(r'^$', list_views.list_index),                   # noqa: W605 (bogus)
     url(r'^accounts/subscriptions/$', user_views.user_subscriptions,
         name='ps_user_profile'),
     url(r'^accounts/per-address-preferences/$',
@@ -133,7 +133,7 @@ urlpatterns = [
     url(r'^api/list/(?P<list_id>[^/]+)/held_message/(?P<held_id>\d+)/$',
         rest_views.get_held_message, name='rest_held_message'),
     url(r'^api/list/(?P<list_id>[^/]+)/held_message/(?P<held_id>\d+)/'
-        'attachment/(?P<attachment_id>\d+)/$',
+        r'attachment/(?P<attachment_id>\d+)/$',
         rest_views.get_attachment_for_held_message,
         name='rest_attachment_for_held_message'),
     # URL configuration for templates.

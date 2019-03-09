@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2018 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2019 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -114,3 +114,40 @@ class ListMembersOptionsTest(ViewTestCase):
         self.assertHasSuccessMessage(response)
         self.assertIsNone(
             self.foo_list.get_member('test@example.com').moderation_action)
+
+    def test_get_nonmember_options(self):
+        # Test that nonmember options can also be set using
+        # `list_member_options` view.
+        self.client.login(username='testowner', password='testpass')
+        self.foo_list.add_role(
+            role='nonmember', address='nonmember@example.com')
+        self.assertEqual(len(self.foo_list.nonmembers), 1)
+        # Now, let's try to get options for these users.
+        url = reverse('list_member_options', args=(self.foo_list.list_id,
+                                                   'nonmember@example.com',))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_nonmember_moderation_action(self):
+        self.foo_list.add_role(
+            role='nonmember', address='nonmember@example.com')
+        nonmember = self.foo_list.find_members(
+            address='nonmember@example.com')[0]
+        self.assertIsNone(nonmember.moderation_action)
+        url = reverse('list_member_options', args=(self.foo_list.list_id,
+                                                   'nonmember@example.com',))
+        self.client.login(username='testsu', password='testpass')
+        response = self.client.post(url, {
+            'formname': 'moderation', 'moderation_action': 'hold'})
+        self.assertRedirects(response, url)
+        self.assertHasSuccessMessage(response)
+        nonmember = self.foo_list.find_members(
+            address='nonmember@example.com')[0]
+        self.assertEqual(nonmember.moderation_action, 'hold')
+        response = self.client.post(url, {
+            'formname': 'moderation', 'moderation_action': ''})
+        self.assertRedirects(response, url)
+        self.assertHasSuccessMessage(response)
+        nonmember = self.foo_list.find_members(
+            address='nonmember@example.com')[0]
+        self.assertIsNone(nonmember.moderation_action)

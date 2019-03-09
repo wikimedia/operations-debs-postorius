@@ -12,7 +12,7 @@ Subject: README.rst-remove-embedded-images
  1 file changed, 14 deletions(-)
 
 diff --git a/README.rst b/README.rst
-index 78085be..97a48c1 100644
+index cba3a5f..7aaac71 100644
 --- a/README.rst
 +++ b/README.rst
 @@ -1,20 +1,6 @@
@@ -34,5 +34,5 @@ index 78085be..97a48c1 100644
 -.. image:: http://img.shields.io/pypi/dm/postorius.svg
 -    :target: https://pypi.python.org/pypi/postorius
  
- Copyright (C) 1998-2018 by the Free Software Foundation, Inc.
+ Copyright (C) 1998-2019 by the Free Software Foundation, Inc.
  

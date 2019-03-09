@@ -18,9 +18,30 @@ You should have received a copy of the GNU Lesser General Public License
 along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 
 
+1.2.4
+=====
+(2019-02-09)
+
+* Add support for ``explicit_header_only`` in list settings.
+  (See !369)
+
+
+1.2.3
+=====
+(2019-01-19)
+
+* Expose ``max_num_recipients`` in list settings.  (Closes #297)
+* Add support for Non-member management in Postorius.  (Closes #265)
+* `Members` tab in Mailing List settings page is now called `Users`.
+  (Closes #309)
+* Show pending subscription requests are only pending for Moderator.
+  (Closes #314)
+
+
 1.2.2
 =====
 (2018-08-30)
+
 * Add support for Python 3.7 with Django 2.0+
 * Index page only shows related lists for signed-in users with option to
   filter based on role.
@@ -82,7 +103,7 @@ along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 * Postorius now sets the 'Display Name' of the user in Core correctly. This
   fixes a security vulnerability where user's display_name would be set as their
   Core's password.
-=======
+
 
 1.1.1
 =====
@@ -128,7 +149,7 @@ along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 (2015-04-28)
 
 * Help texts Small visual alignment fix; removed unnecessary links to
-separate help pages.
+  separate help pages.
 * Import fix in fieldset_forms module (Django1.6 only)
 
 
@@ -150,7 +171,7 @@ separate help pages.
 * Mozilla Persona integration: switch from django-social-auto to django-browserid: Contributed by Abhilash Raj.
 * Fix manage.py mmclient command for non-IPython shells. Contributed by Ankush Sharma (LP: 1428169).
 * Added archiver options: Site-wide enabled archivers can not be enabled
-on a per-list basis through the web UI.
+  on a per-list basis through the web UI.
 * Added functionality to choose or switch subscription addresses. Contributed by Abhilash Raj.
 * Added subscription moderation, pre_verification/_confirmation.
 * Several style changes.
