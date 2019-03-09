@@ -1,3 +1,15 @@
+postorius (1.2.4-1~bpo9+1) stretch-backports; urgency=medium
+
+  * Rebuild for stretch-backports.
+  * d/rules:
+    - Remove logic to remove included fonts-glewlwyd files, as it's not
+      packaged for stretch-backports.
+  * d/p/0003-Use-sphinx-theme-classic-to-avoid-dependency-on-sphi.patch:
+    - Patch doc/conf.py to use sphinx html theme 'classic'. Avoids dependency
+      on sphinx-rtd-theme-common, which is unavailable in stretch(-backports).
+
+ -- Jonas Meurer <jonas@freesources.org>  Sun, 10 Mar 2019 00:15:06 +0100
+
 postorius (1.2.4-1) unstable; urgency=medium
 
   * New upstream release 1.2.4
