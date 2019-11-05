@@ -12,12 +12,12 @@ Subject: README.rst-remove-embedded-images
  1 file changed, 14 deletions(-)
 
 diff --git a/README.rst b/README.rst
-index cba3a5f..7aaac71 100644
+index 2ac451f..7f5b647 100644
 --- a/README.rst
 +++ b/README.rst
 @@ -1,20 +1,6 @@
  ===================================
- Postorius - web ui for GNU Mailman
+ Postorius - Web UI for GNU Mailman
  ===================================
 -.. image:: https://gitlab.com/mailman/postorius/badges/master/build.svg
 -    :target: https://gitlab.com/mailman/postorius/commits/master
