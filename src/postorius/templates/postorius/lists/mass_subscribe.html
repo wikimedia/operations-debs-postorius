@@ -9,7 +9,7 @@
 
 {% block content %}
 
-    {% list_nav 'list_mass_ops' 'Mass subscription' %}
+    {% list_nav 'list_mass_ops' 'msgid:title:list_mass_subscription' %}
 
     <form action="{% url 'mass_subscribe' list.list_id %}" method="post" class="form-horizontal">
         {% bootstrap_form_horizontal form 2 8 'Subscribe users' %}

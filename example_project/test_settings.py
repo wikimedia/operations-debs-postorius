@@ -22,6 +22,7 @@ Django test settings for postorius project.
 
 from settings import *
 
+
 TESTING = True
 
 # Mailman API credentials for testing

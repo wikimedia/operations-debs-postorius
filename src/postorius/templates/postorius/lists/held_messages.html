@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load nav_helpers %}
 {% load pagination %}
-{% load staticfiles %}
+{% load static %}
 
 {% block head_title %}
 {% trans 'Held messages' %} | {{ list.fqdn_listname }} - {{ block.super }}
@@ -10,7 +10,7 @@
 
 {% block content %}
 
-    {% list_nav 'list_held_messages' 'Held messages' %}
+    {% list_nav 'list_held_messages' 'msgid:title:list_held_messages' %}
 
     {% if held_messages|length > 0 %}
         <form method="post">
@@ -84,13 +84,23 @@
                 <div class="col-md-6 text-left">
                   <form action="{% url 'moderate_held_message' list.list_id %}" method="post">
                     {% csrf_token %}
+                    <p>
                     <input type="hidden" name="msgid" />
+                    <select class="form-control" name="moderation_choice">
+                      <option value="no-action" selected="">--- {% trans "Set member moderation" %} ---</option>
+                      {% for name, action in ACTION_CHOICES %}
+                        <option value="{{name}}">{{action}}</option>
+                      {% endfor %}
+                    </select>
+                    </p>
+                    <p>
                     <input type="submit" class="btn btn-success" name="accept" value="{% trans 'Accept' %}" />
                     <input type="submit" class="btn btn-warning" name="reject" value="{% trans 'Reject' %}" />
                     <input type="submit" class="btn btn-danger" name="discard" value="{% trans 'Discard' %}" />
+                    </p>
                   </form>
                 </div>
-                <div class="col-md-6"> 
+                <div class="col-md-6">
                     <a href="#" target="_blank" id="message-source-btn" class="btn btn-default">Show Source</a>
                     <button type="button" class="btn btn-info pull-right" id="toggle-headers" data-toggle="button" aria-pressed="false" autocomplete="off">
                       {% trans 'Show Headers' %}

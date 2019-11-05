@@ -18,24 +18,25 @@
 
 
 import logging
-from django.utils.six.moves.urllib.error import HTTPError
 
-from allauth.account.models import EmailAddress
-from django.forms import formset_factory
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-from django.utils.decorators import method_decorator
-from django.utils.translation import gettext as _
-from django.urls import reverse, reverse_lazy
-from django.views.generic import FormView
+from django.forms import formset_factory
 from django.http import Http404
+from django.shortcuts import render
+from django.urls import reverse, reverse_lazy
+from django.utils.decorators import method_decorator
+from django.utils.six.moves.urllib.error import HTTPError
+from django.utils.translation import gettext as _
+from django.views.generic import FormView
 
-from postorius.models import List, MailmanUser
-from postorius.forms import (
-    UserPreferences, UserPreferencesFormset, ChangeSubscriptionForm)
-from postorius.views.generic import MailmanClientMixin
+from allauth.account.models import EmailAddress
 from django_mailman3.lib.mailman import get_mailman_client
+
+from postorius.forms import (
+    ChangeSubscriptionForm, UserPreferences, UserPreferencesFormset)
+from postorius.models import List, MailmanUser
+from postorius.views.generic import MailmanClientMixin
 
 
 logger = logging.getLogger(__name__)

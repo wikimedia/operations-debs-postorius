@@ -17,14 +17,15 @@
 
 """Tests for list settings"""
 
-from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils import six
 
-from postorius.views.list import SETTINGS_FORMS
+from allauth.account.models import EmailAddress
+
 from postorius.models import List
 from postorius.tests.utils import ViewTestCase
+from postorius.views.list import SETTINGS_FORMS
 
 
 class ListSettingsTest(ViewTestCase):
@@ -154,6 +155,8 @@ class ListSettingsTest(ViewTestCase):
             'subject_prefix': '',
             'description': '',
             'advertised': 'True',
+            'preferred_language': 'en',
+            'member_roster_visibility': 'public',
             })
         self.assertRedirects(response, url)
         self.assertHasSuccessMessage(response)

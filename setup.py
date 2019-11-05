@@ -17,7 +17,9 @@
 
 import re
 import sys
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
+
 
 # Calculate the version number without importing the postorius package.
 with open('src/postorius/__init__.py') as fp:
@@ -51,13 +53,15 @@ setup(
     package_dir={'': 'src'},
     include_package_data=True,
     install_requires=[
-        'Django>=1.11,<2.2',
+        'Django>=1.11,<2.3',
         'django-mailman3>=1.2.0a1',
-        'mailmanclient>=3.2.1'
+        'mailmanclient>=3.2.3a2',
+        'readme_renderer[md]',
     ],
     tests_require=[
         "mock",
         "vcrpy",
         "beautifulsoup4",
+        "isort",
     ],
 )

@@ -16,16 +16,16 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 #
-import time
 import json
+import time
+from email import message_from_bytes, message_from_file
+
+from django.contrib.auth.models import User
 
 from allauth.account.models import EmailAddress
-from django.contrib.auth.models import User
-from email import message_from_file, message_from_bytes
 
-from postorius.tests.utils import ViewTestCase
-from postorius.views.rest import parse, get_attachments
-from postorius.tests.utils import get_test_file, reverse
+from postorius.tests.utils import ViewTestCase, get_test_file, reverse
+from postorius.views.rest import get_attachments, parse
 
 
 class TestRestViews(ViewTestCase):

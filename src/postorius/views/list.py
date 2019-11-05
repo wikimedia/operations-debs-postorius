@@ -21,37 +21,46 @@ import csv
 import email.utils
 import logging
 
-from allauth.account.models import EmailAddress
-from django.http import HttpResponse, HttpResponseNotAllowed, Http404
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.forms import formset_factory
-from django.shortcuts import render, redirect
-from django.core.exceptions import ValidationError
+from django.http import Http404, HttpResponse
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.decorators import method_decorator
-from django.utils.translation import gettext as _
-from django_mailman3.lib.mailman import get_mailman_client
-from django_mailman3.lib.paginator import paginate, MailmanPaginator
 from django.utils.six.moves.urllib.error import HTTPError
+from django.utils.translation import gettext as _
+from django.views.decorators.http import require_http_methods
 
-from postorius.forms import (
-    ListNew, MemberForm, ListSubscribe, MultipleChoiceForm, UserPreferences,
-    ListSubscriptionPolicyForm, ArchiveSettingsForm, MessageAcceptanceForm,
-    DigestSettingsForm, AlterMessagesForm, ListAutomaticResponsesForm,
-    ListIdentityForm, ListMassSubscription, ListMassRemoval, ListAddBanForm,
-    ListHeaderMatchForm, ListHeaderMatchFormset, MemberModeration,
-    DMARCMitigationsForm, ListAnonymousSubscribe)
-from postorius.models import Domain, List, Mailman404Error, Style
+from allauth.account.models import EmailAddress
+from django_mailman3.lib.mailman import get_mailman_client
+from django_mailman3.lib.paginator import MailmanPaginator, paginate
+
 from postorius.auth.decorators import (
-    list_owner_required, list_moderator_required, superuser_required)
+    list_moderator_required, list_owner_required, superuser_required)
 from postorius.auth.mixins import ListOwnerMixin
+from postorius.forms import (
+    AlterMessagesForm, ArchiveSettingsForm, DigestSettingsForm,
+    DMARCMitigationsForm, ListAddBanForm, ListAnonymousSubscribe,
+    ListAutomaticResponsesForm, ListHeaderMatchForm, ListHeaderMatchFormset,
+    ListIdentityForm, ListMassRemoval, ListMassSubscription, ListNew,
+    ListSubscribe, ListSubscriptionPolicyForm, MemberForm, MemberModeration,
+    MessageAcceptanceForm, MultipleChoiceForm, UserPreferences)
+from postorius.forms.list_forms import ACTION_CHOICES
+from postorius.models import Domain, List, Mailman404Error, Style
 from postorius.views.generic import MailingListView
 
 
 logger = logging.getLogger(__name__)
+
+
+class TokenOwner:
+    """Who 'owns' the token returned from the registrar?"""
+    subscriber = 'subscriber'
+    moderator = 'moderator'
 
 
 class ListMembersViews(ListOwnerMixin, MailingListView):
@@ -138,13 +147,12 @@ class ListMembersViews(ListOwnerMixin, MailingListView):
                     display_name=member_form.cleaned_data['display_name'])
                 messages.success(
                     request,
-                    _('%(email)s has been added with the role %(role)s'.format(
-                        email=member_form.cleaned_data['email'],
-                        role=role)))
+                    _('{email} has been added with the role {role}'.format(
+                        email=member_form.cleaned_data['email'], role=role)))
             except HTTPError as e:
-                messages.error(request, e.msg.decode())
+                messages.error(request, e.msg)
         else:
-            messages.error(request, member_form.errorsg)
+            messages.error(request, member_form.errors)
         return redirect('list_members', self.mailing_list.list_id, role)
 
     def post(self, request, list_id, role=None):
@@ -194,7 +202,7 @@ def list_member_options(request, list_id, email):
                 try:
                     preferences_form.save()
                 except HTTPError as e:
-                    messages.error(request, e.msg.decode())
+                    messages.error(request, e.msg)
                 else:
                     messages.success(request, _("The member's preferences"
                                                 " have been updated."))
@@ -215,7 +223,7 @@ def list_member_options(request, list_id, email):
                 try:
                     mm_member.save()
                 except HTTPError as e:
-                    messages.error(request, e.msg.decode())
+                    messages.error(request, e.msg)
                 else:
                     messages.success(request, _("The member's moderation "
                                                 "settings have been updated."))
@@ -309,7 +317,7 @@ class ChangeSubscriptionView(MailingListView):
                     response = self.mailing_list.subscribe(
                         email, pre_confirmed=True)
                     if (type(response) == dict and                # noqa: W504
-                            response.get('token_owner') == 'moderator'):
+                            response.get('token_owner') == TokenOwner.moderator):  # noqa: E501
                         messages.success(
                             request, _('Your request to change the email for'
                                        ' this subscription was submitted and'
@@ -322,7 +330,7 @@ class ChangeSubscriptionView(MailingListView):
                 messages.error(request,
                                _('Something went wrong. Please try again.'))
         except HTTPError as e:
-            messages.error(request, e.msg.decode())
+            messages.error(request, e.msg)
         return redirect('list_summary', self.mailing_list.list_id)
 
 
@@ -346,8 +354,8 @@ class ListSubscribeView(MailingListView):
                 email = request.POST.get('email')
                 response = self.mailing_list.subscribe(
                     email, pre_verified=True, pre_confirmed=True)
-                if (type(response) == dict and                    # noqa: W504
-                        response.get('token_owner') == 'moderator'):
+                if (type(response) == dict and                   # noqa: W504
+                        response.get('token_owner') == TokenOwner.moderator):
                     messages.success(
                         request, _('Your subscription request has been'
                                    ' submitted and is waiting for moderator'
@@ -360,7 +368,7 @@ class ListSubscribeView(MailingListView):
                 messages.error(request,
                                _('Something went wrong. Please try again.'))
         except HTTPError as e:
-            messages.error(request, e.msg.decode())
+            messages.error(request, e.msg)
         return redirect('list_summary', self.mailing_list.list_id)
 
 
@@ -388,7 +396,7 @@ class ListAnonymousSubscribeView(MailingListView):
                 messages.error(request,
                                _('Something went wrong. Please try again.'))
         except HTTPError as e:
-            messages.error(request, e.msg.decode())
+            messages.error(request, e.msg)
         return redirect('list_summary', self.mailing_list.list_id)
 
 
@@ -513,26 +521,42 @@ def list_moderation(request, list_id, held_id=-1):
         'list': mailing_list,
         'held_messages': held_messages,
         'form': form,
+        'ACTION_CHOICES': ACTION_CHOICES,
         }
     return render(request, 'postorius/lists/held_messages.html', context)
 
 
+@require_http_methods(['POST'])
 @login_required
 @list_moderator_required
 def moderate_held_message(request, list_id):
-    if request.method != 'POST':
-        return HttpResponseNotAllowed(['POST'])
-    msg_id = request.POST['msgid']
+    """Moderate one held message"""
     mailing_list = List.objects.get_or_404(fqdn_listname=list_id)
+    msg = mailing_list.get_held_message(request.POST['msgid'])
+    moderation_choice = request.POST.get('moderation_choice')
     if 'accept' in request.POST:
-        mailing_list.accept_message(msg_id)
+        mailing_list.accept_message(msg.request_id)
         messages.success(request, _('The message was accepted'))
     elif 'reject' in request.POST:
-        mailing_list.reject_message(msg_id)
+        mailing_list.reject_message(msg.request_id)
         messages.success(request, _('The message was rejected'))
     elif 'discard' in request.POST:
-        mailing_list.discard_message(msg_id)
+        mailing_list.discard_message(msg.request_id)
         messages.success(request, _('The message was discarded'))
+    moderation_choices = dict(ACTION_CHOICES)
+    if moderation_choice in moderation_choices:
+        try:
+            member = mailing_list.get_member(msg.sender)
+            member.moderation_action = moderation_choice
+            member.save()
+            messages.success(
+                request,
+                _('Moderation action for {} set to {}'.format(
+                    member, moderation_choices[moderation_choice])))
+        except ValueError as e:
+            messages.error(
+                request,
+                _('Failed to set moderation action: {}'.format(e)))
     return redirect('list_held_messages', list_id)
 
 
@@ -615,13 +639,13 @@ def list_new(request, template='postorius/lists/new.html'):
                 # Right now, there is no good way to detect that this is a
                 # duplicate mailing list request other than checking the
                 # reason for 400 error.
-                if e.reason == b'Mailing list exists':
+                if e.reason == 'Mailing list exists':
                     form.add_error(
                         'listname', _('Mailing List already exists.'))
                     return render(request, template, {'form': form})
                 # Otherwise just render the generic error page.
                 return render(request, 'postorius/errors/generic.html',
-                              {'error': e.msg.decode()})
+                              {'error': e.msg})
         else:
             messages.error(request, _('Please check the errors below'))
     else:
@@ -659,9 +683,12 @@ def list_index_authenticated(request):
 
     # Get all the mailing lists for the current user.
     all_lists = []
+    mail_host = request.get_host().split(':')[0] if (
+        getattr(settings, 'FILTER_VHOST', False)) else None
     for user_email in user_emails:
         try:
-            all_lists.extend(client.find_lists(user_email, role=role))
+            all_lists.extend(
+                client.find_lists(user_email, role=role, mail_host=mail_host))
         except HTTPError:
             # No lists exist with the given role for the given user.
             pass
@@ -696,8 +723,10 @@ def list_index(request, template='postorius/index.html'):
     def _get_list_page(count, page):
         client = get_mailman_client()
         advertised = not request.user.is_superuser
+        mail_host = request.get_host().split(":")[0] if (
+            getattr(settings, 'FILTER_VHOST', False)) else None
         return client.get_list_page(
-            advertised=advertised, count=count, page=page)
+            advertised=advertised, mail_host=mail_host, count=count, page=page)
 
     lists = paginate(
         _get_list_page, request.GET.get('page'), request.GET.get('count'),
@@ -731,21 +760,45 @@ def list_delete(request, list_id):
 
 @login_required
 @list_moderator_required
-def list_subscription_requests(request, list_id):
+def list_pending_confirmations(request, list_id):
     """Shows a list of subscription requests.
     """
+    return _list_subscriptions(
+        request=request,
+        list_id=list_id,
+        token_owner=TokenOwner.subscriber,
+        template='postorius/lists/pending_confirmations.html',
+        page_title=_('Subscriptions pending user confirmation'),
+        )
+
+
+@login_required
+@list_moderator_required
+def list_subscription_requests(request, list_id):
+    """Shows a list of subscription requests."""
+    return _list_subscriptions(
+        request=request,
+        list_id=list_id,
+        token_owner=TokenOwner.moderator,
+        template='postorius/lists/subscription_requests.html',
+        page_title=_('Subscriptions pending approval'),
+        )
+
+
+def _list_subscriptions(request, list_id, token_owner, template, page_title):
     m_list = List.objects.get_or_404(fqdn_listname=list_id)
     requests = [req
                 for req in m_list.requests
-                if req['token_owner'] == 'moderator']
+                if req['token_owner'] == token_owner]
     paginated_requests = paginate(
         requests,
         request.GET.get('page'),
         request.GET.get('count', 25))
     page_subtitle = '(%d)' % len(requests)
-    return render(request, 'postorius/lists/subscription_requests.html',
+    return render(request, template,
                   {'list': m_list,
                    'paginated_requests': paginated_requests,
+                   'page_title': page_title,
                    'page_subtitle': page_subtitle})
 
 
@@ -843,7 +896,7 @@ def list_settings(request, list_id=None, visible_section=None,
             except HTTPError as e:
                 messages.error(
                     request,
-                    _('An error occured: ') + e.reason.decode('utf-8'))
+                    _('An error occurred: ') + e.reason)
             return redirect('list_settings', m_list.list_id, visible_section)
     else:
         form = form_class(initial=initial_data, mlist=m_list)
@@ -888,7 +941,7 @@ def remove_role(request, list_id=None, role=None, address=None,
             the_list.remove_role(role, address)
         except HTTPError as e:
             messages.error(request, _('The user could not be removed: %(msg)s')
-                           % {'msg': e.msg.decode()})
+                           % {'msg': e.msg})
             return redirect('list_members', the_list.list_id, role)
         messages.success(request, _('The user %(address)s has been removed'
                                     ' from the %(role)s group.')
@@ -950,7 +1003,7 @@ def list_bans(request, list_id):
                             addban_form.cleaned_data['email'])))
                 except HTTPError as e:
                     messages.error(
-                        request, _('An error occured: %s') % e.reason)
+                        request, _('An error occurred: %s') % e.reason)
                 except ValueError as e:
                     messages.error(request, _('Invalid data: %s') % e)
                 return redirect('list_bans', list_id)
@@ -961,12 +1014,12 @@ def list_bans(request, list_id):
                     'The email {} has been un-banned'.format(
                         request.POST['email'])))
             except HTTPError as e:
-                messages.error(request, _('An error occured: %s') % e.reason)
+                messages.error(request, _('An error occurred: %s') % e.reason)
             except ValueError as e:
                 messages.error(request, _('Invalid data: %s') % e)
             return redirect('list_bans', list_id)
     else:
-        addban_form = ListAddBanForm()
+        addban_form = ListAddBanForm(initial=request.GET)
     banned_addresses = paginate(
         list(ban_list), request.GET.get('page'), request.GET.get('count'))
     return render(request, 'postorius/lists/bans.html',
@@ -1022,7 +1075,7 @@ def list_header_matches(request, list_id):
                     errors.append(e)
             for e in errors:
                 messages.error(
-                    request, _('An error occured: %s') % e.reason)
+                    request, _('An error occurred: %s') % e.reason)
             if not errors:
                 messages.success(request, _('The header matches were'
                                             ' successfully modified.'))

@@ -19,10 +19,11 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-from allauth.account.models import EmailAddress
-from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
+from django.urls import reverse
+
+from allauth.account.models import EmailAddress
 from django_mailman3.models import MailDomain
 
 from postorius.tests.utils import ViewTestCase

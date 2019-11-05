@@ -20,8 +20,10 @@
 Authentication and authorization-related utilities.
 """
 
-from allauth.account.models import EmailAddress
 from django.utils import six
+
+from allauth.account.models import EmailAddress
+
 from postorius.models import Domain, List
 
 

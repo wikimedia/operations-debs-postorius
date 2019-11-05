@@ -13,8 +13,9 @@
 # serve to show the default.
 
 
-import sys
 import os
+import sys
+
 
 # add dummy settings environment variable so sphinx can import from Postorius.
 os.environ['DJANGO_SETTINGS_MODULE'] = 'postorius.doc.settings'

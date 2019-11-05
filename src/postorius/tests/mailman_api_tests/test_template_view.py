@@ -19,15 +19,16 @@
 
 import urllib
 
-from allauth.account.models import EmailAddress
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
-from django.conf import settings
 from django.urls import reverse
+
+from allauth.account.models import EmailAddress
 from django_mailman3.models import MailDomain
 
+from postorius.models import TEMPLATES_LIST, EmailTemplate
 from postorius.tests.utils import ViewTestCase
-from postorius.models import EmailTemplate, TEMPLATES_LIST
 
 
 class DomainTemplateViewTest(ViewTestCase):
@@ -437,6 +438,30 @@ class TestTemplateAPIView(ViewTestCase):
             except urllib.error.HTTPError:
                 pass
         super().tearDown()
+
+    def test_get_empty_templates_via_API(self):
+        # Test that we can get a domain level template from API.
+        data = dict(name='list:admin:action:post',
+                    context='domain',
+                    identifier='example.com',
+                    data='')
+        # First, let's create a template.
+        EmailTemplate.objects.create(**data)
+        # Now, let's try to GET this template.
+        url = reverse(
+            'rest_template',
+            kwargs=dict(
+                name=data['name'],
+                context=data['context'],
+                identifier=data['identifier']
+                )
+            )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, b'')
+        self.assertRegex(response["Content-Type"],
+                         'charset=' + settings.DEFAULT_CHARSET)
+        self.assertNotRegex(response["Content-Type"], 'charset=$')
 
     def test_get_one_domain_template_via_API(self):
         # Test that we can get a domain level template from API.

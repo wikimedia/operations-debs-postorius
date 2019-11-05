@@ -16,15 +16,16 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from allauth.account.models import EmailAddress
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.urls import reverse
+
+from allauth.account.models import EmailAddress
 from django_mailman3.lib.mailman import get_mailman_client
 from six.moves.urllib_parse import quote
 
-from postorius.tests.utils import ViewTestCase
 from postorius.forms import MemberModeration, UserPreferences
+from postorius.tests.utils import ViewTestCase
 
 
 class ListMembersOptionsTest(ViewTestCase):

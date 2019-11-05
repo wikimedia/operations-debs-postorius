@@ -58,64 +58,57 @@ dash:
 
     # List all currently configured envs:
     $ tox -l
-    py27-django18
-    py27-django19
+    py35-django111
+    py35-django20
+    py35-djangolatest
+    py36-django111
+    py36-django20
+    py36-djangolatest
+    py37-django111
+    py37-django20
+    py37-djangolatest
+    pep8
 
-    # Test Django 1.8 on Python2.7 only:
-    $ tox -e py27-django18
+    # Test Django 2.1 on Python3.7 only:
+    $ tox -e py37-django21
 
     # Run only tests in ``test_address_activation``:
     $ tox -- postorius.tests.test_address_activation
 
     # You get the idea...
-    $ tox -e py27-django18 -- postorius.tests.test_address_activation
+    $ tox -e py37-django21 -- postorius.tests.test_address_activation
 
 
 All test modules reside in the ``postorius/src/postorius/tests``
 directory. Please have a look at the existing examples.
 
 
-Mocking calls to Mailman's REST API
-===================================
+Calling Mailman's REST API
+==========================
 
-A lot of Postorius' code involves calls to Mailman's REST API (through
-the mailman.client library). Running these tests against a real instance
-of Mailman would be bad practice and slow, so ``vcrpy`` *cassettes* are
-used instead (see the `vcrpy Documentation`_ for details). These files
-contain pre-recorded HTTP responses.
+A lot of Postorius' code involves calls to Mailman's REST API (through the
+``mailmanclient`` library). Postorius' test uses `pytest`_ along with
+`pytest-django`_ to run tests.
 
-.. _`vcrpy Documentation`: https://github.com/kevin1024/vcrpy
+Postorius uses `pytest fixtures`_ to setup Mailman Core's REST API and is
+defined at ``postorius.tests.mailman_api_tests.conftest.mailman_rest_layer``. It
+is set to ``autouse=True`` so, all the tests inside the module
+``mailman_api_tests`` automatically use it.
 
-If you write new tests, it's advisable to add a separate fixture file
-for each test case, so the cached responses don't interfere with other
-tests. The cassette files are stored in the
-``tests/fixtures/vcr_cassettes`` directory. Check out the existing test
-cases for examples.
-
-In order to record new API responses for your test case, you need  to
-first start the mailman core, with the API server listening on port
-9001. You can use the ``example_project/mailman.cfg`` file from the
-Postorius source.
-
-.. note::
-    Make sure, you use a fresh mailman.db file.
-
-Once the core is running, you can record the new cassette file defined
-in your test case by running tox with the `record` test env:
-
-::
-
-    # This will only record the cassette files defined in my_new_test_module:
-    $ tox -e record -- postorius.tests.my_new_test_module
-
-    # This will re-record all cassette files:
-    $ tox -e record
+``mailman_rest_layer`` starts up ``incoming`` runner and ``rest`` runner using
+``mailman.testing.helpersTestableMaster``. It also removes all the data after
+every ``TestCase`` class.
 
 
-View Auth
-=========
+.. _pytest fixtures: https://docs.pytest.org/en/latest/fixture.html
+.. _pytest: https://docs.pytest.org/en/latest/contents.html
+.. _pytest-django: https://pytest-django.readthedocs.io/en/latest/
 
-Three of Django's default User roles are relvant for Postorius:
+
+View Authorization
+==================
+
+Three of Django's default User roles are relevant for Postorius:
 
 - Superuser: Can do everything.
 - AnonymousUser: Can view list index and info pages.
@@ -154,7 +147,7 @@ A quick example:
     $ python manage.py mmclient
 
     >>> client
-    <Client (user:pwd) http://localhost:8001/3.0/>
+    <Client (user:pwd) http://localhost:8001/3.1/>
 
     >>> print(client.system['mailman_version'])
     GNU Mailman 3.0.0b2+ (Here Again)

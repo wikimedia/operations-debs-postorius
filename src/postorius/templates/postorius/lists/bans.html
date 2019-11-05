@@ -10,7 +10,7 @@
 
 {% block content %}
 
-    {% list_nav 'list_bans' 'Banned addresses' %}
+    {% list_nav 'list_bans' 'msgid:title:list_bans' %}
 
     <!-- Add ban -->
     <form action="{% url 'list_bans' list.list_id %}" method="POST" class="form-inline bans-add-form">

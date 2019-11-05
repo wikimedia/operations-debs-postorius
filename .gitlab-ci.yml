@@ -1,0 +1,94 @@
+image: maxking/mailman-ci-runner
+
+
+py35-django-1.11:
+  stage: test
+  script:
+  - tox -e py35-django111
+
+py36-django-1.11:
+  stage: test
+  script:
+  - tox -e py36-django111
+
+py37-django-20:
+  stage: test
+  script:
+    - tox -e py37-django20
+
+py36-django-20:
+  stage: test
+  script:
+    - tox -e py36-django20
+
+py35-django-20:
+  stage: test
+  script:
+    - tox -e py35-django20
+
+py35-django-21:
+  stage: test
+  script:
+    - tox -e py35-django21
+
+py36-django-21:
+  stage: test
+  script:
+    - tox -e py36-django21
+
+py37-django-21:
+  stage: test
+  script:
+    - tox -e py37-django21
+
+py36-django-22:
+  stage: test
+  script:
+    - tox -e py36-django22
+
+py37-django-22:
+  stage: test
+  script:
+    - tox -e py37-django22
+
+coverage:
+  stage: test
+  script:
+  - tox -e coverage
+  artifacts:
+    paths:
+    - coverage
+    expire_in: 5 days
+
+pep8:
+  stage: test
+  script:
+  - tox -e pep8
+
+git-heads:
+  stage: test
+  allow_failure: true
+  script:
+  - tox -e py36-head
+
+django-latest:
+  stage: test
+  allow_failure: true
+  script:
+    - tox -e py36-django-latest
+
+upstream-client:
+  stage: test
+  script:
+    - tox -e upstream-client
+  only:
+    variables:
+      - $MAILMANCLIENT_COMMIT_SHA
+
+upstream-django-mailman3:
+  stage: test
+  script:
+    - tox -e upstream-django-mailman3
+  only:
+    variables:
+      - $DJANGO_MAILMAN3_COMMIT_SHA

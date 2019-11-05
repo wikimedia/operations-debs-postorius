@@ -18,13 +18,16 @@
 #
 
 import re
+
 from django import forms
-from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.utils.translation import ugettext_lazy as _
+
 from django_mailman3.lib.mailman import get_mailman_client
 
 from postorius.forms.fields import ListOfStringsField
+from postorius.languages import LANGUAGES
 
 
 ACTION_CHOICES = (
@@ -34,6 +37,20 @@ ACTION_CHOICES = (
     ("accept", _("Accept immediately (bypass other rules)")),
     ("defer", _("Default processing")),
 )
+
+DIGEST_FREQUENCY_CHOICES = (
+    ("daily", _("Daily")),
+    ("weekly", _("Weekly")),
+    ("quarterly", _("Quarterly")),
+    ("monthly", _("Monthly")),
+    ("yearly", _("Yearly"))
+)
+
+ROSTER_VISIBILITY_CHOICES = (
+    ("moderators", _("Only mailinglist moderators")),
+    ("members", _("Only mailinglist members")),
+    ("public", _("Anyone")),
+    )
 
 
 EMPTY_STRING = ''
@@ -190,8 +207,7 @@ class ListSubscriptionPolicyForm(ListSettingsForm):
                     'Moderate: Moderators will have to authorize '
                     'each subscription manually.\n'
                     'Confirm then Moderate: First subscribers have to confirm,'
-                    ' then a moderator '
-                    'needs to authorize.'))
+                    ' then a moderator needs to authorize.'))
 
 
 class ArchiveSettingsForm(ListSettingsForm):
@@ -290,8 +306,7 @@ class MessageAcceptanceForm(ListSettingsForm):
             'the message.'))
     default_nonmember_action = forms.ChoiceField(
         widget=forms.RadioSelect(),
-        label=_('Default action to take when a non-member posts to the '
-                'list'),
+        label=_('Default action to take when a non-member posts to the list'),
         error_messages={
             'required': _("Please choose a default non-member action.")},
         required=True,
@@ -306,7 +321,7 @@ class MessageAcceptanceForm(ListSettingsForm):
         label=_('Maximum message size'),
         required=False,
         help_text=_(
-            'The maximum allowed message size. '
+            'The maximum allowed message size in KB. '
             'This can be used to prevent emails with large attachments. '
             'A size of 0 disables the check.'))
     max_num_recipients = forms.IntegerField(
@@ -346,6 +361,27 @@ class DigestSettingsForm(ListSettingsForm):
     """
     List digest settings.
     """
+    digests_enabled = forms.ChoiceField(
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget=forms.RadioSelect,
+        required=False,
+        label=_('Enable Digests'),
+        help_text=_('Should Mailman enable digests for this MailingList?'),
+        )
+    digest_send_periodic = forms.ChoiceField(
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget=forms.RadioSelect,
+        required=False,
+        label=_('Send Digest Periodically'),
+        help_text=_('Should Mailman send out digests periodically?'),
+        )
+    digest_volume_frequency = forms.ChoiceField(
+        choices=DIGEST_FREQUENCY_CHOICES,
+        widget=forms.RadioSelect,
+        required=False,
+        label=_('Digest Frequency'),
+        help_text=_('At what frequency should Mailman send out digests?'),
+        )
     digest_size_threshold = forms.DecimalField(
         label=_('Digest size threshold'),
         help_text=_('How big in Kb should a digest be before '
@@ -373,7 +409,7 @@ class DMARCMitigationsForm(ListSettingsForm):
             'The action to apply to messages From: a domain publishing a '
             'DMARC policy of reject or quarantine or to all messages if '
             'DMARC Mitigate unconditionally is True.'))
-    dmarc_mitigate_unconditionally = forms.TypedChoiceField(
+    dmarc_mitigate_unconditionally = forms.ChoiceField(
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
         required=False,
@@ -403,21 +439,21 @@ class AlterMessagesForm(ListSettingsForm):
     """
     Alter messages list settings.
     """
-    filter_content = forms.TypedChoiceField(
+    filter_content = forms.ChoiceField(
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
         required=False,
         label=_('Filter content'),
         help_text=_('Should Mailman filter the content of list traffic '
                     'according to the settings below?'))
-    collapse_alternatives = forms.TypedChoiceField(
+    collapse_alternatives = forms.ChoiceField(
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
         required=False,
         label=_('Collapse alternatives'),
         help_text=_('Should Mailman collapse multipart/alternative to '
                     'its first part content?'))
-    convert_html_to_plaintext = forms.TypedChoiceField(
+    convert_html_to_plaintext = forms.ChoiceField(
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
         required=False,
@@ -425,7 +461,7 @@ class AlterMessagesForm(ListSettingsForm):
         help_text=_('Should Mailman convert text/html parts to plain text? '
                     'This conversion happens after MIME attachments '
                     'have been stripped.'))
-    anonymous_list = forms.TypedChoiceField(
+    anonymous_list = forms.ChoiceField(
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
         required=False,
@@ -433,7 +469,7 @@ class AlterMessagesForm(ListSettingsForm):
         help_text=_('Hide the sender of a message, '
                     'replacing it with the list address '
                     '(Removes From, Sender and Reply-To fields)'))
-    include_rfc2369_headers = forms.TypedChoiceField(
+    include_rfc2369_headers = forms.ChoiceField(
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
         required=False,
@@ -451,7 +487,7 @@ class AlterMessagesForm(ListSettingsForm):
             'As a last resort you can disable these headers, but this is not '
             'recommended (and in fact, your ability to disable these headers '
             'may eventually go away).'))
-    allow_list_posts = forms.TypedChoiceField(
+    allow_list_posts = forms.ChoiceField(
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
         required=False,
@@ -467,7 +503,7 @@ class AlterMessagesForm(ListSettingsForm):
             'This option allows admins to set an explicit Reply-to address. '
             'It is only used if the reply-to is set to use an explicitly set '
             'header'))
-    first_strip_reply_to = forms.TypedChoiceField(
+    first_strip_reply_to = forms.ChoiceField(
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
         required=False,
@@ -574,7 +610,7 @@ class ListAutomaticResponsesForm(ListSettingsForm):
             'or -request/-owner address from the same poster. Set to zero '
             '(or negative) for no grace period (i.e. auto-respond to every '
             'message).'))
-    respond_to_post_requests = forms.TypedChoiceField(
+    respond_to_post_requests = forms.ChoiceField(
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
         required=False,
@@ -583,7 +619,7 @@ class ListAutomaticResponsesForm(ListSettingsForm):
             'Should Mailman notify users about their messages held for '
             'approval. If you say \'No\', no notifications will be sent '
             'to users about the pending approval on their messages.'))
-    send_welcome_message = forms.TypedChoiceField(
+    send_welcome_message = forms.ChoiceField(
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
         required=False,
@@ -591,23 +627,10 @@ class ListAutomaticResponsesForm(ListSettingsForm):
         help_text=_(
             'Send welcome message to newly subscribed members? '
             'Turn this off only if you plan on subscribing people manually '
-            'and don\'t want them to know that you did so. This option is '
-            'most useful for transparently migrating lists from some other '
-            'mailing list manager to Mailman.'))
-    welcome_message_uri = forms.CharField(
-        label=_('URI for the welcome message'),
-        required=False,
-        help_text=_(
-            'If a welcome message is to be sent to subscribers, you can '
-            'specify a URI that gives the text of this message.'),
-    )
-    goodbye_message_uri = forms.CharField(
-        label=_('URI for the good bye message'),
-        required=False,
-        help_text=_(
-            'If a good bye message is to be sent to unsubscribers, you can '
-            'specify a URI that gives the text of this message.'),
-    )
+            'and don\'t want them to know that you did so. Setting this to No '
+            'is most useful for transparently migrating lists from some other '
+            'mailing list manager to Mailman.\n'
+            'The text of Welcome message can be set via the Templates tab.'))
     admin_immed_notify = forms.BooleanField(
         widget=forms.RadioSelect(choices=((True, _('Yes')), (False, _('No')))),
         required=False,
@@ -632,7 +655,7 @@ class ListIdentityForm(ListSettingsForm):
     """
     List identity settings.
     """
-    advertised = forms.TypedChoiceField(
+    advertised = forms.ChoiceField(
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
         label=_('Show list on index page'),
@@ -662,6 +685,19 @@ class ListIdentityForm(ListSettingsForm):
         strip=False,
         required=False,
     )
+    preferred_language = forms.ChoiceField(
+        label=_('Preferred Language'),
+        required=False,
+        widget=forms.Select(),
+        choices=LANGUAGES,
+    )
+    member_roster_visibility = forms.ChoiceField(
+        label=_('Members List Visibility'),
+        required=False,
+        widget=forms.Select(),
+        choices=ROSTER_VISIBILITY_CHOICES,
+        help_text=_('Who is allowed to see members list for this MailingList?')
+    )
 
     def clean_subject_prefix(self):
         """
@@ -682,8 +718,8 @@ class ListMassSubscription(forms.Form):
             'John Doe &lt;jdoe@example.com&gt;\n'
             '"John Doe" &lt;jdoe@example.com&gt;\n'
             'jdoe@example.com (John Doe)\n'
-            'Use the last three to associate a display name with'
-            ' the address\n'),
+            'Use the last three to associate a display name with the address\n'
+            ),
     )
 
 
@@ -787,7 +823,7 @@ class MemberModeration(forms.Form):
             'Discard -- this simply discards the message, with no notice '
             'sent to the post\'s author. \n'
             'Accept -- accepts any postings without any further checks. \n'
-            'Defer -- default processing, run additional checks and accept '
+            'Default Processing -- run additional checks and accept '
             'the message. \n'))
 
 

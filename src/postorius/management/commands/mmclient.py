@@ -17,6 +17,7 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.core.management.base import BaseCommand
+
 from django_mailman3.lib.mailman import get_mailman_client
 
 

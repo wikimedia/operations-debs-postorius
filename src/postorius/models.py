@@ -23,19 +23,21 @@ import logging
 from urllib.parse import urljoin
 
 from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
 from django.contrib.auth.models import User
+from django.core.exceptions import ImproperlyConfigured
 from django.db import models
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from django.http import Http404
 from django.urls import reverse
 from django.utils.six.moves.urllib.error import HTTPError
 from django.utils.translation import ugettext_lazy as _
+
 from mailmanclient import MailmanConnectionError
 
-from postorius.utils import get_mailman_client, LANGUAGES
 from postorius.template_list import TEMPLATES_LIST
+from postorius.utils import LANGUAGES, get_mailman_client
+
 
 logger = logging.getLogger(__name__)
 
@@ -245,13 +247,14 @@ class EmailTemplate(models.Model):
             '$owner_email: The email address for -owner address \n'
             '$site_email: The email address to reach the owners of the site \n'
             '$language: The two letter language code for list\'s preferred language e.g. fr, en, de \n'  # noqa: E501
-        )
+        ),
+        blank=True,
     )
     language = models.CharField(
         max_length=5, choices=LANGUAGES,
         help_text=_('Language for the template, this should be the list\'s preferred language.'),     # noqa: E501
         blank=True)
-    craeted_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
     context = models.CharField(max_length=50, choices=TEMPLATE_CONTEXT_CHOICES)
     identifier = models.CharField(blank=True, max_length=100)

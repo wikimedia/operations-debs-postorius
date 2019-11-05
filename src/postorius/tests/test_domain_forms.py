@@ -17,10 +17,11 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.test import TestCase
 from django.contrib.sites.models import Site
+from django.test import TestCase
 
-from postorius.forms import DomainEditForm, DomainForm
+from postorius.forms.domain_forms import (
+    DomainEditForm, DomainForm, DomainOwnerForm)
 
 
 class TestDomainEditForm(TestCase):
@@ -30,6 +31,15 @@ class TestDomainEditForm(TestCase):
         self.assertTrue('alias_domain' in form.fields)
         self.assertTrue('site' in form.fields)
         self.assertFalse('mail_host' in form.fields)
+
+
+class TestDomainOwnerAddForm(TestCase):
+    def test_form_sanity(self):
+        form = DomainOwnerForm(dict(email='some'))
+        self.assertFalse(form.is_valid())
+        self.assertIn('email', form.errors)
+        form = DomainOwnerForm(dict(email='some@example.com'))
+        self.assertTrue(form.is_valid())
 
 
 class TestDomainForm(TestCase):

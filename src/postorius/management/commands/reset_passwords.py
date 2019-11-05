@@ -17,11 +17,13 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import os
 import base64
+import os
 
 from django.core.management.base import BaseCommand
+
 from django_mailman3.lib.mailman import get_mailman_client
+
 
 PASSWORD_BYTES = 32
 

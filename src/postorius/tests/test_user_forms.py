@@ -18,6 +18,7 @@
 #
 
 from django.test import TestCase
+
 from postorius.forms.user_forms import UserPreferences
 
 

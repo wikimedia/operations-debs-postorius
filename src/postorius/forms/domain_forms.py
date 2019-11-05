@@ -18,11 +18,11 @@
 
 
 from django import forms
-from django.core.validators import validate_email
+from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.sites.models import Site
 
 from postorius.forms.fields import SiteModelChoiceField
 
@@ -95,3 +95,11 @@ class DomainEditForm(DomainForm):
     separte from the DomainForm, so that the mail_host can't be changed.
     """
     mail_host = None
+
+
+class DomainOwnerForm(forms.Form):
+    """Form to add a owner for a domain."""
+    email = forms.EmailField(
+        label=_("Owner's Email"),
+        required=True,
+    )

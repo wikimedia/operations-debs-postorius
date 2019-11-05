@@ -40,52 +40,52 @@ And a nginx server section to with it:
 
 ::
 
-		upstream mailman {
-				server unix:///run/uwsgi/mailman.sock;
-		}
+        upstream mailman {
+                server unix:///run/uwsgi/mailman.sock;
+        }
 
-		server {
-				listen      80;
-				# TODO Replace with your domain
-				server_name lists.example.com;
-				return 301	https://$server_name$request_uri;
+        server {
+                listen      80;
+                # TODO Replace with your domain
+                server_name lists.example.com;
+                return 301  https://$server_name$request_uri;
 
-		}
+        }
 
-		## Config for server secured with https
-		server {
-			listen   443;
+        ## Config for server secured with https
+        server {
+            listen   443;
 
-			# TODO Replace with your domain
-			server_name lists.example.com;
+            # TODO Replace with your domain
+            server_name lists.example.com;
 
 
-			ssl			on;
-			# TODO Replace with your crt and key
-			ssl_certificate		/etc/nginx/keys/lists.example.com.crt;
-			ssl_certificate_key  	/etc/nginx/keys/lists.example.com.key;
-			ssl_session_timeout 	5m;
-			ssl_ciphers 		'AES128+EECDH:AES128+EDH';
-			ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-			ssl_prefer_server_ciphers 	on;
-			add_header Strict-Transport-Security "max-age=63072000; includeSubdomains; preload";
+            ssl         on;
+            # TODO Replace with your crt and key
+            ssl_certificate     /etc/nginx/keys/lists.example.com.crt;
+            ssl_certificate_key     /etc/nginx/keys/lists.example.com.key;
+            ssl_session_timeout     5m;
+            ssl_ciphers         'AES128+EECDH:AES128+EDH';
+            ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+            ssl_prefer_server_ciphers   on;
+            add_header Strict-Transport-Security "max-age=63072000; includeSubdomains; preload";
 
-			charset     utf-8;
+            charset     utf-8;
 
-			# max upload size
-			client_max_body_size 75M;   # adjust to taste
+            # max upload size
+            client_max_body_size 75M;   # adjust to taste
 
-			location /static {
-					# TODO Adjust to your static location
-					alias /srv/django/mailman/public/static;
-			}
+            location /static {
+                    # TODO Adjust to your static location
+                    alias /srv/django/mailman/public/static;
+            }
 
-			# Finally, send all non-media requests to the Django server.
-			location / {
-					uwsgi_pass  mailman;
-					include     /etc/nginx/uwsgi_params; # the uwsgi_params file you installed
-			}
-		}
+            # Finally, send all non-media requests to the Django server.
+            location / {
+                    uwsgi_pass  mailman;
+                    include     /etc/nginx/uwsgi_params; # the uwsgi_params file you installed
+            }
+        }
 
 
 Apache with mod_wsgi

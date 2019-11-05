@@ -18,6 +18,35 @@ You should have received a copy of the GNU Lesser General Public License
 along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 
 
+1.3.0
+=====
+(2019-09-04)
+* Fix a string substitution bug which would cause un-substituted raw string to
+  be exposed as notification to admin. (Closes #327)
+* Add support for ``FILTER_VHOST`` option to filter MalingLists based on
+  ``HOST`` header of incoming request. (Closes #330)
+* List Summary page now renders List info as markdown. (Closes #244)
+* Moderation action for held message's sender can now be set from held
+  message's view.(Closes #127)
+* Add a 'Ban' button to list of subscription requests to help administrators
+  against spams. (Closes #339)
+* Added support for Django 2.2.
+* ``pytest`` will be used to run tests instead of default Django's test runner.
+* Remove ``vcrpy`` and use fixtures to start and stop Mailman's REST API to
+  test against, without having to record tapes to be replayed.
+* Corrected display message in 'recieve_list_copy' option in global mailman
+  preferences of mailman settings. (Closes #351)
+* Allow setting a MailingList's Preferred Language. (Closes #303)
+* Allow a empty templates as a workaround for missing settings to skip
+  email decoration. (Closes #331)
+* Expose ``digest_volume_frequency``, ``digest_send_periodict`` and
+  ``digests_enabled`` settings for MailingLists.
+* Add a badge with count of held messages and pending subscription requests
+  for moderator approval. (Closes #308)
+* Add support to add, view and remove domain owners.
+* Allow setting the visibility options for MailingList's member list.
+* Make page titles localizable.
+
 1.2.4
 =====
 (2019-02-09)
@@ -32,7 +61,7 @@ along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 
 * Expose ``max_num_recipients`` in list settings.  (Closes #297)
 * Add support for Non-member management in Postorius.  (Closes #265)
-* `Members` tab in Mailing List settings page is now called `Users`.
+* ``Members`` tab in Mailing List settings page is now called ``Users``.
   (Closes #309)
 * Show pending subscription requests are only pending for Moderator.
   (Closes #314)
@@ -204,7 +233,7 @@ along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 * all code now conform to PEP8
 * themes: removed obsolete MAILMAN_THEME settings from templates, contexts, file structure; contributed by Richard Wackerbarth (LP: 1043258)
 * added access control for list owners and moderators
-* added a mailmanclient shell to use as a `manage.py` command (`python manage.py mmclient`)
+* added a mailmanclient shell to use as a ``manage.py`` command (``python manage.py mmclient``)
 * use "url from future" template tag in all templates. Contributed by Richard Wackerbarth.
 * added "new user" form. Contributed by George Chatzisofroniou.
 * added user subscription page

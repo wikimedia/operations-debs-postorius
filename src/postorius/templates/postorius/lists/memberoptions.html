@@ -9,7 +9,7 @@
 
 {% block content %}
 
-    {% list_nav 'list_members' 'Subscription options' mm_member.email %}
+    {% list_nav 'list_members' 'msgid:title:list_members' mm_member.email %}
 
     {% if not user.is_superuser and not user.is_list_owner %}
         <h1>{% trans 'No Preferences Available' %}</h1>
