@@ -4,7 +4,7 @@ Uploaders: Pierre-Elliott Bécue <peb@debian.org>,
            Jonas Meurer <jonas@freesources.org>
 Section: python
 Priority: optional
-Build-Depends: debhelper (>= 11~),
+Build-Depends: debhelper-compat (= 12),
                dh-python,
                python3-all,
                python3-bs4,
