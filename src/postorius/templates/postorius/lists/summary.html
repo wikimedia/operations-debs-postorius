@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load bootstrap_tags %}
 {% load nav_helpers %}
+{% load markdown %}
 
 {% block head_title %}
 {% trans 'Info' %} | {{ list.fqdn_listname }} - {{ block.super }}
@@ -9,11 +10,13 @@
 
 {% block content %}
 
-    {% list_nav 'list_summary' 'Summary' %}
+    {% list_nav 'list_summary' 'msgid:title:list_summary' %}
 
     <p>{{ list.settings.description }}</p>
     {% if list.settings.info %}
-    <p><pre style="white-space: pre-wrap; word-break: normal; border: none; background: none;">{{ list.settings.info }}</pre></p>
+        {% autoescape off %}
+          {% markdown_value list.settings.info %}
+        {% endautoescape %}
     {% endif %}
     <p>{% trans 'To contact the list owners, use the following email address:' %} <em>{{ list.settings.owner_address }}</em></p>
 

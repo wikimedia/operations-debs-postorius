@@ -17,19 +17,18 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
-
-from email import policy
-from email import message_from_string
+from email import message_from_string, policy
 from email.parser import HeaderParser
 
-from django.http import HttpResponse, Http404
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import gettext as _
+from django.http import Http404, HttpResponse
 from django.urls import reverse
+from django.utils.translation import gettext as _
+
+from django_mailman3.lib.scrub import Scrubber
 
 from postorius.auth.decorators import list_moderator_required
 from postorius.models import List
-from django_mailman3.lib.scrub import Scrubber
 
 
 def parse(message):

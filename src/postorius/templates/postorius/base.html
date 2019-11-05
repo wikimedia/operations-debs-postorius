@@ -1,5 +1,5 @@
 {% load i18n %}
-{% load staticfiles %}
+{% load static %}
 {% load gravatar %}
 <!DOCTYPE html>
 <html lang="en">
@@ -119,6 +119,10 @@
                 <a href="http://list.org">GNU Mailman</a>
                 &bull;
                 {% trans 'Postorius Version' %} {{ POSTORIUS_VERSION }}
+                {% if mailman_day %}
+                &bull;
+                {% trans 'Happy Mailman Day!' %}
+                {% endif %}
             </p>
         </div>
     </footer>

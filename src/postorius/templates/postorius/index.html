@@ -23,6 +23,7 @@
             <li><a href="?role=owner">Owner</a></li>
             <li><a href="?role=moderator">Moderator</a></li>
             <li><a href="?role=member">Member</a></li>
+            <li><a href="?role=nonmember">Non-member</a></li>
             <li><a href="?all-lists">All</a></li>
           </ul>
         </div>
@@ -70,7 +71,7 @@
             </table>
         </div>
         {% if not all_lists and not role %}
-            <small>* {% trans 'Only lists that you are owner,moderator or subscriber for are shown here.' %} Click to <a href="?all-lists"> see all lists</a>.</small>
+            <small>* {% trans 'Only lists that you are owner, moderator or subscriber for are shown here.' %} Click to <a href="?all-lists"> see all lists</a>.</small>
             <br/>
         {% endif %}
         {% if user.is_superuser %}

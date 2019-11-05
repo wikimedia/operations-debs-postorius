@@ -16,18 +16,27 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
+import logging
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.models import Site
 from django.http import Http404
-from django.shortcuts import render, redirect
-from django.utils.translation import gettext as _
-from django_mailman3.models import MailDomain
+from django.shortcuts import redirect, render
 from django.utils.six.moves.urllib.error import HTTPError
+from django.utils.translation import gettext as _
+from django.views.decorators.http import require_POST
+
+from django_mailman3.lib.mailman import get_mailman_client
+from django_mailman3.models import MailDomain
+
 from postorius.auth.decorators import superuser_required
+from postorius.forms.domain_forms import (
+    DomainEditForm, DomainForm, DomainOwnerForm)
 from postorius.models import Domain, Mailman404Error
-from postorius.forms import DomainEditForm, DomainForm
+
+
+log = logging.getLogger(__name__)
 
 
 @login_required
@@ -135,3 +144,54 @@ def domain_delete(request, domain):
     return render(request, 'postorius/domain/confirm_delete.html',
                   {'domain': domain_obj,
                    'lists': domain_lists_page})
+
+
+@login_required
+@superuser_required
+def domain_owners(request, domain):
+    domain_obj = Domain.objects.get(mail_host=domain)
+    if request.method == 'POST':
+        form = DomainOwnerForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            domain_obj.add_owner(email)
+            messages.success(request,
+                             _('Added {} as an owner for {}'
+                               ).format(email, domain_obj.mail_host))
+            return redirect("domain_index")
+    else:
+        form = DomainOwnerForm()
+    return render(request, 'postorius/domain/owners.html',
+                  {'domain': domain_obj,
+                   'form': form})
+
+
+@require_POST
+@login_required
+@superuser_required
+def remove_owners(request, domain, user_id):
+    domain_obj = Domain.objects.get(mail_host=domain)
+    # Since there is no way to remove one single owner, we do the only possible
+    # thing, remove all owners and add the rest back.
+    client = get_mailman_client()
+    try:
+        remove_email = client.get_user(user_id).addresses[0].email
+        all_owners_emails = [owner.addresses[0].email
+                             for owner in domain_obj.owners]
+    except (KeyError, ValueError) as e:
+        # We get KeyError if the user has no address due to [0].
+        log.error('Unable to delete owner: %s', str(e))
+        raise Http404(str(e))
+    if remove_email in all_owners_emails:
+        all_owners_emails.remove(remove_email)
+    else:
+        messages.error(_('{} is not an owner for {}').format(
+                       remove_email, domain_obj.mail_host))
+        return redirect("domain_index")
+    domain_obj.remove_all_owners()
+    for owner in all_owners_emails:
+        domain_obj.add_owner(owner)
+    messages.success(request,
+                     _('Removed {} as an owner for {}'
+                       ).format(remove_email, domain_obj.mail_host))
+    return redirect("domain_index")

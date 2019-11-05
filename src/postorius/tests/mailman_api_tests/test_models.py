@@ -16,15 +16,16 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from mock import patch, MagicMock
-from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
-from django.utils.six.moves.urllib.error import HTTPError
 from django.test import override_settings
+from django.utils.six.moves.urllib.error import HTTPError
 
-from postorius.tests.utils import ViewTestCase
+from allauth.account.models import EmailAddress
+from mock import MagicMock, patch
+
 from postorius.models import (
     MailmanApiError, MailmanListManager, MailmanUserManager)
+from postorius.tests.utils import ViewTestCase
 
 
 class ModelTest(ViewTestCase):

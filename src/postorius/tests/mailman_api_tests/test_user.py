@@ -16,16 +16,15 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
-from django.urls import reverse
 from django.test.utils import override_settings
-# Temporarily disabled with test_rpeferences_none
-# from mock import patch
+from django.urls import reverse
 
-from postorius.models import MailmanUser, Mailman404Error
+from allauth.account.models import EmailAddress
+
+from postorius.forms import ChangeSubscriptionForm, UserPreferences
+from postorius.models import Mailman404Error, MailmanUser
 from postorius.tests.utils import ViewTestCase
-from postorius.forms import UserPreferences, ChangeSubscriptionForm
 
 
 class MailmanUserTest(ViewTestCase):

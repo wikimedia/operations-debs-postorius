@@ -9,7 +9,7 @@
 
 {% block content %}
 
-    {% list_nav 'list_header_matches' 'Header filters' %}
+    {% list_nav 'list_header_matches' 'msgid:title:list_header_matches' %}
 
     {% for error in formset.non_form_errors %}
         <div class="alert alert-danger">{{ error }}</div>

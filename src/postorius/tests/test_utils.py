@@ -34,4 +34,4 @@ class TestUtils(TestCase):
         response = render_api_error(request)
         self.assertTrue('Mailman REST API not available.' in
                         str(response.content))
-        self.assertEquals(response.status_code, 503)
+        self.assertEqual(response.status_code, 503)

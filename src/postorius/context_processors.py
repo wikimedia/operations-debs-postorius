@@ -18,13 +18,22 @@
 
 
 import logging
+
+from django.utils import timezone
+
 from postorius import __version__
 
 
 logger = logging.getLogger(__name__)
+# The day of the month which we celebrate as Mailman Day!
+MAILMAN_DAY = 1
 
 
 def postorius(request):
     """Add template variables to context.
     """
-    return dict(POSTORIUS_VERSION=__version__)
+    return dict(
+        POSTORIUS_VERSION=__version__,
+        # Mailman Day is first of every month.
+        mailman_day=(timezone.localtime(timezone.now()).day == MAILMAN_DAY),
+    )

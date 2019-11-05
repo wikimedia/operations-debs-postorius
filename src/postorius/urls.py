@@ -17,14 +17,14 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from django.conf.urls import url, include
+from django.conf.urls import include, url
 
-from postorius.views import user as user_views
 from postorius.views import domain as domain_views
 from postorius.views import list as list_views
 from postorius.views import rest as rest_views
 from postorius.views import system as system_views
 from postorius.views import template as template_views
+from postorius.views import user as user_views
 
 
 list_patterns = [
@@ -46,6 +46,8 @@ list_patterns = [
         name='list_unsubscribe'),
     url(r'^subscription_requests$', list_views.list_subscription_requests,
         name='list_subscription_requests'),
+    url(r'^pending_confirmation$', list_views.list_pending_confirmations,
+        name='list_pending_confirmation'),
     url(r'^handle_subscription_request/(?P<request_id>[^/]+)/'
         '(?P<action>[accept|reject|discard|defer]+)$',
         list_views.handle_subscription_request,
@@ -106,6 +108,11 @@ urlpatterns = [
         name='domain_edit'),
     url(r'^domains/(?P<domain>[^/]+)/delete$', domain_views.domain_delete,
         name='domain_delete'),
+   url(r'^domains/(?P<domain>[^/]+)/owners$', domain_views.domain_owners,
+       name='domain_owners'),
+   url(r'^domains/(?P<domain>[^/]+)/owners/(?P<user_id>.+)/remove$',
+       domain_views.remove_owners,
+       name='remove_domain_owner'),
     # Ideally, these paths should be accessible by domain_owners, however,
     # we don't have good ways to check that, so for now, this views are
     # protected by superuser privileges.

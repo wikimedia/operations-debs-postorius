@@ -18,6 +18,7 @@
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+
 from django_mailman3.lib.mailman import get_mailman_client
 
 from postorius.auth.decorators import superuser_required

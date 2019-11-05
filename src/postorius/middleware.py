@@ -17,10 +17,13 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import logging
+
+from mailmanclient import MailmanConnectionError
+
 from postorius import utils
 from postorius.models import MailmanApiError
-from mailmanclient import MailmanConnectionError
-import logging
+
 
 logger = logging.getLogger(__name__)
 

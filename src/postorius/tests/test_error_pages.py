@@ -19,10 +19,11 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from django.test import TestCase
 from django.contrib.auth.models import User
-from mock import patch
+from django.test import TestCase
+
 from mailmanclient import Client
+from mock import patch
 
 
 def server_error(requset):

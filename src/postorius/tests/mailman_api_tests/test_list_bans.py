@@ -18,10 +18,11 @@
 """Tests for ban lists"""
 
 
-from allauth.account.models import EmailAddress
-from bs4 import BeautifulSoup
 from django.contrib.auth.models import User
 from django.urls import reverse
+
+from allauth.account.models import EmailAddress
+from bs4 import BeautifulSoup
 
 from postorius.tests.utils import ViewTestCase
 

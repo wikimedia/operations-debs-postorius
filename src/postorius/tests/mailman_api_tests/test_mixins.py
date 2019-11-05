@@ -18,20 +18,20 @@
 #
 
 
-from allauth.account.models import EmailAddress
-from django.core.exceptions import PermissionDenied
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AnonymousUser, User
 from django.contrib.sites.models import Site
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponse
 from django.test import RequestFactory
 from django.urls import reverse
-from django.http import HttpResponse
 from django.views.generic import TemplateView
-from django.contrib.auth.models import AnonymousUser
+
+from allauth.account.models import EmailAddress
 from django_mailman3.models import MailDomain
 
-from postorius.tests.utils import ViewTestCase
 from postorius.auth.mixins import (
-    ListOwnerMixin, ListModeratorMixin, DomainOwnerMixin)
+    DomainOwnerMixin, ListModeratorMixin, ListOwnerMixin)
+from postorius.tests.utils import ViewTestCase
 
 
 class TestAuthenticationMixins(ViewTestCase):

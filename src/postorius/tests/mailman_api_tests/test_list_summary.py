@@ -16,12 +16,13 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
 from django.urls import reverse
 
-from postorius.tests.utils import ViewTestCase
+from allauth.account.models import EmailAddress
+
 from postorius.forms import ListAnonymousSubscribe
+from postorius.tests.utils import ViewTestCase
 
 
 class ListSummaryPageTest(ViewTestCase):
@@ -106,7 +107,7 @@ class ListSummaryPageTest(ViewTestCase):
         self.client.login(username='testuser', password='testpass')
         response = self.client.get(reverse('list_summary',
                                    args=('foo@example.com', )))
-        self.assertContains(response, 'Held messages</a>')
+        self.assertContains(response, 'Held messages')
         self.assertNotContains(response, 'Delete</a>')
 
     def test_list_summary_is_admin_secondary_owner(self):
@@ -136,7 +137,7 @@ class ListSummaryPageTest(ViewTestCase):
         response = self.client.get(reverse('list_summary',
                                    args=('foo@example.com', )))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Held messages</a>')
+        self.assertContains(response, 'Held messages')
         self.assertNotContains(response, 'Delete</a>')
 
     def test_metrics_not_displayed_to_anonymous(self):
@@ -170,3 +171,26 @@ class ListSummaryPageTest(ViewTestCase):
         response = self.client.get(reverse('list_summary',
                                            args=('foo@example.com',)))
         self.assertContains(response, 'List metrics')
+
+    def test_list_info(self):
+        # Test that list info is rendered as markdown.
+        settings = self.mm_client.get_list('foo@example.com').settings
+        info = 'Welcome To FooList today. This is something very interesting.'
+        settings['info'] = info
+        settings.save()
+        response = self.client.get(reverse('list_summary',
+                                           args=('foo@example.com',)))
+        self.assertContains(response, info)
+        settings['info'] = """\
+Welcome To Foolist
+==================
+
+```
+def function:
+    print('Hello World')
+```
+"""
+        settings.save()
+        response = self.client.get(reverse('list_summary',
+                                           args=('foo@example.com',)))
+        self.assertContains(response, '<pre><code>def function:')

@@ -16,9 +16,10 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from allauth.account.models import EmailAddress
 from django.contrib.auth.models import User
 from django.urls import reverse
+
+from allauth.account.models import EmailAddress
 from mock import patch
 
 from postorius.tests.utils import ViewTestCase

@@ -17,18 +17,17 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from django.conf import settings
 from django.core.exceptions import MultipleObjectsReturned
 from django.db import IntegrityError
-from django.conf import settings
-from django.http import Http404, HttpResponseBadRequest, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_safe
-from django.views.generic import (
-    CreateView, UpdateView, ListView, DeleteView)
+from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
-from postorius.models import Domain, EmailTemplate, List
 from postorius.auth.mixins import DomainOwnerMixin, ListOwnerMixin
+from postorius.models import Domain, EmailTemplate, List
 
 
 class ListContextMixin:

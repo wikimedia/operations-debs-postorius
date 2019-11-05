@@ -1,0 +1,123 @@
+# -*- coding: utf-8 -*-
+# Copyright (C) 2019 by the Free Software Foundation, Inc.
+#
+# This file is part of Postorius.
+#
+# Postorius is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free
+# Software Foundation, either version 3 of the License, or (at your option)
+# any later version.
+#
+# Postorius is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+# more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# Postorius.  If not, see <http://www.gnu.org/licenses/>.
+
+import time
+
+from django.contrib.auth.models import User
+from django.urls import reverse
+
+from allauth.account.models import EmailAddress
+
+from postorius.tests.utils import ViewTestCase
+
+
+class HeldMessageTest(ViewTestCase):
+    """Test view for Held message"""
+
+    def setUp(self):
+        super().setUp()
+        self.domain = self.mm_client.create_domain('example.com')
+        self.superuser = User.objects.create_superuser('su', 'su@example.com',
+                                                       'pwd')
+        EmailAddress.objects.create(user=self.superuser,
+                                    email=self.superuser.email,
+                                    verified=True)
+        self.client.login(username='su', password='pwd')
+
+    def _wait_for_processing(self, queue):
+        while True:
+            if len(queue.files) == 0:
+                break
+            time.sleep(0.1)
+
+    def _wait_for_held_message(self, mlist):
+        # Wait for the message to land in held queue.
+        while True:
+            all_held = mlist.held
+            if len(all_held) > 0:
+                break
+            time.sleep(0.1)
+
+    def test_accept_held_messages(self):
+        # Test that held messages are visible.
+        mlist = self.domain.create_list('test-1')
+        test_msg = """\
+From: aperson@example.com
+To: test-1@example.com
+Subject: This is a test message
+Message-ID: <test-msg@id>
+
+This is a test message.
+
+"""
+        inque = self.mm_client.queues['in']
+        inque.inject('test-1.example.com', test_msg)
+        # Wait for the message to be formatted.
+        self._wait_for_processing(inque)
+        # Wait for message to land in held message queue.
+        self._wait_for_held_message(mlist)
+        # Check that there is a held message.
+        self.assertEqual(len(mlist.held), 1)
+        held_message = mlist.held[0]
+        # Test that a held message is accepted when POST'ing.
+        response = self.client.post(
+            reverse('moderate_held_message', args=('test-1.example.com', )),
+            {'msgid': held_message.request_id,
+             'accept': True,
+             'moderation_choice': 'no-action'}
+            )
+        self.assertEqual(response.status_code, 302)
+
+    def test_accept_held_message_moderate_member(self):
+        # Test that we can moderate a member and accept a message at the same
+        # time.
+        mlist = self.domain.create_list('test-2')
+        # Set default action to be hold for member's post.
+        mlist.settings['default_member_action'] = 'hold'
+        mlist.settings.save()
+        # Subscribe this user.
+        mlist.subscribe('aperson@example.com',
+                        pre_verified=True, pre_confirmed=True)
+        test_msg = """\
+From: aperson@example.com
+To: test-2@example.com
+Subject: This is a test message
+Message-ID: <test-msg@id>
+
+This is a test message.
+
+"""
+        inque = self.mm_client.queues['in']
+        inque.inject('test-2.example.com', test_msg)
+        # Wait for the message to be formatted.
+        self._wait_for_processing(inque)
+        # Wait for message to land in held message queue.
+        self._wait_for_held_message(mlist)
+        # Check that there is a held message.
+        self.assertEqual(len(mlist.held), 1)
+        held_message = mlist.held[0]
+        # Test that a held message is accepted when POST'ing.
+        response = self.client.post(
+            reverse('moderate_held_message', args=('test-2.example.com', )),
+            {'msgid': held_message.request_id,
+             'accept': True,
+             'moderation_choice': 'defer'}
+        )
+        self.assertEqual(response.status_code, 302)
+        member = mlist.get_member('aperson@example.com')
+        self.assertEqual(member.moderation_action, 'defer')

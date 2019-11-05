@@ -21,8 +21,8 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.http import Http404
 from django.urls import reverse_lazy
-from django.views.generic import RedirectView
 from django.views.defaults import server_error
+from django.views.generic import RedirectView
 
 
 def not_found(request):

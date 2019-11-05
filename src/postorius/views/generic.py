@@ -19,10 +19,11 @@
 
 from django.http import HttpResponse
 from django.views.generic import TemplateView
+
 from django_mailman3.lib.mailman import get_mailman_client
 
-from postorius.models import List
 from postorius.auth.utils import set_list_access_props
+from postorius.models import List
 
 
 class MailmanClientMixin(object):

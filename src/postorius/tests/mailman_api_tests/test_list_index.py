@@ -16,9 +16,13 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from allauth.account.models import EmailAddress
+from functools import partial
+
 from django.contrib.auth.models import User
+from django.test import override_settings
 from django.urls import reverse
+
+from allauth.account.models import EmailAddress
 
 from postorius.tests.utils import ViewTestCase
 
@@ -187,3 +191,53 @@ class ListIndexPageTest(ViewTestCase):
         # Make sure that memberships of other email addresses than primary one
         # showup here.
         self.assertEqual(len(response.context['lists']), 1)
+
+
+@override_settings(FILTER_VHOST=True, ALLOWED_HOSTS=["*"])
+class DomainFilteringListIndexPageTest(ListIndexPageTest):
+    """Tests for the list index page when domain filtering is enabled.
+
+    This also runs all the ListIndexPageTests with FILTER_VHOST enabled for
+    more coverage."""
+
+    def setUp(self):
+        super(DomainFilteringListIndexPageTest, self).setUp()
+        self.domain2 = self.mm_client.create_domain('example.org')
+        self.quux_list = self.domain2.create_list('quux')
+        self.thud_list = self.domain2.create_list('thud')
+
+        self.client._get = self.client.get
+        self.client.get = partial(self.client._get, HTTP_HOST='example.com')
+        self.client.get2 = partial(self.client._get, HTTP_HOST='example.org')
+
+    def test_domain2_list_index_contains_the_lists(self):
+        # The list index page should contain only the requested domain's lists
+        response = self.client.get2(reverse('list_index'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['lists']), 2)
+        self.assertEqual([l.fqdn_listname for l in response.context['lists']],
+                         ['quux@example.org', 'thud@example.org'])
+
+    def test_domain2_list_index_all_lists(self):
+        # Test that list index page for a logged-in user.
+        self.client.login(username='user', password='pwd')
+        url = reverse('list_index')
+        response = self.client.get2(url)
+        # Since this user isn't related to any list, their index page will
+        # redirect to all-lists.
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, '/postorius/lists/?all-lists')
+        response = self.client.get2(response.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['lists']), 2)
+        # Now, if we subscribe the user to a list, it will show only that list.
+        self.quux_list.subscribe(
+            self.user.email, pre_confirmed=True, pre_verified=True)
+        response = self.client.get2(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['lists']), 1)
+        # List that you are owners and moderators for should also show up.
+        self.thud_list.add_owner(self.user.email)
+        response = self.client.get2(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['lists']), 2)

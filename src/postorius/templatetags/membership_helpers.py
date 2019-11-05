@@ -19,10 +19,11 @@
 
 from django import template
 
+from mailmanclient import MailingList
+
 from postorius.auth.utils import user_is_in_list_roster
 from postorius.models import List
 
-from mailmanclient import MailingList
 
 register = template.Library()
 
@@ -59,3 +60,10 @@ def user_is_list_moderator(user, mlist):
     the user is one of the list moderators, False otherwise.
     """
     return user_is_in_list_roster(user, get_list(mlist), 'moderators')
+
+
+@register.filter
+def owner_repr(owner):
+    name = owner.display_name or ''
+    address = owner.addresses[0].original_email
+    return '{} {}'.format(name, address)

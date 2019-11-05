@@ -15,25 +15,19 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-
 import os
-import vcr
-import logging
 
 from django.conf import settings
 from django.contrib import messages
-from django.urls import reverse
 from django.test import TransactionTestCase
-from mock import MagicMock
-from six import binary_type, text_type, PY3
-from six.moves.urllib_parse import (
-    quote, urlparse, urlunparse, parse_qsl, urlencode)
+from django.urls import reverse
+
 from django_mailman3.lib.mailman import get_mailman_client
 from django_mailman3.tests.utils import get_flash_messages
-
-
-vcr_log = logging.getLogger('vcr')
-vcr_log.setLevel(logging.WARNING)
+from mock import MagicMock
+from six import PY3, binary_type, text_type
+from six.moves.urllib_parse import (
+    parse_qsl, quote, urlencode, urlparse, urlunparse)
 
 
 def get_test_file(*fileparts):
@@ -80,26 +74,6 @@ def filter_response_headers(response):
         if header in response['headers']:
             del response['headers'][header]
     return response
-
-
-def get_vcr(**kwargs):
-    # Use the POSTORIUS_VCR_RECORD_MODE environment variable to set the record
-    # mode. By default, this value is set to 'once'.
-    # See http://vcrpy.readthedocs.io/en/latest/usage.html#record-modes
-    # for more details about all the record modes.
-    vcr_record_mode = os.getenv('POSTORIUS_VCR_RECORD_MODE', 'once')
-    if vcr_record_mode not in ('once', 'all', 'none', 'new_episodes'):
-        vcr_log.warning('{} is not a valid VCR.py mode, '
-                        'using once as default'.format(vcr_record_mode))
-        vcr_record_mode = 'once'
-
-    return vcr.VCR(
-        filter_headers=['authorization', 'user-agent', 'date'],
-        before_record=reorder_request_params,
-        before_record_response=filter_response_headers,
-        record_mode=vcr_record_mode,
-        **kwargs
-    )
 
 
 def create_mock_domain(properties=None):
@@ -157,19 +131,9 @@ def create_mock_member(properties=None):
 
 
 class ViewTestCase(TransactionTestCase):
-    use_vcr = True
-    _fixtures_dir = os.path.join(os.path.abspath(
-        os.path.dirname(__file__)), 'fixtures', 'vcr_cassettes')
-
-    _mm_vcr = get_vcr(cassette_library_dir=_fixtures_dir)
 
     def setUp(self):
         self.mm_client = get_mailman_client()
-        if self.use_vcr:
-            cm = self._mm_vcr.use_cassette('.'.join([
-                self.__class__.__name__, self._testMethodName, 'yaml']))
-            self.cassette = cm.__enter__()
-            self.addCleanup(cm.__exit__, None, None, None)
 
     def tearDown(self):
         for d in self.mm_client.domains:

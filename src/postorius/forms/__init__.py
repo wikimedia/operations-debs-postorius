@@ -17,8 +17,8 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from postorius.forms.domain_forms import *      # noqa
-from postorius.forms.fields import *            # noqa
-from postorius.forms.member_forms import *      # noqa
-from postorius.forms.list_forms import *        # noqa
-from postorius.forms.user_forms import *        # noqa
+from postorius.forms.domain_forms import *  # noqa
+from postorius.forms.fields import *  # noqa
+from postorius.forms.list_forms import *  # noqa
+from postorius.forms.member_forms import *  # noqa
+from postorius.forms.user_forms import *  # noqa
