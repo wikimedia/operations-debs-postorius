@@ -21,6 +21,7 @@ Architecture: all
 Depends: libjs-jquery,
          libjs-bootstrap,
          fonts-glewlwyd,
+         node-html5shiv,
          python3-cmarkgfm,
          python3-django,
          python3-django-mailman3 (>= 1.2.0),
