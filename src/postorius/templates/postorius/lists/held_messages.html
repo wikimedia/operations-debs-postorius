@@ -1,6 +1,7 @@
 {% extends "postorius/base.html" %}
 {% load i18n %}
 {% load nav_helpers %}
+{% load date_helpers %}
 {% load pagination %}
 {% load static %}
 
@@ -54,7 +55,7 @@
                     </td>
                     <td>{{ msg.sender }}</td>
                     <td>{{ msg.reason }}</td>
-                    <td>{{ msg.hold_date|date:"DATETIME_FORMAT" }}</td>
+                    <td>{{ msg.hold_date|datetime_parse|date:"DATETIME_FORMAT" }}</td>
                   </tr>
                 {% endfor %}
               </tbody>

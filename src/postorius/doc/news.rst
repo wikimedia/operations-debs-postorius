@@ -18,9 +18,43 @@ You should have received a copy of the GNU Lesser General Public License
 along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 
 
+1.3.2
+=====
+
+(2020-01-12)
+
+* Do not show pagination, when user is authenticated. (Closes #387)
+* Drop support for Django 1.11.
+* Add support to choose options for ``pre_confirm``, ``pre_approve`` and
+  ``pre_verify`` when mass subscribing. (Fixes #203)
+
+1.3.1
+=====
+
+(2019-12-08)
+
+* Show templates' file names in selection list where admins can pick
+  individual templates for customization. (See !425)
+* Make template short names more prominent on all email templates related
+  views. (See !425)
+* Bind object attributes to local variables in {% blocktrans %} (See !439)
+* Set the initial style in new list form as the default style. (Closes #310)
+* Fix a bug where logged in users's index page view would cap the total number
+  of lists for a role to 50. (Closes #335)
+* Fix a bug where handling non-existent held message can raise 500
+  exception. (Closes #349)
+* Emit appropriate signals when Domain and MailingList is updated. (Closes
+  #385)
+* Do not strip leading whitespaces in Email Templates. (Closes #301)
+* Hold date for held messages are now displayed correctly. (Closes #312)
+* Add support for Python 3.8.
+* Add support for Django 3.0.
+
 1.3.0
 =====
+
 (2019-09-04)
+
 * Fix a string substitution bug which would cause un-substituted raw string to
   be exposed as notification to admin. (Closes #327)
 * Add support for ``FILTER_VHOST`` option to filter MalingLists based on
@@ -46,6 +80,7 @@ along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 * Add support to add, view and remove domain owners.
 * Allow setting the visibility options for MailingList's member list.
 * Make page titles localizable.
+
 
 1.2.4
 =====

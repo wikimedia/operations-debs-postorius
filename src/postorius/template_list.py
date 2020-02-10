@@ -18,7 +18,7 @@
 #
 # flake8: noqa
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 TEMPLATES_LIST = (
@@ -51,7 +51,7 @@ TEMPLATES_LIST = (
     ('list:user:notice:goodbye',
      _('The notice sent to a member when they unsubscribe from a mailing list.')),
     ('list:user:notice:hold',
-     _('The notice sent to a poster when their message is being held or moderator approval.')),
+     _('The notice sent to a poster when their message is being held for moderator approval.')),
     ('list:user:notice:no-more-today',
      _('Sent to a user when the maximum number of autoresponses has been reached for that day.')),
     ('list:user:notice:post',

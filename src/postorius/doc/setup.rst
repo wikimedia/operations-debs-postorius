@@ -12,7 +12,7 @@ Installation
 Install Postorius
 =================
 
-Postorius supports Python 3.5+ and Django 1.11+.
+Postorius supports Python 3.5+ and Django 2.0+.
 
 
 Latest release

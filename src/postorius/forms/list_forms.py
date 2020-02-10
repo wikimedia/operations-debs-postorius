@@ -22,12 +22,13 @@ import re
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from django_mailman3.lib.mailman import get_mailman_client
 
 from postorius.forms.fields import ListOfStringsField
 from postorius.languages import LANGUAGES
+from postorius.models import EmailTemplate, _email_template_help_text
 
 
 ACTION_CHOICES = (
@@ -722,6 +723,35 @@ class ListMassSubscription(forms.Form):
             ),
     )
 
+    pre_confirmed = forms.BooleanField(
+        label=_('Pre confirm'),
+        initial=True,
+        required=False,
+        help_text=_(
+            'If checked, users will not have to confirm their subscription.'),
+        widget=forms.CheckboxInput()
+        )
+
+    pre_approved = forms.BooleanField(
+        label=_('Pre approved'),
+        initial=True,
+        required=False,
+        help_text=_(
+            'If checked, moderators will not have to approve the subscription'
+            ' request.',),
+        widget=forms.CheckboxInput()
+        )
+
+    pre_verified = forms.BooleanField(
+        label=_('Pre Verified'),
+        initial=False,
+        required=False,
+        help_text=_(
+            'If checked, users will not have to verify that their '
+            'email address is valid.'),
+        widget=forms.CheckboxInput()
+        )
+
 
 class ListMassRemoval(forms.Form):
 
@@ -837,3 +867,16 @@ class ChangeSubscriptionForm(forms.Form):
             required=False,
             widget=forms.Select(),
             choices=((address, address) for address in user_emails))
+
+
+class TemplateUpdateForm(forms.ModelForm):
+    data = forms.CharField(
+        label=_('Data'),
+        required=False,
+        strip=False,
+        widget=forms.Textarea(),
+        help_text=_email_template_help_text)
+
+    class Meta:
+        model = EmailTemplate
+        fields = ['data']

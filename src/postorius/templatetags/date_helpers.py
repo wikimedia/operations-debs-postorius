@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2018-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2019 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -16,3 +16,18 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 #
+from django import template
+from django.utils.dateparse import parse_datetime
+
+
+register = template.Library()
+
+
+@register.filter
+def datetime_parse(value):
+    """Parse string value into datetime object. """
+    try:
+        return parse_datetime(value)
+    except ValueError:
+        # If they are invalid dates, just return them back.
+        return value

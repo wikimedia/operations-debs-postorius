@@ -192,6 +192,24 @@ class ListIndexPageTest(ViewTestCase):
         # showup here.
         self.assertEqual(len(response.context['lists']), 1)
 
+    def test_list_index_pagination(self):
+        # Test that pagination is shown when user is not authenticated.
+        url = reverse('list_index')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(b'Results per page' in response.content)
+        # Test that pagination is not shown when user is authenticated.
+        self.client.login(username='user', password='pwd')
+        self.foo_list.add_owner(self.user.email)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['lists']), 1)
+        self.assertTrue(b'Results per page' not in response.content)
+        # Test that pagination is shown when `all-lists` is in query params.
+        response = self.client.get(url + '?all-lists')
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(b'Results per page' in response.content)
+
 
 @override_settings(FILTER_VHOST=True, ALLOWED_HOSTS=["*"])
 class DomainFilteringListIndexPageTest(ListIndexPageTest):

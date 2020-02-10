@@ -61,10 +61,14 @@
                         <tr>
                             <td>
                                 <a href="{% url 'list_summary' list_id=list.list_id %}">{{ list.display_name }}</a>
-                                {% if user.is_superuser and not list.settings.advertised %} ({% trans 'unadvertised' %}*){% endif %}
+                                {% if check_advertised %}
+                                  {% if user.is_superuser and not list.settings.advertised %}
+                                    ({% trans 'unadvertised' %}*)
+                                  {% endif %}
+                                {% endif %}
                             </td>
                             <td>{{ list.fqdn_listname }}</td>
-                            <td>{{ list.settings.description }}</td>
+                            <td>{{ list.description }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -77,7 +81,9 @@
         {% if user.is_superuser %}
             <small>* {% trans 'Only admins see unadvertised lists in the list index.' %}</small>
         {% endif %}
-        {% paginator lists %}
+        {% if not user.is_authenticated or "all-lists" in request.GET %}
+            {% paginator lists %}
+        {% endif %}
     {% else %}
         <p>{% trans 'There are currently no mailing lists.' %}</p>
     {% endif %}

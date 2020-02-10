@@ -20,8 +20,6 @@
 Authentication and authorization-related utilities.
 """
 
-from django.utils import six
-
 from allauth.account.models import EmailAddress
 
 from postorius.models import Domain, List
@@ -57,7 +55,7 @@ def set_list_access_props(user, mlist):
     :param mlist: MailingList to check permissions for.
     :type mlist: postorius.models.List
     """
-    if isinstance(mlist, six.string_types):
+    if isinstance(mlist, str):
         mlist = List.objects.get_or_404(mlist)
     if not hasattr(user, 'is_list_owner'):
         user.is_list_owner = user_is_in_list_roster(
@@ -78,7 +76,7 @@ def set_domain_access_props(user, domain):
     # TODO: This is very slow as it involves first iterating over every domain
     # owner and then each of their addresses. Create an API in Core to
     # facilitate this.
-    if isinstance(domain, six.string_types):
+    if isinstance(domain, str):
         domain = Domain.objects.get_or_404(domain)
     owner_addresses = []
     for owner in domain.owners:

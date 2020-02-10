@@ -14,7 +14,9 @@
     </div>
 
     {% if object %}
-        <h3> {{ object.description }} </h3>
+    <h3>{% blocktrans with name=object.name %}Template '{{ name }}'{% endblocktrans %}<br />
+        <small>{{ object.description }}</small>
+    </h3>
     {% endif %}
 
     <form action="" method="post" class="form-group">
