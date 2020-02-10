@@ -1,6 +1,6 @@
-postorius (1.3.0-1) UNRELEASED; urgency=medium
+postorius (1.3.2-1) UNRELEASED; urgency=medium
 
-  * New upstream release 1.3.0
+  * New upstream release 1.3.2
   * d/control:
     - Switch to debhelper-compat (version 12) instead of debian/compat
     - Bump Standards-Version to 4.4.1
