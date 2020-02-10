@@ -179,7 +179,7 @@ class TestSubscription(ViewTestCase):
                         <test-5@example.org>\n"""
         self.client.post(
             reverse('mass_subscribe', args=('open_list.example.com',)),
-            {'emails': email_list})
+            {'emails': email_list, 'pre_verified': True})
         self.assertEqual(len(self.open_list.members), 5)
         first = self.open_list.get_member('test-1@example.org')
         second = self.open_list.get_member('test-2@example.org')

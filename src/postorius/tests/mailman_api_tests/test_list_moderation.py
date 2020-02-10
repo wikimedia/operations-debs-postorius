@@ -121,3 +121,16 @@ This is a test message.
         self.assertEqual(response.status_code, 302)
         member = mlist.get_member('aperson@example.com')
         self.assertEqual(member.moderation_action, 'defer')
+
+    def test_moderate_held_message_missing(self):
+        self.domain.create_list('test-3')
+        response = self.client.post(
+            reverse('moderate_held_message', args=('test-3.example.com', )),
+            {'msgid': '12345',
+             'accept': True,
+             'moderation_choice': 'defer'})
+
+        self.assertHasErrorMessage(response)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url,
+                         '/postorius/lists/test-3.example.com/held_messages')

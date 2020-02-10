@@ -17,18 +17,19 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 import logging
+from urllib.error import HTTPError
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.models import Site
 from django.http import Http404
 from django.shortcuts import redirect, render
-from django.utils.six.moves.urllib.error import HTTPError
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 
 from django_mailman3.lib.mailman import get_mailman_client
 from django_mailman3.models import MailDomain
+from django_mailman3.signals import domain_created, domain_deleted
 
 from postorius.auth.decorators import superuser_required
 from postorius.forms.domain_forms import (
@@ -76,6 +77,8 @@ def domain_new(request):
                 MailDomain.objects.get_or_create(
                     site=form.cleaned_data['site'],
                     mail_domain=form.cleaned_data['mail_host'])
+                domain_created.send(sender=Domain,
+                                    mail_host=form.cleaned_data['mail_host'])
                 return redirect("domain_index")
     else:
         form = DomainForm(initial=form_initial)
@@ -135,6 +138,7 @@ def domain_delete(request, domain):
             MailDomain.objects.filter(mail_domain=domain).delete()
             messages.success(request,
                              _('The domain %s has been deleted.' % domain))
+            domain_deleted.send(sender=Domain, mail_host=domain)
             return redirect("domain_index")
         except HTTPError as e:
             messages.error(request,

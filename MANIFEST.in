@@ -1,10 +1,11 @@
 include COPYING
 include *.rst
-recursive-include src/postorius *.py *.html *.js *.rst *.txt
+recursive-include src/postorius *.py *.html *.js *.rst *.txt *.po
 prune src/postorius/doc/_build
 graft src/postorius/static
 include src/postorius/doc/Makefile
 include tox.ini
+include pytest.ini
 recursive-include example_project *.py *.cfg *.rst *.txt
 exclude example_project/settings_local.py
 prune example_project/venv

@@ -20,6 +20,7 @@ from __future__ import (
     absolute_import, division, print_function, unicode_literals)
 
 import logging
+from urllib.error import HTTPError
 from urllib.parse import urljoin
 
 from django.conf import settings
@@ -30,8 +31,7 @@ from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from django.http import Http404
 from django.urls import reverse
-from django.utils.six.moves.urllib.error import HTTPError
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from mailmanclient import MailmanConnectionError
 
@@ -40,6 +40,23 @@ from postorius.utils import LANGUAGES, get_mailman_client
 
 
 logger = logging.getLogger(__name__)
+
+_email_template_help_text = _(
+    'Note: Do not add any secret content in templates as they are '
+    'publicly accessible.\n'
+    'You can use these variables in the templates. \n'
+    '$hyperkitty_url: Permalink to archived message in Hyperkitty\n'
+    '$listname: Name of the Mailing List e.g. ant@example.com \n'
+    '$list_id: The List-ID header e.g. ant.example.com \n'
+    '$display_name: Display name of the mailing list e.g. Ant \n'
+    '$short_listname: Local part of the listname e.g. ant \n'
+    '$domain: The domain part of the listname e.g. example.com \n'
+    '$info: The mailing list\'s longer descriptive text \n'
+    '$request_email: The email address for -request address \n'
+    '$owner_email: The email address for -owner address \n'
+    '$site_email: The email address to reach the owners of the site \n'
+    '$language: The two letter language code for list\'s preferred language e.g. fr, en, de \n'  # noqa: E501
+    )
 
 
 @receiver(post_save, sender=User)
@@ -228,26 +245,19 @@ class EmailTemplate(models.Model):
     Footers on emails for decorations are also repsented as templates.
     """
 
+    # Ease differentiating the various Mailman templates by providing the
+    # template file's name (key) prepended in square brackets to the
+    # template's purpose (value).
+    _templates_list_choices = [
+        (t[0], "[{key}] - {value}".format(key=t[0], value=t[1]))
+        for t in TEMPLATES_LIST
+    ]
+
     name = models.CharField(
-        max_length=100, choices=TEMPLATES_LIST,
+        max_length=100, choices=_templates_list_choices,
         help_text=_('Choose the template you want to customize.'))
     data = models.TextField(
-        help_text=_(
-            'Note: Do not add any secret content in templates as they are '
-            'publicly accessible.\n'
-            'You can use these variables in the templates. \n'
-            '$hyperkitty_url: Permalink to archived message in Hyperkitty\n'
-            '$listname: Name of the Mailing List e.g. ant@example.com \n'
-            '$list_id: The List-ID header e.g. ant.example.com \n'
-            '$display_name: Display name of the mailing list e.g. Ant \n'
-            '$short_listname: Local part of the listname e.g. ant \n'
-            '$domain: The domain part of the listname e.g. example.com \n'
-            '$info: The mailing list\'s longer descriptive text \n'
-            '$request_email: The email address for -request address \n'
-            '$owner_email: The email address for -owner address \n'
-            '$site_email: The email address to reach the owners of the site \n'
-            '$language: The two letter language code for list\'s preferred language e.g. fr, en, de \n'  # noqa: E501
-        ),
+        help_text=_email_template_help_text,
         blank=True,
     )
     language = models.CharField(
@@ -275,7 +285,8 @@ class EmailTemplate(models.Model):
         """API url is the remote url that Core can use to fetch templates"""
         base_url = getattr(settings, 'POSTORIUS_TEMPLATE_BASE_URL', None)
         if not base_url:
-            raise ImproperlyConfigured
+            raise ImproperlyConfigured(
+                'Setting "POSTORIUS_TEMPLATE_BASE_URL" is not configured.')
         resource_url = reverse(
             'rest_template',
             kwargs=dict(context=self.context,

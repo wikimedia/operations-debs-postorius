@@ -27,7 +27,19 @@ from django.views.decorators.http import require_safe
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
 from postorius.auth.mixins import DomainOwnerMixin, ListOwnerMixin
+from postorius.forms.list_forms import TemplateUpdateForm
 from postorius.models import Domain, EmailTemplate, List
+
+
+def _clean_with_no_strip(field, data):
+    """Clean Django's CharField field without strip=True.
+
+    :param field: Instance of the Charfield.
+    :param data: The un-cleaned data from the form.
+    :returns: Cleaned data.
+    """
+    field.strip = False
+    return field.clean(data)
 
 
 class ListContextMixin:
@@ -61,6 +73,8 @@ class ListTemplateCreateView(ListOwnerMixin, ListContextMixin, CreateView):
 
     def form_valid(self, form):
         formdata = form.cleaned_data
+        formdata['data'] = _clean_with_no_strip(form.fields['data'],
+                                                form.data['data'])
         formdata['identifier'] = self.kwargs['list_id']
         formdata['context'] = 'list'
         email_template = EmailTemplate(**formdata)
@@ -82,7 +96,7 @@ class ListTemplateUpdateView(ListOwnerMixin, ListContextMixin, UpdateView):
 
     template_name = 'postorius/lists/template_update.html'
     model = EmailTemplate
-    fields = ['data']
+    form_class = TemplateUpdateForm
 
     def get_success_url(self):
         return reverse_lazy(
@@ -132,6 +146,8 @@ class DomainTemplateCreateView(
 
     def form_valid(self, form):
         formdata = form.cleaned_data
+        formdata['data'] = _clean_with_no_strip(form.fields['data'],
+                                                form.data['data'])
         formdata['identifier'] = self.kwargs['domain']
         formdata['context'] = 'domain'
         template = EmailTemplate(**formdata)
@@ -154,7 +170,7 @@ class DomainTemplateUpdateView(
 
     model = EmailTemplate
     template_name = 'postorius/domain/template_add.html'
-    fields = ['data']
+    form_class = TemplateUpdateForm
     header = 'Edit Template'
 
     def get_success_url(self):

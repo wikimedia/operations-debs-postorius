@@ -20,6 +20,8 @@
 import csv
 import email.utils
 import logging
+import sys
+from urllib.error import HTTPError
 
 from django.conf import settings
 from django.contrib import messages
@@ -31,13 +33,14 @@ from django.http import Http404, HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils.decorators import method_decorator
-from django.utils.six.moves.urllib.error import HTTPError
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
 
 from allauth.account.models import EmailAddress
 from django_mailman3.lib.mailman import get_mailman_client
 from django_mailman3.lib.paginator import MailmanPaginator, paginate
+from django_mailman3.signals import (
+    mailinglist_created, mailinglist_deleted, mailinglist_modified)
 
 from postorius.auth.decorators import (
     list_moderator_required, list_owner_required, superuser_required)
@@ -428,11 +431,12 @@ def list_mass_subscribe(request, list_id):
                     # Parse the data to get the address and the display name
                     display_name, address = email.utils.parseaddr(data)
                     validate_email(address)
-                    mailing_list.subscribe(address=address,
-                                           display_name=display_name,
-                                           pre_verified=True,
-                                           pre_confirmed=True,
-                                           pre_approved=True)
+                    mailing_list.subscribe(
+                        address=address,
+                        display_name=display_name,
+                        pre_verified=form.cleaned_data['pre_verified'],
+                        pre_confirmed=form.cleaned_data['pre_confirmed'],
+                        pre_approved=form.cleaned_data['pre_approved'])
                     messages.success(
                         request, _('The address %(address)s has been'
                                    ' subscribed to %(list)s.') %
@@ -534,15 +538,26 @@ def moderate_held_message(request, list_id):
     mailing_list = List.objects.get_or_404(fqdn_listname=list_id)
     msg = mailing_list.get_held_message(request.POST['msgid'])
     moderation_choice = request.POST.get('moderation_choice')
-    if 'accept' in request.POST:
-        mailing_list.accept_message(msg.request_id)
-        messages.success(request, _('The message was accepted'))
-    elif 'reject' in request.POST:
-        mailing_list.reject_message(msg.request_id)
-        messages.success(request, _('The message was rejected'))
-    elif 'discard' in request.POST:
-        mailing_list.discard_message(msg.request_id)
-        messages.success(request, _('The message was discarded'))
+
+    try:
+        if 'accept' in request.POST:
+            mailing_list.accept_message(msg.request_id)
+            messages.success(request, _('The message was accepted'))
+        elif 'reject' in request.POST:
+            mailing_list.reject_message(msg.request_id)
+            messages.success(request, _('The message was rejected'))
+        elif 'discard' in request.POST:
+            mailing_list.discard_message(msg.request_id)
+            messages.success(request, _('The message was discarded'))
+    except HTTPError as e:
+        if e.code == 404:
+            messages.error(
+                request,
+                _('Held message was not found.'))
+            return redirect('list_held_messages', list_id)
+        else:
+            raise
+
     moderation_choices = dict(ACTION_CHOICES)
     if moderation_choice in moderation_choices:
         try:
@@ -588,13 +603,11 @@ def _get_choosable_styles(request):
     styles = Style.objects.all()
     options = [(style['name'], style['description'])
                for style in styles['styles']]
-    # Reorder to put the default at the beginning
-    for style_option in options:
-        if style_option[0] == styles['default']:
-            options.remove(style_option)
-            options.insert(0, style_option)
-            break
     return options
+
+
+def _get_default_style():
+    return Style.objects.all()['default']
 
 
 @login_required
@@ -632,6 +645,8 @@ def list_new(request, template='postorius/lists/new.html'):
                 list_settings["advertised"] = form.cleaned_data['advertised']
                 list_settings.save()
                 messages.success(request, _("List created"))
+                mailinglist_created.send(sender=List,
+                                         list_id=mailing_list.list_id)
                 return redirect("list_summary",
                                 list_id=mailing_list.list_id)
             # TODO catch correct Error class:
@@ -652,6 +667,7 @@ def list_new(request, template='postorius/lists/new.html'):
         form = ListNew(choosable_domains, choosable_styles, initial={
             'list_owner': request.user.email,
             'advertised': True,
+            'list_style': _get_default_style(),
             })
     return render(request, template, {'form': form})
 
@@ -688,7 +704,10 @@ def list_index_authenticated(request):
     for user_email in user_emails:
         try:
             all_lists.extend(
-                client.find_lists(user_email, role=role, mail_host=mail_host))
+                client.find_lists(user_email,
+                                  role=role,
+                                  mail_host=mail_host,
+                                  count=sys.maxsize))
         except HTTPError:
             # No lists exist with the given role for the given user.
             pass
@@ -696,11 +715,14 @@ def list_index_authenticated(request):
     # just redirect them to the index page with all lists.
     if len(all_lists) == 0 and role is None:
         return redirect(reverse('list_index') + '?all-lists')
-    # Render the list index page.
+    # Render the list index page with `check_advertised = False` since we don't
+    # need to check for advertised list given that all the users are related
+    # and know about the existence of the list anyway.
     context = {
         'lists': _unique_lists(all_lists),
         'domain_count': len(choosable_domains),
-        'role': role
+        'role': role,
+        'check_advertised': False,
     }
     return render(
         request,
@@ -736,6 +758,7 @@ def list_index(request, template='postorius/index.html'):
 
     return render(request, template,
                   {'lists': lists,
+                   'check_advertised': True,
                    'all_lists': True,
                    'domain_count': len(choosable_domains)})
 
@@ -748,6 +771,7 @@ def list_delete(request, list_id):
     the_list = List.objects.get_or_404(fqdn_listname=list_id)
     if request.method == 'POST':
         the_list.delete()
+        mailinglist_deleted.send(sender=List, list_id=list_id)
         return redirect("list_index")
     else:
         submit_url = reverse('list_delete',
@@ -893,6 +917,7 @@ def list_settings(request, list_id=None, visible_section=None,
                         list_settings[key] = form.cleaned_data[key]
                 list_settings.save()
                 messages.success(request, _('The settings have been updated.'))
+                mailinglist_modified.send(sender=List, list_id=m_list.list_id)
             except HTTPError as e:
                 messages.error(
                     request,

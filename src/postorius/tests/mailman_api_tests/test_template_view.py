@@ -52,12 +52,7 @@ class DomainTemplateViewTest(ViewTestCase):
         self.domain.add_owner('do@example.com')
 
     def tearDown(self):
-        try:
-            for template in self.domain.templates:
-                template.delete()
-        except urllib.error.HTTPError:
-            pass
-
+        EmailTemplate.objects.all().delete()
         # We do this because instead of returning an empty list, we get
         # a 404 error. This must be fixed in Client.
 
@@ -127,6 +122,24 @@ class DomainTemplateViewTest(ViewTestCase):
             context='domain',
             name='list:admin:action:post',
             identifier='example.com').exists())
+
+    def test_template_create_view_whitespace(self):
+        self.client.login(
+            username='domain_owner', password='testpass')
+        # First, let's make sure we can GET the view.
+        url = reverse('domain_template_new', args=('example.com',))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('New Template' in str(response.content))
+        # Now, let's try to create a new Template with leading whitespace.
+        data = {'name': 'list:admin:action:post',
+                'data': '\n\n\t\tThis is test data.'}
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 302)
+        # Now, let's check to make sure that the data wasn't stripped.
+        templates = EmailTemplate.objects.get(
+            name='list:admin:action:post', identifier='example.com')
+        self.assertEqual(templates.data, '\n\n\t\tThis is test data.')
 
     def test_template_create_all(self):
         # Test that we can create all the template options.
@@ -331,6 +344,25 @@ class MailingListTemplateViewTest(ViewTestCase):
             name='list:admin:action:post',
             identifier='fun.example.com').exists())
 
+    def test_template_create_view_whitespace(self):
+        self.client.login(
+            username='list_owner', password='testpass')
+        # First, let's make sure we can GET the view.
+        url = reverse('list_template_new', args=('fun.example.com',))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue('Choose the template you want to customize.'
+                        in str(response.content))
+        # Now, let's try to create a new Template with leading whitespace.
+        data = {'name': 'list:admin:action:post',
+                'data': '\n\n\t\tThis is test data.'}
+        response = self.client.post(url, data=data)
+        self.assertEqual(response.status_code, 302)
+        # Now, let's check to make sure that the data wasn't stripped.
+        templates = EmailTemplate.objects.get(
+            name='list:admin:action:post', identifier='fun.example.com')
+        self.assertEqual(templates.data, '\n\n\t\tThis is test data.')
+
     def test_template_create_all(self):
         # Test that we can create all the template options.
         self.client.login(
@@ -396,10 +428,10 @@ class MailingListTemplateViewTest(ViewTestCase):
             name='list:admin:action:post',
             identifier='fun.example.com').exists())
 
-    def test_template_update_view(self):
+    def _test_template_update_view(self, template_name, updated_data):
         self.client.login(
             username='list_owner', password='testpass')
-        data = dict(name='list:admin:action:post',
+        data = dict(name=template_name,
                     context='list',
                     identifier='fun.example.com',
                     data='This is some new data.')
@@ -410,11 +442,17 @@ class MailingListTemplateViewTest(ViewTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         # Now, let's try to update this template by POST'ing.
-        data = {'data': 'This is the update template data.'}
+        data = {'data': updated_data}
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 302)
         template = EmailTemplate.objects.get(pk=template.id)
         self.assertEqual(template.data, data['data'])
+
+    def test_template_update_view(self):
+        self._test_template_update_view('list:admin:action:post',
+                                        'This is the update template data.')
+        self._test_template_update_view('list:admin:action:subscribe',
+                                        '\n\n\n\tHello World')
 
 
 class TestTemplateAPIView(ViewTestCase):
@@ -427,16 +465,7 @@ class TestTemplateAPIView(ViewTestCase):
         self.mlist = self.domain.create_list('fun')
 
     def tearDown(self):
-        for each_level in (
-                self.domain.templates,
-                self.mlist.templates,
-                self.mm_client.templates
-        ):
-            try:
-                for template in each_level:
-                    template.delete()
-            except urllib.error.HTTPError:
-                pass
+        EmailTemplate.objects.all().delete()
         super().tearDown()
 
     def test_get_empty_templates_via_API(self):

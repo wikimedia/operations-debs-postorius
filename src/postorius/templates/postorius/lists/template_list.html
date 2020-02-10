@@ -27,7 +27,7 @@
       <tbody>
         {% for template in object_list %}
         <tr>
-          <td> {{ template.description }}</td>
+          <td> <b>[{{ template.name }}]</b> - {{ template.description }}</td>
           <td> <a class="btn btn-xs btn-primary" href="{% url 'list_template_update' list.list_id template.id %}">{% trans 'Edit' %}</a>
             <a class="btn btn-xs btn-danger" href="{% url 'list_template_delete' list.list_id template.id %}">{% trans 'Delete' %}</a>
           </td>
@@ -37,7 +37,7 @@
   </table>
 </div>
 {% else %}
-<p>No Templates.</p>
+<p>{% trans 'No Templates.' %}</p>
 {% endif %}
 
 

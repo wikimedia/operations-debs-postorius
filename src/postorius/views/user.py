@@ -18,6 +18,7 @@
 
 
 import logging
+from urllib.error import HTTPError
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -26,7 +27,6 @@ from django.http import Http404
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
-from django.utils.six.moves.urllib.error import HTTPError
 from django.utils.translation import gettext as _
 from django.views.generic import FormView
 

@@ -1,17 +1,10 @@
-.coveragerc
-.gitignore
-.gitlab-ci.yml
 COPYING
 MANIFEST.in
 README.rst
-copybump.py
 pytest.ini
 setup.cfg
 setup.py
-template.py
 tox.ini
-update-po.sh
-example_project/.gitignore
 example_project/README.rst
 example_project/__init__.py
 example_project/mailman.cfg
@@ -20,7 +13,6 @@ example_project/settings.py
 example_project/test_settings.py
 example_project/urls.py
 example_project/wsgi.py
-example_project/logs/.keep
 src/postorius/__init__.py
 src/postorius/apps.py
 src/postorius/context_processors.py
@@ -54,7 +46,6 @@ src/postorius/forms/fields.py
 src/postorius/forms/list_forms.py
 src/postorius/forms/member_forms.py
 src/postorius/forms/user_forms.py
-src/postorius/locale/LINGUAS
 src/postorius/locale/af/LC_MESSAGES/django.po
 src/postorius/locale/am/LC_MESSAGES/django.po
 src/postorius/locale/an/LC_MESSAGES/django.po
@@ -91,7 +82,6 @@ src/postorius/locale/fa/LC_MESSAGES/django.po
 src/postorius/locale/fi/LC_MESSAGES/django.po
 src/postorius/locale/fil/LC_MESSAGES/django.po
 src/postorius/locale/fo/LC_MESSAGES/django.po
-src/postorius/locale/fr/LC_MESSAGES/django.mo
 src/postorius/locale/fr/LC_MESSAGES/django.po
 src/postorius/locale/fr_CA/LC_MESSAGES/django.po
 src/postorius/locale/frp/LC_MESSAGES/django.po
@@ -135,7 +125,6 @@ src/postorius/locale/my/LC_MESSAGES/django.po
 src/postorius/locale/nb_NO/LC_MESSAGES/django.po
 src/postorius/locale/ne/LC_MESSAGES/django.po
 src/postorius/locale/nl/LC_MESSAGES/django.po
-src/postorius/locale/nn/LC_MESSAGES/django.po
 src/postorius/locale/nn_NO/LC_MESSAGES/django.po
 src/postorius/locale/oc/LC_MESSAGES/django.po
 src/postorius/locale/os/LC_MESSAGES/django.po
@@ -187,6 +176,8 @@ src/postorius/migrations/0006_auto_20180711_1359.py
 src/postorius/migrations/0007_auto_20180712_0536.py
 src/postorius/migrations/0008_auto_20190310_0717.py
 src/postorius/migrations/0009_auto_20190508_1604.py
+src/postorius/migrations/0010_auto_20190821_0621.py
+src/postorius/migrations/0011_auto_20191109_1219.py
 src/postorius/migrations/__init__.py
 src/postorius/static/postorius/css/style.css
 src/postorius/static/postorius/img/favicon.ico
@@ -251,6 +242,7 @@ src/postorius/templates/postorius/user/mailman_settings.html
 src/postorius/templates/postorius/user/subscription_preferences.html
 src/postorius/templates/postorius/user/subscriptions.html
 src/postorius/templatetags/__init__.py
+src/postorius/templatetags/date_helpers.py
 src/postorius/templatetags/markdown.py
 src/postorius/templatetags/membership_helpers.py
 src/postorius/templatetags/nav_helpers.py
@@ -264,6 +256,7 @@ src/postorius/tests/test_list_view.py
 src/postorius/tests/test_member_forms.py
 src/postorius/tests/test_migration.py
 src/postorius/tests/test_template_api_view.py
+src/postorius/tests/test_templatetags.py
 src/postorius/tests/test_urls.py
 src/postorius/tests/test_user_forms.py
 src/postorius/tests/test_utils.py
