@@ -1,8 +1,14 @@
-Test-Command: for python3 in $(py3versions -r); do $python3 $(which django-admin) test --pythonpath=example_project --settings=test_settings postorius; done
+Tests: python3-django-postorius
 Depends: @,
+         procps,
          python3-all,
+         mailman3,
          python3-bs4,
+         python3-cmarkgfm,
+         python3-django (>= 1:1.11),
+         python3-django-mailman3 (>= 1.2.0),
+         python3-mailmanclient (>= 3.2.2),
          python3-mock,
-         python3-vcr
-Restrictions: build-needed,
-              allow-stderr
+         python3-pytest-django,
+Restrictions: allow-stderr,
+              needs-root

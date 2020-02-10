@@ -8,15 +8,6 @@ export PYBUILD_NAME = postorius
 	dh $@ --with python3,sphinxdoc --buildsystem=pybuild
 
 override_dh_auto_test:
-ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
-	ln -s ../src/postorius example_project/postorius
-	set -e; \
-	for python3 in $(shell py3versions -r); do \
-		$$python3 $(shell which django-admin) test --pythonpath=example_project --settings=test_settings postorius; \
-	done
-	rm example_project/postorius
-	find example_project src/postorius -name '__pycache__' -type d -print | xargs rm -r
-endif
 
 override_dh_auto_build:
 	PYTHONPATH=. sphinx-build -b html -E -N src/postorius/doc build/sphinx/html
