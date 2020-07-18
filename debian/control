@@ -20,7 +20,7 @@ Package: python3-django-postorius
 Architecture: all
 Depends: libjs-jquery,
          libjs-bootstrap,
-         fonts-glewlwyd,
+         fonts-glyphicons-halflings,
          node-html5shiv,
          python3-cmarkgfm,
          python3-django,
