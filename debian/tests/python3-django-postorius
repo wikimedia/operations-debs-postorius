@@ -1,16 +1,11 @@
 #!/bin/bash
 
-python3_versions="$(py3versions -r 2> /dev/null)"
+service mailman3 stop
+ln -s /usr/lib/mailman3/bin/runner  /usr/bin/runner
 
-cp -r src/postorius/tests "${AUTOPKGTEST_TMP}"
-cp -r example_project "${AUTOPKGTEST_TMP}"
-cp -a debian/tests/config/mailman.cfg /etc/mailman3/mailman.cfg
-service mailman3 restart
-cd "${AUTOPKGTEST_TMP}"
+cd "${AUTOPKGTEST_TMP}/example_project"
 
 # Wait for mailman3 server to be up
-sleep 30
+sleep 10
 
-for python3 in $python3_versions; do
-    $python3 $(which django-admin) test --pythonpath=example_project --settings=test_settings postorius || exit 1
-done
+PYTHONPATH=../src pytest-3 ../src --tb=long --create-db --reuse-db --ds=test_settings
