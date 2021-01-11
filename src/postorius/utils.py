@@ -38,6 +38,12 @@ def render_api_error(request):
                   status=503)
 
 
+def render_client_error(request, error):
+    return render(request, 'postorius/errors/generic.html',
+                  {'error': str(error)},
+                  status=error.code)
+
+
 def get_mailman_client():
     # easier to patch during unit tests
     client = Client(
@@ -46,6 +52,11 @@ def get_mailman_client():
         settings.MAILMAN_REST_API_USER,
         settings.MAILMAN_REST_API_PASS)
     return client
+
+
+def with_empty_choice(choices):
+    """Add an empty Choice for unset values in dropdown."""
+    return [(None, '-----')] + list(choices)
 
 
 LANGUAGES = (

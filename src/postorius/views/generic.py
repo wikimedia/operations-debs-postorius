@@ -17,12 +17,20 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from urllib.error import HTTPError
+
+from django.contrib import messages
 from django.http import HttpResponse
+from django.shortcuts import redirect, render
+from django.urls import reverse
+from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
 
 from django_mailman3.lib.mailman import get_mailman_client
+from django_mailman3.lib.paginator import paginate
 
 from postorius.auth.utils import set_list_access_props
+from postorius.forms import AddBanForm
 from postorius.models import List
 
 
@@ -64,3 +72,65 @@ class MailingListView(TemplateView, MailmanClientMixin):
         if 'template' in kwargs:
             self.template = kwargs['template']
         return super(MailingListView, self).dispatch(request, *args, **kwargs)
+
+
+def bans_view(request, template, list_id=None):
+    """Ban or unban email addresses.
+
+    This is a reusable view which works for both global and list specific bans.
+    Whether a MailingList ban is updated or a Global one depends on list_id
+    being passed in.
+
+    :list_id: MailingList Id if this is a List ban, None otherwise.
+
+    """
+    if list_id:
+        m_list = List.objects.get_or_404(fqdn_listname=list_id)
+        url = reverse('list_bans', args=[list_id])
+        ban_list = m_list.bans
+    else:
+        ban_list = get_mailman_client().bans
+        url = reverse('global_bans')
+        m_list = None
+
+    # Process form submission.
+    if request.method == 'POST':
+        if 'add' in request.POST:
+            addban_form = AddBanForm(request.POST)
+            if addban_form.is_valid():
+                try:
+                    ban_list.add(addban_form.cleaned_data['email'])
+                    messages.success(request, _(
+                        'The email {} has been banned.'.format(
+                            addban_form.cleaned_data['email'])))
+                except HTTPError as e:
+                    messages.error(
+                        request, _('An error occurred: %s') % e.reason)
+                except ValueError as e:
+                    messages.error(request, _('Invalid data: %s') % e)
+                return redirect(url)
+        elif 'del' in request.POST:
+            try:
+                ban_list.remove(request.POST['email'])
+                messages.success(request, _(
+                    'The email {} has been un-banned'.format(
+                        request.POST['email'])))
+            except HTTPError as e:
+                messages.error(request, _('An error occurred: %s') % e.reason)
+            except ValueError as e:
+                messages.error(request, _('Invalid data: %s') % e)
+            return redirect(url)
+    else:
+        addban_form = AddBanForm(initial=request.GET)
+    banned_addresses = paginate(
+        list(ban_list), request.GET.get('page'), request.GET.get('count'))
+
+    context = {
+        'addban_form': addban_form,
+        'banned_addresses': banned_addresses,
+    }
+
+    if list_id:
+        context['list'] = m_list
+
+    return render(request, template, context)

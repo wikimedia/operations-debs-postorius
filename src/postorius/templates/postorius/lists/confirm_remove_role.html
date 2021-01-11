@@ -15,7 +15,7 @@
             <form method="post" action="{% url 'remove_role' list_id role address %}">
                 {% csrf_token %}
                 <button class="btn btn-danger" type="submit">{% trans 'Remove' %} {{ address }}</button>
-                <a class="btn btn-default" href="{% url 'list_members' list_id role %}">{% trans 'Cancel' %}</a>
+                <a class="btn btn-success" href="{% url 'list_members' list_id role %}">{% trans 'Cancel' %}</a>
             </form>
         </div>
     </div>

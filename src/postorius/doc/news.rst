@@ -18,6 +18,34 @@ You should have received a copy of the GNU Lesser General Public License
 along with Postorius. If not, see <http://www.gnu.org/licenses/>.
 
 
+1.3.3
+=====
+
+(2020-06-01)
+
+* Expose additional list settings.  (See !483)
+* Correct description of Digest Frequency.  (Closes #395)
+* Added links to Reply-To munging articles.  (Closes #401)
+* Fix "Show Headers" button to show the held message headers in the
+  held message popup. (Closes #407)
+* Fix the held message popup structure and increase the max width of the popup
+  to be 800px(modal-lg) for larger screens. (Closes #405)
+* Fix FILTER_VHOST = True option to try to find the email host corresponding
+  to the requesting web host.  (Closes #394)
+* Allow specifying a reason when rejecting a held message. (Closes #412)
+* Allow users to set their preferred language in their preferences. (Closes #413)
+* Add support to ban addresses for the entire Mailman installation. (Closes #357)
+* Un-handled ``HTTPError`` exception raised from MailmanClient now results in an
+  error page and proper logging instead of mysterious ``KeyError`` in logs.
+  (Closes #341)
+* Change List settings navigation to be vertical instead of horizontal. (See
+  !509)
+* Move bounce processing settings into a new vertical tab for better
+  visibility.
+* Add URL to edit the Web host for each domain in Domain Index page. Also, show
+  the ``SITE_ID`` for each webhost. (Closes #426)
+
+
 1.3.2
 =====
 

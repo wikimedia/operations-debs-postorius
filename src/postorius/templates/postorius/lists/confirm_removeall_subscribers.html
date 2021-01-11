@@ -19,7 +19,7 @@
     <form method="post" action="{% url 'unsubscribe_all' list.list_id %}">
         {% csrf_token %}
         <button class="btn btn-danger" type="submit" >{% trans 'Unsubscribe All' %}</button>
-        <a class="btn btn-default" href="{% url 'mass_removal' list.list_id %}">{% trans 'Cancel' %}</a>
+        <a class="btn btn-success" href="{% url 'mass_removal' list.list_id %}">{% trans 'Cancel' %}</a>
     </form>
 
 {% endblock content %}
