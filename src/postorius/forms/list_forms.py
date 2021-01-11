@@ -27,8 +27,8 @@ from django.utils.translation import gettext_lazy as _
 from django_mailman3.lib.mailman import get_mailman_client
 
 from postorius.forms.fields import ListOfStringsField
-from postorius.languages import LANGUAGES
 from postorius.models import EmailTemplate, _email_template_help_text
+from postorius.utils import LANGUAGES
 
 
 ACTION_CHOICES = (
@@ -195,9 +195,9 @@ SUBSCRIPTION_POLICY_CHOICES = (
 )
 
 
-class ListSubscriptionPolicyForm(ListSettingsForm):
+class MemberPolicyForm(ListSettingsForm):
     """
-    List subscription policy settings.
+    Policies related to members.
     """
     subscription_policy = forms.ChoiceField(
         label=_('Subscription Policy'),
@@ -209,6 +209,84 @@ class ListSubscriptionPolicyForm(ListSettingsForm):
                     'each subscription manually.\n'
                     'Confirm then Moderate: First subscribers have to confirm,'
                     ' then a moderator needs to authorize.'))
+
+    unsubscription_policy = forms.ChoiceField(
+        label=_('Un-Subscription Policy'),
+        choices=SUBSCRIPTION_POLICY_CHOICES,
+        help_text=_('Open: Un-Subscriptions happen automatically\n'
+                    'Confirm: Subscribers need to confirm the un-subscription '
+                    'using an email sent to them\n'
+                    'Moderate: Moderators will have to authorize '
+                    'each un-subscription manually.\n'
+                    'Confirm then Moderate: First subscribers have to confirm,'
+                    ' then a moderator needs to authorize.'))
+
+
+class BounceProcessingForm(ListSettingsForm):
+    """List's bounce processing settings."""
+
+    process_bounces = forms.BooleanField(
+        widget=forms.RadioSelect(choices=((True, _('Yes')), (False, _('No')))),
+        required=False,
+        label=_('Process Bounces'),
+        help_text=_(
+            'Specifies whether or not this list should do automatic'
+            ' bounce processing.'))
+
+    bounce_score_threshold = forms.IntegerField(
+        min_value=0,
+        label=_('Bounce score threshold'),
+        required=False,
+        help_text=_(
+            'This is the bounce score above which a member\'s subscription '
+            ' will be automatically disabled. When the subscription is '
+            ' re-enabled, their bounce score will be reset to zero.'))
+
+    bounce_info_stale_after = forms.CharField(
+        label=_('Bounce info stale after'),
+        required=False,
+        help_text=_(
+            'The number of days after which a member\'s bounce information'
+            ' is considered stale. If no new bounces have been received in'
+            ' the interim, the bounce score is reset to zero.'
+            ' This value must be an integer. '))
+
+    bounce_notify_owner_on_disable = forms.BooleanField(
+        widget=forms.RadioSelect(choices=((True, _('Yes')), (False, _('No')))),
+        required=False,
+        label=_('Notify owner on disable'),
+        help_text=_(
+            'This option controls whether or not the list owner is notified'
+            ' when a member\'s subscription is automatically disabled due'
+            ' to their bounce threshold being reached. '))
+
+    bounce_notify_owner_on_removal = forms.BooleanField(
+        widget=forms.RadioSelect(choices=((True, _('Yes')), (False, _('No')))),
+        required=False,
+        label=_('Notify owner on removal'),
+        help_text=_(
+            'This option controls whether or not the list owner is '
+            'notified when a member is removed from the list after '
+            'their disabled notifications have been exhausted. '))
+
+    # forward_unrecognized_bounces_to =
+
+    bounce_you_are_disabled_warnings_interval = forms.CharField(
+        label=_('Bounce disabled warnings interval'),
+        required=False,
+        help_text=_(
+            'The number of days between each disabled notification.'))
+
+    bounce_you_are_disabled_warnings = forms.IntegerField(
+        min_value=0,
+        label=_('Bounce disable warnings'),
+        required=False,
+        help_text=_(
+            'The number of notices a disabled member will receive before'
+            ' their address is removed from the mailing list\'s roster. '
+            'Set this to 0 to immediately remove an address from the list'
+            ' once their bounce score exceeds the threshold. '
+            'This value must be an integer. '))
 
 
 class ArchiveSettingsForm(ListSettingsForm):
@@ -334,6 +412,65 @@ class MessageAcceptanceForm(ListSettingsForm):
             'This can be used to prevent mass mailings from being accepted. '
             'A value of 0 disables the check.'))
 
+    # TODO: Expose after this functionality actually works in Core.
+    # max_days_to_hold = forms.IntegerField(
+    #     min_value=0,
+    #     label=_('Discard held posts after'),
+    #     required=False,
+    #     help_text=_(
+    #         'No. of days after which held messages will be automatically'
+    #         ' discarded.'))
+
+    accept_these_nonmembers = ListOfStringsField(
+        label=_("Accept these non-members"),
+        required=False,
+        help_text=_(
+            'This is a list, one per line, of regexps matching '
+            'addresses that are allowed to post to this mailing list without'
+            ' subscribing to the list.'
+            ' Entries are regexps beginning with `^\' and are matched against'
+            ' the sender addresses in the message.'
+            ' While non-regexp addresses can be entered here, it is preferred'
+            ' to add the address as a nonmember and set the nonmember\'s '
+            'Moderation to Default Processing.'))
+
+    hold_these_nonmembers = ListOfStringsField(
+        label=_("Hold these non-members"),
+        required=False,
+        help_text=_(
+            'This is a list, one per line, of regexps matching '
+            'nonmember addresses, posts from which are held automatically.'
+            ' Entries are regexps beginning with `^\' and are matched against'
+            ' the sender addresses in the message.'
+            ' While non-regexp addresses can be entered here, it is preferred'
+            ' to add the address as a nonmember and set the nonmember\'s '
+            'Moderation to Hold.'))
+
+    reject_these_nonmembers = ListOfStringsField(
+        label=_("Reject these non-members"),
+        required=False,
+        help_text=_(
+            'This is a list, one per line, of regexps matching '
+            'nonmember addresses, posts from which are rejected with notice to'
+            ' the sender.'
+            ' Entries are regexps beginning with `^\' and are matched against'
+            ' the sender addresses in the message.'
+            ' While non-regexp addresses can be entered here, it is preferred'
+            ' to add the address as a nonmember and set the nonmember\'s '
+            'Moderation to Reject.'))
+
+    discard_these_nonmembers = ListOfStringsField(
+        label=_("Discard these non-members"),
+        required=False,
+        help_text=_(
+            'This is a list, one per line, of regexps matching '
+            'nonmember addresses, posts from which are discarded automatically'
+            '. Entries are regexps beginning with `^\' and are matched against'
+            ' the sender addresses in the message.'
+            ' While non-regexp addresses can be entered here, it is preferred'
+            ' to add the address as a nonmember and set the nonmember\'s '
+            'Moderation to Discard.'))
+
     def clean_acceptable_aliases(self):
         # python's urlencode will drop this attribute completely if an empty
         # list is passed with doseq=True. To make it work for us, we instead
@@ -380,8 +517,9 @@ class DigestSettingsForm(ListSettingsForm):
         choices=DIGEST_FREQUENCY_CHOICES,
         widget=forms.RadioSelect,
         required=False,
-        label=_('Digest Frequency'),
-        help_text=_('At what frequency should Mailman send out digests?'),
+        label=_('Digest Volume Frequency'),
+        help_text=_('At what frequency should Mailman increment the digest '
+                    'volume number and reset the issue number?'),
         )
     digest_size_threshold = forms.DecimalField(
         label=_('Digest size threshold'),
@@ -436,10 +574,48 @@ class DMARCMitigationsForm(ListSettingsForm):
             'mitigation action of wrap message applies.'))
 
 
+PERSONALIZATION_CHOICES = (
+    ('none', _('None')),
+    ('individual', _('Individual')),
+    ('full', _('Full'))
+)
+
+PERSONALIZATION_CHOICES_HELP = _(
+    """
+    None: No personalization.
+
+    Individual: Everyone gets a unique copy of the message, and there are a \
+          few more substitution variables, but no headers are modified.
+
+    Full: All of the 'individual' personalization plus recipient header \
+          modification. """)
+
+FILTER_ACTION_CHOICES = (
+    ('discard', _('Discard')),
+    ('reject', _('Reject')),
+    ('forward', _('Forward')),
+    ('preserve', _('Preserve')),
+)
+
+FILTER_ACTION_HELP = _("""Action to take on messages which have no content
+after filtering.
+ Discard = silently discard the message.
+ Reject = discard the message and notify the sender.
+ Forward = forward the message to the list owner(s).
+ Preserve = save the message in qfiles/bad.
+""")
+
+
 class AlterMessagesForm(ListSettingsForm):
     """
     Alter messages list settings.
     """
+    personalize = forms.ChoiceField(
+        choices=PERSONALIZATION_CHOICES,
+        widget=forms.RadioSelect,
+        required=False,
+        label=_('Personalize'),
+        help_text=PERSONALIZATION_CHOICES_HELP)
     filter_content = forms.ChoiceField(
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
@@ -447,6 +623,34 @@ class AlterMessagesForm(ListSettingsForm):
         label=_('Filter content'),
         help_text=_('Should Mailman filter the content of list traffic '
                     'according to the settings below?'))
+    filter_types = ListOfStringsField(
+        label=_('Filter types'),
+        required=False,
+        help_text=_(
+            'MimeTypes to filter from the incoming posts. A list of common '
+            'types can be found '
+            '<a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types">here </a>'  # noqa# E501
+            ))
+    filter_extensions = ListOfStringsField(
+        label=_('Filter extensions'),
+        required=False,
+        help_text=_(
+            'Extensions to filter from the incoming posts.'
+            ))
+    pass_types = ListOfStringsField(
+        label=_('Pass types'),
+        required=False,
+        help_text=_(
+            'MimeTypes to allow in the incoming posts. A list of common '
+            'types can be found '
+            '<a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types">here </a>'  # noqa# E501
+            ))
+    pass_extensions = ListOfStringsField(
+        label=_('Pass extensions'),
+        required=False,
+        help_text=_(
+            'Extensions to allow in the incoming posts.'
+            ))
     collapse_alternatives = forms.ChoiceField(
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
@@ -454,6 +658,12 @@ class AlterMessagesForm(ListSettingsForm):
         label=_('Collapse alternatives'),
         help_text=_('Should Mailman collapse multipart/alternative to '
                     'its first part content?'))
+    filter_action = forms.ChoiceField(
+        choices=FILTER_ACTION_CHOICES,
+        widget=forms.RadioSelect,
+        required=False,
+        label=_('Filter Action'),
+        help_text=FILTER_ACTION_HELP)
     convert_html_to_plaintext = forms.ChoiceField(
         choices=((True, _('Yes')), (False, _('No'))),
         widget=forms.RadioSelect,
@@ -541,9 +751,13 @@ class AlterMessagesForm(ListSettingsForm):
             'override the Reply-To: header. One is that some posters depend '
             'on their own Reply-To: settings to convey their valid return '
             'address. Another is that modifying Reply-To: makes it much more '
-            'difficult to send private replies. See `Reply-To\' Munging '
-            'Considered Harmful for a general discussion of this issue. '
-            'See Reply-To Munging Considered Useful for a dissenting opinion. '
+            'difficult to send private replies. See <a href="'
+            'http://marc.merlins.org/netrants/reply-to-harmful.html">'
+            '`Reply-To\' Munging Considered Harmful</a> for a general '
+            'discussion of this issue. See <a href="'
+            'http://marc.merlins.org/netrants/reply-to-useful.html">'
+            '`Reply-To\' Munging Considered Useful</a> for a dissenting '
+            'opinion. '
             'Some mailing lists have restricted '
             'posting privileges, with a parallel list devoted to discussions. '
             'Examples are `patches\' or `checkin\' lists, where software '
@@ -652,6 +866,13 @@ class ListAutomaticResponsesForm(ListSettingsForm):
                     'subscribes and unsubscribes?'))
 
 
+NEWSGROUP_MODERATION_CHOICES = (
+    ('none', _('Not Moderated')),
+    ('open_moderated', _('Moderated but allows for open posting')),
+    ('moderated', _('Moderated')),
+)
+
+
 class ListIdentityForm(ListSettingsForm):
     """
     List identity settings.
@@ -698,6 +919,41 @@ class ListIdentityForm(ListSettingsForm):
         widget=forms.Select(),
         choices=ROSTER_VISIBILITY_CHOICES,
         help_text=_('Who is allowed to see members list for this MailingList?')
+    )
+    gateway_to_mail = forms.BooleanField(
+        widget=forms.RadioSelect(choices=((True, _('Yes')), (False, _('No')))),
+        required=False,
+        label=_('Gateway to mail'),
+        help_text=_('Flag indicating that posts to the linked newsgroup should'
+                    ' be gated to the list')
+    )
+    gateway_to_news = forms.BooleanField(
+        widget=forms.RadioSelect(choices=((True, _('Yes')), (False, _('No')))),
+        required=False,
+        label=_('Gateway to news'),
+        help_text=_('Flag indicating that posts to the list should be gated to'
+                    ' the linked newsgroup.')
+    )
+    linked_newgroup = forms.CharField(
+        label=_('Linked Newsgroup'),
+        required=False,
+        help_text=_(
+            'The name of the linked newsgroup.')
+    )
+    newsgroup_moderation = forms.ChoiceField(
+        label=_('Newsgroup moderation'),
+        required=False,
+        widget=forms.Select(),
+        choices=NEWSGROUP_MODERATION_CHOICES,
+        help_text=_('The moderation policy for the linked newsgroup,'
+                    ' if there is one.')
+    )
+    nntp_prefix_subject_too = forms.BooleanField(
+        widget=forms.RadioSelect(choices=((True, _('Yes')), (False, _('No')))),
+        required=False,
+        label=_('NNTP Include subject prefix '),
+        help_text=_('Flag indicating whether the list\'s "Subject Prefix"'
+                    ' should be included in posts gated to usenet.')
     )
 
     def clean_subject_prefix(self):
@@ -769,22 +1025,6 @@ class ListMassRemoval(forms.Form):
         included in each.
         """
         layout = [["Mass Removal", "emails"]]
-
-
-class ListAddBanForm(forms.Form):
-    """Ban an email address for a list."""
-    # TODO maxking: This form should only accept valid emails or regular
-    # expressions. Anything else that doesn't look like a valid email address
-    # or regexp for email should not be a valid value for the field. However,
-    # checking for that might not be easy.
-    email = forms.CharField(
-        label=_('Add ban'),
-        help_text=_(
-            'You can ban a single email address or use a regular expression '
-            'to match similar email addresses.'),
-        error_messages={
-            'required': _('Please enter an email address.'),
-            'invalid': _('Please enter a valid email address.')})
 
 
 class ListHeaderMatchForm(forms.Form):

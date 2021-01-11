@@ -50,6 +50,9 @@ class ListSettingsTest(ViewTestCase):
         self.foo_list.add_owner('owner@example.com')
         self.foo_list.add_moderator('moderator@example.com')
 
+    def tearDown(self):
+        self.domain.delete()
+
     def test_page_not_accessible_if_not_logged_in(self):
         for section_name in SETTINGS_FORMS:
             url = reverse('list_settings', args=('foo.example.com',
@@ -156,6 +159,7 @@ class ListSettingsTest(ViewTestCase):
             'advertised': 'True',
             'preferred_language': 'en',
             'member_roster_visibility': 'public',
+            'newsgroup_moderation': 'none',
             })
         self.assertRedirects(response, url)
         self.assertHasSuccessMessage(response)

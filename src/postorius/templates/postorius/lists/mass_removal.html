@@ -10,7 +10,7 @@
     <form action="{% url 'mass_removal' list.list_id %}" method="post" class="form-horizontal">
         {% bootstrap_form_horizontal form 2 8 %}
         <div class="form-group">
-            <div class="col-md-offset-2 col-md-8">
+            <div class="offset-md-2 col-md-8">
                 <button class="btn btn-warning" type="submit">{% trans 'Unsubscribe users' %}</button>
                 <hr>
                 <a href="{% url 'unsubscribe_all' list.list_id %}" class="btn btn-danger">

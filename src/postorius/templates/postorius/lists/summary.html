@@ -104,11 +104,14 @@
         {% if user.is_list_owner or user.is_superuser %}
             <hr />
             <h3>{% trans 'List metrics' %}</h3>
-            <dl class="dl-horizontal">
-              <dt>{% trans 'Created at' %}</dt><dd>{{ list.settings.created_at }}</dd>
-              <dt>{% trans 'Last post at' %}</dt><dd>{{ list.settings.last_post_at }}</dd>
-              <dt>{% trans 'Digest last sent at' %}</dt><dd>{{ list.settings.digest_last_sent_at }}</dd>
-              <dt>{% trans 'Volume' %}</dt><dd>{{ list.settings.volume }}</dd>
+            <dl class="row">
+              <dt class="col-2">{% trans 'Created at' %}</dt><dd class="col-2">{{ list.settings.created_at }}</dd>
+              <div class="w-100"></div>
+              <dt class="col-2">{% trans 'Last post at' %}</dt><dd class="col-2">{{ list.settings.last_post_at }}</dd>
+              <div class="w-100"></div>
+              <dt class="col-2">{% trans 'Digest last sent at' %}</dt><dd class="col-2">{{ list.settings.digest_last_sent_at }}</dd>
+              <div class="w-100"></div>
+              <dt class="col-2">{% trans 'Volume' %}</dt><dd class="col-2">{{ list.settings.volume }}</dd>
             </dl>
         {% endif %}
     {% endif %}

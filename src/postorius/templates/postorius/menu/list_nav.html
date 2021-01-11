@@ -6,58 +6,57 @@
 
 {% if user.is_authenticated  %}
 <ul class="nav nav-pills" role="tablist">
-    <li role="tab" class="{% nav_active_class current 'list_summary' %}"><a href="{% url 'list_summary' list.list_id %}">{% trans 'Info' %}</a></li>
+  <li class="nav-item">
+      <a href="{% url 'list_summary' list.list_id %}" class="{% nav_active_class current 'list_summary' %} nav-link">{% trans 'Info' %}</a></li>
     {% if user.is_superuser or user.is_list_owner or user.is_list_moderator %}
-    <li role="tab" class="{% nav_active_class current 'list_subscription_requests' %} dropdown">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-         aria-expanded="false">
-        {% trans 'Subscription requests' %} <span class="label label-default">{{ list|pending_subscriptions }} </span>
+    <li role="tab" class="dropdown nav-item">
+      <a href="#" class="{% nav_active_class current 'list_subscription_requests' %} nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+        {% trans 'Subscription requests' %}<span class="badge badge-pill badge-dark">{{ list|pending_subscriptions }}</span>
         <span class="caret"></span>
       </a>
       <ul class="dropdown-menu">
-        <li><a href="{% url 'list_subscription_requests' list.list_id %}">
+        <li><a href="{% url 'list_subscription_requests' list.list_id %}" class="dropdown-item">
             {% trans 'Pending Approval' %}
         </a></li>
-        <li><a href="{% url 'list_pending_confirmation' list.list_id %}">
+        <li><a href="{% url 'list_pending_confirmation' list.list_id %}" class="dropdown-item">
             {% trans 'Pending Confirmation' %}
         </a></li>
       </ul>
     </li>
-    <li role="tab" class="{% nav_active_class current 'list_held_messages' %}">
-      <a href="{% url 'list_held_messages' list.list_id %}">
-        {% trans 'Held messages' %} <span class="label label-default"> {{ list|held_count }} </span>
+    <li role="tab" class="nav-item">
+      <a href="{% url 'list_held_messages' list.list_id %}" class="{% nav_active_class current 'list_held_messages' %} nav-link">
+        {% trans 'Held messages' %}<span class="badge badge-pill badge-dark"> {{ list|held_count }}</span>
       </a>
     </li>
     {% endif %}
     {% if user.is_superuser or user.is_list_owner %}
-        <li role="tab" class="{% nav_active_class current 'list_members' %} dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+        <li role="tab" class="dropdown nav-item">
+            <a href="#" class="nav-link dropdown-toggle {% nav_active_class current 'list_members' %} " data-toggle="dropdown"
                role="button" aria-haspopup="true" aria-expanded="false">
                 {% trans 'Users' %}<span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
-              <li><a href="{% url 'list_members' list.list_id 'member' %}">{% trans 'Members' %}</a></li>
-              <li><a href="{% url 'list_members' list.list_id 'nonmember' %}">{% trans 'Non-Members' %}</a></li>
-              <li><a href="{% url 'list_members' list.list_id 'moderator' %}">{% trans 'Moderators' %}</a></li>
-              <li><a href="{% url 'list_members' list.list_id 'owner' %}">{% trans 'Owners' %}</a></li>
+              <li><a href="{% url 'list_members' list.list_id 'member' %}" class="dropdown-item">{% trans 'Members' %}</a></li>
+              <li><a href="{% url 'list_members' list.list_id 'nonmember' %}" class="dropdown-item">{% trans 'Non-Members' %}</a></li>
+              <li><a href="{% url 'list_members' list.list_id 'moderator' %}" class="dropdown-item">{% trans 'Moderators' %}</a></li>
+              <li><a href="{% url 'list_members' list.list_id 'owner' %}" class="dropdown-item">{% trans 'Owners' %}</a></li>
             </ul>
         </li>
-        <li role="tab" class="{% nav_active_class current 'templates' %}"><a href="{% url 'list_template_list' list.list_id %}">{% trans 'Templates' %}</a></li>
-        <li role="tab" class="{% nav_active_class current 'list_settings' %}"><a href="{% url 'list_settings' list.list_id %}">{% trans 'Settings' %}</a></li>
-        <li role="tab" class="{% nav_active_class current 'list_mass_ops' %} dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+        <li role="tab" class="nav-item"><a href="{% url 'list_template_list' list.list_id %}" class="nav-link {% nav_active_class current 'templates' %}">{% trans 'Templates' %}</a></li>
+        <li role="tab" class="nav-item"><a href="{% url 'list_settings' list.list_id %}" class="nav-link {% nav_active_class current 'list_settings' %} ">{% trans 'Settings' %}</a></li>
+        <li role="tab" class="dropdown nav-item">
+            <a href="#" class="{% nav_active_class current 'list_mass_ops' %} dropdown-toggle nav-link" data-toggle="dropdown"
                role="button" aria-haspopup="true" aria-expanded="false">
                 {% trans 'Mass operations' %}<span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
-              <li><a href="{% url 'mass_subscribe' list.list_id %}">{% trans 'Mass subscribe' %}</a></li>
-              <li><a href="{% url 'mass_removal' list.list_id %}">{% trans 'Mass removal' %}</a></li>
+              <li><a href="{% url 'mass_subscribe' list.list_id %}" class="dropdown-item">{% trans 'Mass subscribe' %}</a></li>
+              <li><a href="{% url 'mass_removal' list.list_id %}" class="dropdown-item">{% trans 'Mass removal' %}</a></li>
             </ul>
         </li>
-
-        <li role="tab" class="{% nav_active_class current 'list_bans' %}"><a href="{% url 'list_bans' list.list_id %}">{% trans 'Ban List' %}</a></li>
-        <li role="tab" class="{% nav_active_class current 'list_header_matches' %}"><a href="{% url 'list_header_matches' list.list_id %}">{% trans 'Header filters' %}</a></li>
-        <li role="tab" class="{% nav_active_class current 'list_delete' %}"><a href="{% url 'list_delete' list.list_id %}">{% trans 'Delete' %}</a></li>
+        <li role="tab" class="nav-item"><a href="{% url 'list_bans' list.list_id %}" class="{% nav_active_class current 'list_bans' %} nav-link">{% trans 'Ban List' %}</a></li>
+        <li role="tab" class="nav-item"><a href="{% url 'list_header_matches' list.list_id %}" class="nav-link {% nav_active_class current 'list_header_matches' %}">{% trans 'Header filters' %}</a></li>
+        <li role="tab" class="nav-item"><a href="{% url 'list_delete' list.list_id %}" class="{% nav_active_class current 'list_delete' %} nav-link">{% trans 'Delete' %}</a></li>
     {% endif %}
 </ul>
 {% endif %}

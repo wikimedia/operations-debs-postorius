@@ -41,9 +41,9 @@ var loadjs = function(rest_url, error_message) {
   });
   $('#toggle-headers').click(function() {
     if ($(this).hasClass('active')) {
-      $('#held-message-headers').addClass('hidden');
+      $('#held-message-headers').addClass('d-none');
     } else {
-      $('#held-message-headers').removeClass('hidden');
+      $('#held-message-headers').removeClass('d-none');
     }
   });
   $('#held-messages-modal').on('hidden.bs.modal', function() {

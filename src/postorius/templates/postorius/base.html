@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{% static 'postorius/libs/bootstrap/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'django-mailman3/css/main.css' %}">
     <link rel="stylesheet" href="{% static 'postorius/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'postorius/libs/fonts/font-awesome/css/font-awesome.min.css' %}" type="text/css" media="all" />
     {% block additionalcss %}{% endblock %}
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -21,92 +22,102 @@
     <![endif]-->
 </head>
 <body>
-
-    <nav class="navbar navbar-default">
-        <div class="container">
+  <nav class="navbar navbar-expand-md navbar-light bg-light navbar-default">
+    <div class="container">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#header-nav" aria-expanded="false">
+                <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#header-nav" aria-expanded="false">
                     <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
+                    <span class="fa fa-bars"></span>
                 </button>
                 <a class="navbar-brand" href="{% url 'list_index' %}"><span><img src="{% static 'postorius/img/mailman_logo_small_trans.png' %}" alt="{% trans 'Mailman logo' %}"/> Postorius</span></a>
             </div>
             <div class="collapse navbar-collapse" id="header-nav">
-                <ul class="nav navbar-nav">
-                    <li><a href="{% url 'list_index' %}">
-                        <span class="glyphicon glyphicon-envelope"></span>
+                <ul class="nav navbar-nav mr-auto">
+                    <li class="nav-item"><a href="{% url 'list_index' %}" class="nav-link">
+                        <span class="fa fa-envelope"></span>
                         {% trans 'Lists' %}
                     </a></li>
                     {% if user.is_superuser %}
-                        <li><a href="{% url 'domain_index' %}">
-                            <span class="glyphicon glyphicon-globe"></span>
+                        <li class="nav-item">
+                          <a href="{% url 'domain_index' %}" class="nav-link">
+                            <span class="fa fa-globe"></span>
                             {% trans 'Domains' %}
-                        </a></li>
-                        <li>
-                            <a href="{% url 'system_information' %}">
-                                <span class="glyphicon glyphicon-list-alt"></span>
+                          </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'global_bans' %}" class="nav-link">
+                                <span class="fa fa-ban"></span>
+                                {% trans 'Bans' %}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'system_information' %}" class="nav-link">
+                                <span class="fa fa-list-alt"></span>
                                 {% trans 'System Information' %}
                             </a>
                         </li>
                     {% endif %}
                     {% if 'hyperkitty' in INSTALLED_APPS %}
-                        <li><a href="{% url 'hk_root' %}">
-                            <span class="glyphicon glyphicon-comment"></span>
+                        <li class="nav-item"><a href="{% url 'hk_root' %}" class="nav-link">
+                            <span class="fa fa-comment"></span>
                             {% trans 'Archives' %}
                         </a></li>
                     {% endif %}
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if user.is_authenticated %}
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                        <li class="dropdown nav-item">
+                            <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown"
                                role="button" aria-haspopup="true" aria-expanded="false">
                                 {% gravatar user.email 20 %}
                                 {{ user.username|truncatechars:"35" }}
                                 <span class="caret"></span>
                             </a>
-                            <ul class="dropdown-menu">
-                                <li><a href="{% url 'mm_user_profile' %}">
-                                    <span class="glyphicon glyphicon-user"></span>
+                            <div class="dropdown-menu">
+                                <a href="{% url 'mm_user_profile' %}" class="dropdown-item">
+                                    <span class="fa fa-user"></span>
                                     {% trans 'Account' %}
-                                </a></li>
-                                <li><a href="{% url 'ps_user_profile' %}">
-                                    <span class="glyphicon glyphicon-cog"></span>
+                                </a>
+                                <a href="{% url 'ps_user_profile' %}" class="dropdown-item">
+                                    <span class="fa fa-cog"></span>
                                     {% trans 'Mailman settings' %}
-                                </a></li>
+                                </a>
                                 {% if 'hyperkitty' in INSTALLED_APPS %}
-                                <li><a href="{% url 'hk_user_profile' %}">
-                                <span class="glyphicon glyphicon-comment"></span>
+                                <a href="{% url 'hk_user_profile' %}" class="dropdown-item">
+                                <span class="fa fa-comment"></span>
                                     {% trans 'Posting activity' %}
-                                </a></li>
+                                </a>
                                 {% endif %}
-                                <li role="separator" class="divider"></li>
-                                <li><a href="{% url LOGOUT_URL %}?next={% url 'list_index' %}">
-                                    <span class="glyphicon glyphicon-log-out"></span>
+                                <div class="dropdown-divider"></div>
+                                <a href="{% url LOGOUT_URL %}?next={% url 'list_index' %}" class="dropdown-item">
+                                    <span class="fa fa-sign-out"></span>
                                     {% trans 'Logout' %}
-                                </a></li>
+                                </a>
                             </ul>
                         </li>
                     {% else %}
-                        <li><a href="{% url LOGIN_URL %}?next={{ next|default:request.path|urlencode }}">
-                            <span class="glyphicon glyphicon-log-in"></span>
+                        <li class="nav-item"><a class="nav-link" href="{% url LOGIN_URL %}?next={{ next|default:request.path|urlencode }}">
+                            <span class="fa fa-sign-in"></span>
                             {% trans 'Login' %}
                         </a></li>
-                        <li><a href="{% url 'account_signup' %}?next={{next|default:request.path|urlencode}}">
-                            <span class="glyphicon glyphicon-plus-sign"></span>
+                        <li  class="nav-item"><a class="nav-link" href="{% url 'account_signup' %}?next={{next|default:request.path|urlencode}}">
+                            <span class="fa fa-user-plus"></span>
                             {% trans 'Sign Up' %}
                         </a></li>
                     {% endif %}
                 </ul>
             </div>
-        </div>
+            </div>
     </nav>
 
     <div class="container" role="main">
         {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        <div class="alert alert-{{ message.tags }} fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
         {% endfor %}
         {% block content %}{% endblock content %}
     </div>
@@ -128,6 +139,7 @@
     </footer>
 
     <script src="{% static 'postorius/libs/jquery/jquery-1.11.3.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>        
     <script src="{% static 'postorius/libs/bootstrap/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'django-mailman3/js/main.js' %}"></script>
     <script src="{% static 'postorius/js/script.js' %}"></script>

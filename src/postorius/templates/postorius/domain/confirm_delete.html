@@ -31,7 +31,7 @@
     <form action="" method="post">
         {% csrf_token %}
         <button class="btn btn-danger" type="submit">{% trans 'Delete' %} {{ domain.mail_host }}</button>
-        <a class="btn btn-default" href="{% url 'domain_index' %}">{% trans 'Cancel' %}</a>
+        <a class="btn btn-primary" href="{% url 'domain_index' %}">{% trans 'Cancel' %}</a>
     </form>
 
 {% endblock content %}

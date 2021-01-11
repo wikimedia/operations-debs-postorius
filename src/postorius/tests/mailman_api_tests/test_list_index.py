@@ -19,10 +19,12 @@
 from functools import partial
 
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 from django.test import override_settings
 from django.urls import reverse
 
 from allauth.account.models import EmailAddress
+from django_mailman3.models import MailDomain
 
 from postorius.tests.utils import ViewTestCase
 
@@ -50,8 +52,9 @@ class ListIndexPageTest(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.context['lists']), 2)
         # The lists should be sorted by address
-        self.assertEqual([l.fqdn_listname for l in response.context['lists']],
-                         ['bar@example.com', 'foo@example.com'])
+        self.assertEqual(
+            [ml.fqdn_listname for ml in response.context['lists']],
+            ['bar@example.com', 'foo@example.com'])
 
     def test_list_index_only_contains_advertised_lists(self):
         # The list index page should contain only contain the advertised lists
@@ -223,18 +226,34 @@ class DomainFilteringListIndexPageTest(ListIndexPageTest):
         self.domain2 = self.mm_client.create_domain('example.org')
         self.quux_list = self.domain2.create_list('quux')
         self.thud_list = self.domain2.create_list('thud')
+        self._site = Site.objects.create(domain='www.example.org',
+                                         name='www')
+        self.mail_domain2 = MailDomain.objects.create(
+            site=self._site, mail_domain="example.org")
 
         self.client._get = self.client.get
         self.client.get = partial(self.client._get, HTTP_HOST='example.com')
         self.client.get2 = partial(self.client._get, HTTP_HOST='example.org')
+        self.client.get3 = partial(self.client._get,
+                                   HTTP_HOST='www.example.org')
 
     def test_domain2_list_index_contains_the_lists(self):
         # The list index page should contain only the requested domain's lists
         response = self.client.get2(reverse('list_index'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.context['lists']), 2)
-        self.assertEqual([l.fqdn_listname for l in response.context['lists']],
-                         ['quux@example.org', 'thud@example.org'])
+        self.assertEqual(
+            [ml.fqdn_listname for ml in response.context['lists']],
+            ['quux@example.org', 'thud@example.org'])
+
+    def test_domain2_list_index_www_host_contains_the_lists(self):
+        # The list index page should contain only the requested domain's lists
+        response = self.client.get3(reverse('list_index'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['lists']), 2)
+        self.assertEqual(
+            [ml.fqdn_listname for ml in response.context['lists']],
+            ['quux@example.org', 'thud@example.org'])
 
     def test_domain2_list_index_all_lists(self):
         # Test that list index page for a logged-in user.

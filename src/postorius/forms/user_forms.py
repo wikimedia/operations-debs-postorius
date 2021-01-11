@@ -22,6 +22,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 
 from postorius.forms.fields import NullBooleanRadioSelect
+from postorius.utils import LANGUAGES, with_empty_choice
 
 
 class UserPreferences(forms.Form):
@@ -66,7 +67,7 @@ class UserPreferences(forms.Form):
             're-enabled.'))
     delivery_mode = forms.ChoiceField(
         widget=forms.Select(),
-        choices=delivery_mode_choices,
+        choices=with_empty_choice(delivery_mode_choices),
         required=False,
         label=_('Delivery mode'),
         help_text=_(
@@ -111,6 +112,17 @@ class UserPreferences(forms.Form):
             'mailing list. Select Yes to receive copies. '
             'Select No to avoid receiving copies from the mailing list'))
 
+    preferred_language = forms.ChoiceField(
+        widget=forms.Select(),
+        choices=with_empty_choice(LANGUAGES),
+        required=False,
+        label=_('Preferred language'),
+        help_text=_(
+            'Preferred language for your interactions with Mailman. When '
+            'this is set, it will override the MailingList\'s preferred '
+            'language. This affects which language is used for your '
+            'email notifications and such.'))
+
     class Meta:
 
         """
@@ -119,7 +131,7 @@ class UserPreferences(forms.Form):
         """
         layout = [["User Preferences", "acknowledge_posts", "hide_address",
                    "receive_list_copy", "receive_own_postings",
-                   "delivery_mode", "delivery_status"]]
+                   "delivery_mode", "delivery_status", "preferred_language"]]
 
     def save(self):
         if not self.changed_data:

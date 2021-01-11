@@ -17,7 +17,6 @@
 
 """Tests for ban lists"""
 
-
 from django.contrib.auth.models import User
 from django.urls import reverse
 
@@ -30,7 +29,7 @@ from postorius.tests.utils import ViewTestCase
 class ListBansTest(ViewTestCase):
 
     def setUp(self):
-        super(ListBansTest, self).setUp()
+        super().setUp()
         # Create domain `example.com` in Mailman
         self.domain = self.mm_client.create_domain('example.com')
         self.m_list = self.domain.create_list('test_list')
@@ -43,6 +42,7 @@ class ListBansTest(ViewTestCase):
                 user=user, email=user.email, verified=True)
         self.client.login(username="test_superuser", password='pwd')
         self.url = reverse('list_bans', args=['test_list.example.com'])
+        self.bans_list = self.m_list.bans
 
     def test_login_redirect_for_anonymous(self):
         self.client.logout()
@@ -77,7 +77,7 @@ class ListBansTest(ViewTestCase):
     def test_context_contains_delete_forms(self):
         banned = ['banned{}@example.com'.format(i) for i in range(1, 10)]
         for ban in banned:
-            self.m_list.bans.add(ban)
+            self.bans_list.add(ban)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         soup = BeautifulSoup(response.content, "html.parser")
@@ -96,22 +96,24 @@ class ListBansTest(ViewTestCase):
             'add': True,
             })
         self.assertRedirects(response, self.url)
-        self.assertIn('banned@example.com', self.m_list.bans)
+        self.assertIn('banned@example.com', self.bans_list)
         self.assertHasSuccessMessage(response)
 
+        self.bans_list.remove('banned@example.com')
+
     def test_del_ban(self):
-        self.m_list.bans.add('banned@example.com')
-        self.assertIn('banned@example.com', self.m_list.bans)
+        self.bans_list.add('banned@example.com')
+        self.assertIn('banned@example.com', self.bans_list)
         response = self.client.post(self.url, {
             'email': 'banned@example.com',
             'del': True,
             })
         self.assertRedirects(response, self.url)
-        self.assertNotIn('banned@example.com', self.m_list.bans)
+        self.assertNotIn('banned@example.com', self.bans_list)
         self.assertHasSuccessMessage(response)
 
     def test_del_unknown_ban(self):
-        self.assertNotIn('banned@example.com', self.m_list.bans)
+        self.assertNotIn('banned@example.com', self.bans_list)
         response = self.client.post(self.url, {
             'email': 'banned@example.com',
             'del': True,
@@ -121,8 +123,8 @@ class ListBansTest(ViewTestCase):
         self.assertIn('is not banned', message)
 
     def test_add_ban_duplicate(self):
-        self.m_list.bans.add('banned@example.com')
-        self.assertIn('banned@example.com', self.m_list.bans)
+        self.bans_list.add('banned@example.com')
+        self.assertIn('banned@example.com', self.bans_list)
         response = self.client.post(self.url, {
             'email': 'banned@example.com',
             'add': True,
@@ -130,3 +132,13 @@ class ListBansTest(ViewTestCase):
         self.assertRedirects(response, self.url)
         message = self.assertHasErrorMessage(response)
         self.assertIn('is already banned', message)
+
+        self.bans_list.remove('banned@example.com')
+
+
+class GlobalBansTest(ListBansTest):
+
+    def setUp(self):
+        super().setUp()
+        self.url = reverse('global_bans')
+        self.bans_list = self.mm_client.bans

@@ -2,6 +2,10 @@
 html {
     position: relative;
     min-height: 100%;
+    /* This mostly makes sure that the font size doesn't change with
+     bump to Bootstrap 4, which has a default HTML level font-size
+     of 16px rem. */
+    font-size: 14px;
 }
 
 body {
@@ -24,7 +28,7 @@ body {
 }
 
 form.bans-add-form {
-    margin-bottom: 2.5em;
+    margin-bottom: 2.5rem;
 }
 table.bans-current {
     width: auto;
@@ -44,12 +48,13 @@ table.header-matches td .errorlist {
 }
 .header-matches-pending-changes {
     display: none;
-    margin-left: 1em;
+    margin-left: 1rem;
 }
 
 .page-header{
-		margin-top: 0px;
-		padding-top: 0px;
+		margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 9px;
 }
 
 .page-header h1 {
@@ -84,4 +89,13 @@ a {
 }
 .alert-danger {
     color: #773231;
+}
+
+.navbar-default {
+		margin-bottom: 20px;
+}
+
+h1, h2, h3, h4, h5, h6, h7 {
+		margin-bottom: 10px;
+		margin-top: 20px;
 }

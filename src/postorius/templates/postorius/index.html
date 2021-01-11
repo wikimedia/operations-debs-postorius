@@ -15,16 +15,16 @@
     <div class="row">
     {% if user.is_authenticated %}
         <div class="dropdown page-left col-md-4">
-          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+          <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
             Filter by Role
             <span class="caret"></span>
           </button>
           <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-            <li><a href="?role=owner">Owner</a></li>
-            <li><a href="?role=moderator">Moderator</a></li>
-            <li><a href="?role=member">Member</a></li>
-            <li><a href="?role=nonmember">Non-member</a></li>
-            <li><a href="?all-lists">All</a></li>
+            <li><a href="?role=owner" class="dropdown-item">Owner</a></li>
+            <li><a href="?role=moderator" class="dropdown-item">Moderator</a></li>
+            <li><a href="?role=member" class="dropdown-item">Member</a></li>
+            <li><a href="?role=nonmember" class="dropdown-item">Non-member</a></li>
+            <li><a href="?all-lists" class="dropdown-item">All</a></li>
           </ul>
         </div>
         <div class="col-md-4">

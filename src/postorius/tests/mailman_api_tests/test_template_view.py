@@ -155,7 +155,7 @@ class DomainTemplateViewTest(ViewTestCase):
             data = {'name': template_name,
                     'data': 'This is test data.'}
             response = self.client.post(url, data=data)
-            self.assertEqual(response.status_code, 302)
+            self.assertEqual(response.status_code, 302, template_name)
 
     def test_template_unique_property(self):
         # Test that we can create templates with uniqueness.
@@ -373,7 +373,7 @@ class MailingListTemplateViewTest(ViewTestCase):
                     'data': 'This is test data.',
                     'language': 'en'}
             response = self.client.post(url, data=data)
-            self.assertEqual(response.status_code, 302)
+            self.assertEqual(response.status_code, 302, template_name)
 
     def test_template_unique_property(self):
         # Test that we can create templates with uniqueness.

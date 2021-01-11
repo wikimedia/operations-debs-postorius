@@ -17,7 +17,7 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 """Postorius view decorators."""
-
+from functools import wraps
 
 from django.core.exceptions import PermissionDenied
 
@@ -29,6 +29,7 @@ def list_owner_required(fn):
     Assumes that the request object is the first arg and that list_id
     is present in kwargs.
     """
+    @wraps(fn)
     def wrapper(*args, **kwargs):
         user = args[0].user
         list_id = kwargs['list_id']
@@ -49,6 +50,7 @@ def list_moderator_required(fn):
     Assumes that the request object is the first arg and that list_id
     is present in kwargs.
     """
+    @wraps(fn)
     def wrapper(*args, **kwargs):
         user = args[0].user
         list_id = kwargs['list_id']
@@ -68,6 +70,7 @@ def superuser_required(fn):
     """Make sure that the logged in user is a superuser or otherwise raise
     PermissionDenied.
     Assumes the request object to be the first arg."""
+    @wraps(fn)
     def wrapper(*args, **kwargs):
         user = args[0].user
         if not user.is_superuser:

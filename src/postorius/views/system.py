@@ -16,12 +16,14 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 from django_mailman3.lib.mailman import get_mailman_client
 
 from postorius.auth.decorators import superuser_required
+from postorius.views.generic import bans_view
 
 
 SYSTEM_INFO_KEYS = (
@@ -46,3 +48,9 @@ def system_information(request):
         'postorius/system_information.html',
         {'configs': configs},
     )
+
+
+@login_required
+@superuser_required
+def bans(request):
+    return bans_view(request, template='postorius/bans.html')

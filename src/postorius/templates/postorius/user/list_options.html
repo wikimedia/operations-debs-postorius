@@ -14,7 +14,7 @@
     <h2 class="margin-bottom">{% trans 'Subscription options for' %} <strong>{{ mlist.fqdn_listname }}</strong></h2>
     <hr />
 
-    <p class="col-md-offset-2">
+    <p class="offset-md-2">
     {% trans 'Use this form to change the email used for this subscription' %}:
     </p>
     <form action="{% url 'change_subscription' mlist.list_id %}" method="post" class="form-horizontal">

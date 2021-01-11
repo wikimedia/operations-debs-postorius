@@ -18,6 +18,7 @@
 
 
 import logging
+from urllib.error import HTTPError
 
 from mailmanclient import MailmanConnectionError
 
@@ -25,7 +26,7 @@ from postorius import utils
 from postorius.models import MailmanApiError
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('postorius')
 
 
 __all__ = [
@@ -45,3 +46,6 @@ class PostoriusMiddleware(object):
         if isinstance(exception, (MailmanApiError, MailmanConnectionError)):
             logger.exception('Mailman REST API not available')
             return utils.render_api_error(request)
+        elif isinstance(exception, HTTPError):
+            logger.exception('Un-handled exception: %s', str(exception))
+            return utils.render_client_error(request, exception)

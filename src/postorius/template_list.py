@@ -32,6 +32,8 @@ TEMPLATES_LIST = (
      _('Sent to the list administrators to notify them when a new member has been subscribed.')),
     ('list:admin:notice:unrecognized',
      _('Sent to the list administrators when a bounce message in an unrecognized format has been received.')),
+    ('list:admin:notice:disable',
+     _('Sent to the list administrators to notify them when a member\'s delivery is disabled due to excessive bounces.')),
     ('list:admin:notice:unsubscribe',
      _('Sent to the list administrators to notify them when a member has been unsubscribed.')),
     ('list:member:digest:footer',
@@ -60,5 +62,10 @@ TEMPLATES_LIST = (
      _('A bounce probe sent to a member when their subscription has been disabled due to bounces.')),
     ('list:user:notice:refuse',
      _('Notice sent to a poster when their message has been rejected by the list’s moderator.')),
+    ('list:user:notice:rejected',
+     _('Notice sent to a poster when their message has been rejected automatically.')),
     ('list:user:notice:welcome',
-     _('The notice sent to a member when they are subscribed to the mailing list.')))
+     _('The notice sent to a member when they are subscribed to the mailing list.')),
+    ('list:user:notice:warning',
+     _('The notice sent to a member when their membership has been disabled due to excessive bounces.')),
+)

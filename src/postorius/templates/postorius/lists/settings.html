@@ -11,19 +11,24 @@
 
     {% list_nav 'list_settings' 'msgid:title:list_settings' %}
 
-    <ul class="nav nav-tabs margin-bottom" role="tablist">
+<div class="row">
+  <div class="col-3">
+    <ul class="nav flex-column nav-pills margin-bottom navbar-light" role="tablist" aria-orientation="vertical">
         {% for section in section_names %}
-        <li role="tab" {% if section.0 == visible_section %}class="active"{% endif %}>
-          <a href="{% url 'list_settings' list_id=list.list_id visible_section=section.0 %}">
+        <li role="tab" class="nav-item">
+          <a href="{% url 'list_settings' list_id=list.list_id visible_section=section.0 %}" class="nav-link {% if section.0 == visible_section %}active{% endif %} ">
             {{ section.1 }}
           </a>
         </li>
         {% endfor %}
     </ul>
-
+  </div>
+  <div class="col-9">
     <form action="{% url 'list_settings' list_id=list.list_id visible_section=visible_section %}"
           method="post" class="form-horizontal list_settings">
         {% bootstrap_form_horizontal form 3 8 'Save changes' %}
     </form>
+  </div>
+</div>
 
 {% endblock %}

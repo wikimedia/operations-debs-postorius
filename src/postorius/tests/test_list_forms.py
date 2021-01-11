@@ -22,10 +22,11 @@ from django.test import TestCase
 
 from postorius.forms.list_forms import (
     ArchiveSettingsForm, ChangeSubscriptionForm, DigestSettingsForm,
-    DMARCMitigationsForm, ListAddBanForm, ListAnonymousSubscribe,
-    ListAutomaticResponsesForm, ListHeaderMatchForm, ListIdentityForm,
-    ListMassRemoval, ListMassSubscription, ListNew, ListSubscribe,
-    ListSubscriptionPolicyForm, MemberModeration, MessageAcceptanceForm)
+    DMARCMitigationsForm, ListAnonymousSubscribe, ListAutomaticResponsesForm,
+    ListHeaderMatchForm, ListIdentityForm, ListMassRemoval,
+    ListMassSubscription, ListNew, ListSubscribe, MemberModeration,
+    MemberPolicyForm, MessageAcceptanceForm)
+from postorius.forms.system import AddBanForm
 from postorius.tests.utils import create_mock_list
 
 
@@ -284,14 +285,14 @@ jdoe@example.com (John Doe)'''})
         self.assertTrue(form.is_valid())
 
 
-class TestListAddBanForm(TestCase):
+class TestAddBanForm(TestCase):
 
     def test_form_validity(self):
-        form = ListAddBanForm({'email': 'jdoe@example.com'})
+        form = AddBanForm({'email': 'jdoe@example.com'})
         self.assertTrue(form.is_valid())
 
     def test_missing_fields_errors(self):
-        form = ListAddBanForm({})
+        form = AddBanForm({})
         self.assertFalse(form.is_valid())
         self.assertTrue('email' in form.errors)
         self.assertEqual(form.errors['email'],
@@ -301,7 +302,7 @@ class TestListAddBanForm(TestCase):
     def test_invalid_fields_type(self):
         # Valid values for email is either a regexp or an email address.
         # However, this is currently not validated by the form.
-        form = ListAddBanForm({'email': 'invalid@'})
+        form = AddBanForm({'email': 'invalid@'})
         self.assertFalse(form.is_valid())
         self.assertTrue('email' in form.errors)
         self.assertEqual(form.errors['email'],
@@ -495,14 +496,17 @@ class TestArchiveSettingsForm(TestCase):
                          ['hyperkitty', 'pipermail'])
 
 
-class TestListSubscriptionPolicyForm(TestCase):
+class TestMemberPolicyForm(TestCase):
 
     def test_required_fields(self):
-        form = ListSubscriptionPolicyForm({}, mlist=None)
+        form = MemberPolicyForm({}, mlist=None)
         self.assertFalse(form.is_valid())
         self.assertTrue('subscription_policy' in form.errors)
-        form = ListSubscriptionPolicyForm(dict(subscription_policy='confirm'),
-                                          mlist=None)
+        self.assertTrue('unsubscription_policy' in form.errors)
+        form = MemberPolicyForm(
+            dict(subscription_policy='confirm',
+                 unsubscription_policy='confirm'),
+            mlist=None)
         self.assertTrue(form.is_valid())
 
 

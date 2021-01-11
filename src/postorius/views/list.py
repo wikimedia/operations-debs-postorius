@@ -39,6 +39,7 @@ from django.views.decorators.http import require_http_methods
 from allauth.account.models import EmailAddress
 from django_mailman3.lib.mailman import get_mailman_client
 from django_mailman3.lib.paginator import MailmanPaginator, paginate
+from django_mailman3.models import MailDomain
 from django_mailman3.signals import (
     mailinglist_created, mailinglist_deleted, mailinglist_modified)
 
@@ -46,15 +47,15 @@ from postorius.auth.decorators import (
     list_moderator_required, list_owner_required, superuser_required)
 from postorius.auth.mixins import ListOwnerMixin
 from postorius.forms import (
-    AlterMessagesForm, ArchiveSettingsForm, DigestSettingsForm,
-    DMARCMitigationsForm, ListAddBanForm, ListAnonymousSubscribe,
+    AlterMessagesForm, ArchiveSettingsForm, BounceProcessingForm,
+    DigestSettingsForm, DMARCMitigationsForm, ListAnonymousSubscribe,
     ListAutomaticResponsesForm, ListHeaderMatchForm, ListHeaderMatchFormset,
     ListIdentityForm, ListMassRemoval, ListMassSubscription, ListNew,
-    ListSubscribe, ListSubscriptionPolicyForm, MemberForm, MemberModeration,
+    ListSubscribe, MemberForm, MemberModeration, MemberPolicyForm,
     MessageAcceptanceForm, MultipleChoiceForm, UserPreferences)
 from postorius.forms.list_forms import ACTION_CHOICES
 from postorius.models import Domain, List, Mailman404Error, Style
-from postorius.views.generic import MailingListView
+from postorius.views.generic import MailingListView, bans_view
 
 
 logger = logging.getLogger(__name__)
@@ -538,13 +539,14 @@ def moderate_held_message(request, list_id):
     mailing_list = List.objects.get_or_404(fqdn_listname=list_id)
     msg = mailing_list.get_held_message(request.POST['msgid'])
     moderation_choice = request.POST.get('moderation_choice')
+    reason = request.POST.get('reason')
 
     try:
         if 'accept' in request.POST:
             mailing_list.accept_message(msg.request_id)
             messages.success(request, _('The message was accepted'))
         elif 'reject' in request.POST:
-            mailing_list.reject_message(msg.request_id)
+            mailing_list.reject_message(msg.request_id, reason=reason)
             messages.success(request, _('The message was rejected'))
         elif 'discard' in request.POST:
             mailing_list.discard_message(msg.request_id)
@@ -677,6 +679,30 @@ def _unique_lists(lists):
     return {mlist.list_id: mlist for mlist in lists}.values()
 
 
+def _get_mail_host(web_host):
+    """Get the mail_host for a web_host if FILTER_VHOST is true and there's
+    only one mail_host for this web_host.
+    """
+    if not getattr(settings, 'FILTER_VHOST', False):
+        return None
+    mail_hosts = []
+    use_web_host = False
+    for domain in Domain.objects.all():
+        try:
+            if (MailDomain.objects.get(
+                    mail_domain=domain.mail_host).site.domain == web_host):
+                if domain.mail_host not in mail_hosts:
+                    mail_hosts.append(domain.mail_host)
+        except MailDomain.DoesNotExist:
+            use_web_host = True
+    if len(mail_hosts) == 1:
+        return mail_hosts[0]
+    elif len(mail_hosts) == 0 and use_web_host:
+        return web_host
+    else:
+        return None
+
+
 @login_required
 def list_index_authenticated(request):
     """Index page for authenticated users.
@@ -699,8 +725,7 @@ def list_index_authenticated(request):
 
     # Get all the mailing lists for the current user.
     all_lists = []
-    mail_host = request.get_host().split(':')[0] if (
-        getattr(settings, 'FILTER_VHOST', False)) else None
+    mail_host = _get_mail_host(request.get_host().split(':')[0])
     for user_email in user_emails:
         try:
             all_lists.extend(
@@ -745,8 +770,7 @@ def list_index(request, template='postorius/index.html'):
     def _get_list_page(count, page):
         client = get_mailman_client()
         advertised = not request.user.is_superuser
-        mail_host = request.get_host().split(":")[0] if (
-            getattr(settings, 'FILTER_VHOST', False)) else None
+        mail_host = _get_mail_host(request.get_host().split(":")[0])
         return client.get_list_page(
             advertised=advertised, mail_host=mail_host, count=count, page=page)
 
@@ -867,7 +891,8 @@ SETTINGS_SECTION_NAMES = (
     ('digest', _('Digest')),
     ('message_acceptance', _('Message Acceptance')),
     ('archiving', _('Archiving')),
-    ('subscription_policy', _('Subscription Policy')),
+    ('subscription_policy', _('Member Policy')),
+    ('bounce_processing', _('Bounce Processing')),
 )
 
 SETTINGS_FORMS = {
@@ -878,7 +903,8 @@ SETTINGS_FORMS = {
     'digest': DigestSettingsForm,
     'message_acceptance': MessageAcceptanceForm,
     'archiving': ArchiveSettingsForm,
-    'subscription_policy': ListSubscriptionPolicyForm,
+    'subscription_policy': MemberPolicyForm,
+    'bounce_processing': BounceProcessingForm,
 }
 
 
@@ -1009,49 +1035,8 @@ def remove_all_subscribers(request, list_id):
 @login_required
 @list_owner_required
 def list_bans(request, list_id):
-    """
-    Ban or unban email addresses.
-    """
-    # Get the list and cache the archivers property.
-    m_list = List.objects.get_or_404(fqdn_listname=list_id)
-    ban_list = m_list.bans
-
-    # Process form submission.
-    if request.method == 'POST':
-        if 'add' in request.POST:
-            addban_form = ListAddBanForm(request.POST)
-            if addban_form.is_valid():
-                try:
-                    ban_list.add(addban_form.cleaned_data['email'])
-                    messages.success(request, _(
-                        'The email {} has been banned.'.format(
-                            addban_form.cleaned_data['email'])))
-                except HTTPError as e:
-                    messages.error(
-                        request, _('An error occurred: %s') % e.reason)
-                except ValueError as e:
-                    messages.error(request, _('Invalid data: %s') % e)
-                return redirect('list_bans', list_id)
-        elif 'del' in request.POST:
-            try:
-                ban_list.remove(request.POST['email'])
-                messages.success(request, _(
-                    'The email {} has been un-banned'.format(
-                        request.POST['email'])))
-            except HTTPError as e:
-                messages.error(request, _('An error occurred: %s') % e.reason)
-            except ValueError as e:
-                messages.error(request, _('Invalid data: %s') % e)
-            return redirect('list_bans', list_id)
-    else:
-        addban_form = ListAddBanForm(initial=request.GET)
-    banned_addresses = paginate(
-        list(ban_list), request.GET.get('page'), request.GET.get('count'))
-    return render(request, 'postorius/lists/bans.html',
-                  {'list': m_list,
-                   'addban_form': addban_form,
-                   'banned_addresses': banned_addresses,
-                   })
+    return bans_view(
+        request, list_id=list_id, template='postorius/lists/bans.html')
 
 
 @login_required

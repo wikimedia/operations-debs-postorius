@@ -16,7 +16,6 @@ example_project/wsgi.py
 src/postorius/__init__.py
 src/postorius/apps.py
 src/postorius/context_processors.py
-src/postorius/languages.py
 src/postorius/middleware.py
 src/postorius/models.py
 src/postorius/template_list.py
@@ -45,6 +44,7 @@ src/postorius/forms/domain_forms.py
 src/postorius/forms/fields.py
 src/postorius/forms/list_forms.py
 src/postorius/forms/member_forms.py
+src/postorius/forms/system.py
 src/postorius/forms/user_forms.py
 src/postorius/locale/af/LC_MESSAGES/django.po
 src/postorius/locale/am/LC_MESSAGES/django.po
@@ -178,6 +178,7 @@ src/postorius/migrations/0008_auto_20190310_0717.py
 src/postorius/migrations/0009_auto_20190508_1604.py
 src/postorius/migrations/0010_auto_20190821_0621.py
 src/postorius/migrations/0011_auto_20191109_1219.py
+src/postorius/migrations/0012_auto_20200420_2136.py
 src/postorius/migrations/__init__.py
 src/postorius/static/postorius/css/style.css
 src/postorius/static/postorius/img/favicon.ico
@@ -187,12 +188,22 @@ src/postorius/static/postorius/img/mailman_logo_trans.png
 src/postorius/static/postorius/js/held_messages.js
 src/postorius/static/postorius/js/script.js
 src/postorius/static/postorius/libs/bootstrap/css/bootstrap.min.css
+src/postorius/static/postorius/libs/bootstrap/css/bootstrap.min.css.map
 src/postorius/static/postorius/libs/bootstrap/fonts/glyphicons-halflings-regular.eot
 src/postorius/static/postorius/libs/bootstrap/fonts/glyphicons-halflings-regular.svg
 src/postorius/static/postorius/libs/bootstrap/fonts/glyphicons-halflings-regular.ttf
 src/postorius/static/postorius/libs/bootstrap/fonts/glyphicons-halflings-regular.woff
 src/postorius/static/postorius/libs/bootstrap/fonts/glyphicons-halflings-regular.woff2
 src/postorius/static/postorius/libs/bootstrap/js/bootstrap.min.js
+src/postorius/static/postorius/libs/fonts/font-awesome/VERSION.txt
+src/postorius/static/postorius/libs/fonts/font-awesome/css/font-awesome.css
+src/postorius/static/postorius/libs/fonts/font-awesome/css/font-awesome.min.css
+src/postorius/static/postorius/libs/fonts/font-awesome/fonts/FontAwesome.otf
+src/postorius/static/postorius/libs/fonts/font-awesome/fonts/fontawesome-webfont.eot
+src/postorius/static/postorius/libs/fonts/font-awesome/fonts/fontawesome-webfont.svg
+src/postorius/static/postorius/libs/fonts/font-awesome/fonts/fontawesome-webfont.ttf
+src/postorius/static/postorius/libs/fonts/font-awesome/fonts/fontawesome-webfont.woff
+src/postorius/static/postorius/libs/fonts/font-awesome/fonts/fontawesome-webfont.woff2
 src/postorius/static/postorius/libs/html5shiv/html5shiv.js
 src/postorius/static/postorius/libs/html5shiv/html5shiv.min.js
 src/postorius/static/postorius/libs/jquery/jquery-1.11.3.min.js
@@ -203,6 +214,7 @@ src/postorius/templates/404.html
 src/postorius/templates/500.html
 src/postorius/templates/account/base.html
 src/postorius/templates/django_mailman3/base.html
+src/postorius/templates/postorius/bans.html
 src/postorius/templates/postorius/base.html
 src/postorius/templates/postorius/index.html
 src/postorius/templates/postorius/system_information.html
@@ -215,6 +227,7 @@ src/postorius/templates/postorius/domain/template_add.html
 src/postorius/templates/postorius/domain/template_delete.html
 src/postorius/templates/postorius/domain/template_index.html
 src/postorius/templates/postorius/errors/generic.html
+src/postorius/templates/postorius/fragments/bans.html
 src/postorius/templates/postorius/lists/bans.html
 src/postorius/templates/postorius/lists/confirm_delete.html
 src/postorius/templates/postorius/lists/confirm_remove_role.html
@@ -264,12 +277,12 @@ src/postorius/tests/utils.py
 src/postorius/tests/mailman_api_tests/__init__.py
 src/postorius/tests/mailman_api_tests/conftest.py
 src/postorius/tests/mailman_api_tests/test_anonymous_subscribe.py
+src/postorius/tests/mailman_api_tests/test_bans.py
 src/postorius/tests/mailman_api_tests/test_domain_delete.py
 src/postorius/tests/mailman_api_tests/test_domain_edit.py
 src/postorius/tests/mailman_api_tests/test_domain_index.py
 src/postorius/tests/mailman_api_tests/test_domain_new.py
 src/postorius/tests/mailman_api_tests/test_generic_view.py
-src/postorius/tests/mailman_api_tests/test_list_bans.py
 src/postorius/tests/mailman_api_tests/test_list_delete.py
 src/postorius/tests/mailman_api_tests/test_list_header_matches.py
 src/postorius/tests/mailman_api_tests/test_list_index.py

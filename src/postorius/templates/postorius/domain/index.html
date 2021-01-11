@@ -32,7 +32,14 @@
                         <td>{{ domain.mail_host }}</td>
                         <td>{% if domain.description %}{{ domain.description }}{% endif %}</td>
                         <td>{% if domain.alias_domain %}{{ domain.alias_domain }}{% endif %}</td>
-                        <td>{{ domain.site.name }} ({{ domain.site.domain }})</td>
+                        <td>
+                          {{ domain.site.name }} ({{ domain.site.domain }})
+                          <br/>
+                          (<a href='{% url 'admin:sites_site_change' domain.site.pk %}' title='edit web host'>{% trans 'Edit' %}</a>)
+                          <br/>
+                          <code>SITE_ID = {{ domain.site.id }}</code>
+
+                        </td>
                         <td>
                           <ul>
                             {% for owner in domain.owners %}
