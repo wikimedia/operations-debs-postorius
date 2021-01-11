@@ -32,8 +32,10 @@ override_dh_python3:
 		ln -sf /usr/share/nodejs/html5shiv/dist/html5shiv.min.js {} \;
 	find debian/python3-django-postorius -name 'html5shiv.js' -type f -exec \
 		ln -sf /usr/share/nodejs/html5shiv/dist/html5shiv.js {} \;
-	find debian/python3-django-postorius -name 'glyphicons-halflings-regular.ttf' -type f -exec \
-		ln -sf /usr/share/fonts-glyphicons/glyphicons-halflings-regular.ttf {} \;
+	for type in eot ttf woff woff2; do \
+		find debian/python3-django-postorius -name "glyphicons-halflings-regular.$$type" -type f -exec \
+			ln -sf /usr/share/fonts-glyphicons/glyphicons-halflings-regular.$$type {} \; ; \
+	done
 
 override_dh_installchangelogs:
 	dh_installchangelogs src/postorius/doc/news.rst
