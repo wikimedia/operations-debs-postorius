@@ -1,11 +1,8 @@
-#!/bin/bash
+#!/bin/sh
 
 service mailman3 stop
 ln -s /usr/lib/mailman3/bin/runner  /usr/bin/runner
 
-cd "${AUTOPKGTEST_TMP}/example_project"
-
-# Wait for mailman3 server to be up
-sleep 10
+cd ./example_project
 
 PYTHONPATH=../src pytest-3 ../src --tb=long --create-db --reuse-db --ds=test_settings
