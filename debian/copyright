@@ -37,6 +37,11 @@ Copyright: © 2005, 2014, 2015 jQuery Foundation, Inc. and other contributors
            © 2011 The Dojo Foundation
 License: Expat
 
+Files: debian/missing-sources/popper-v1.11.0.js
+       src/postorius/static/postorius/libs/popperjs/*
+Copyright: © 2016 Federico Zivolo and contributors
+License: Expat
+
 Files: src/postorius/static/postorius/libs/html5shiv/*
 Copyright: © 2014 Alexander Farkas (aFarkas)
 License: Expat or GPL-2

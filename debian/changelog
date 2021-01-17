@@ -8,8 +8,9 @@ postorius (1.3.3-1) unstable; urgency=medium
   * d/tests: Fix tests, update test dependencies (Closes: #976097)
   * d/p/0002-Remove-cloudflare-dependency-from-the-frontent.patch:
     Remove cloudflare dependency from the frontend
+  * d/missing-sources/popper-v1.11.0.js: Add missing popperjs source file
 
- -- Jonas Meurer <jonas@freesources.org>  Sun, 17 Jan 2021 14:27:01 +0100
+ -- Jonas Meurer <jonas@freesources.org>  Sun, 17 Jan 2021 14:52:58 +0100
 
 postorius (1.3.2-2.1) unstable; urgency=medium
 
