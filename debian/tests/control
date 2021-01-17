@@ -12,4 +12,5 @@ Depends: mailman3 (>= 3.3.2),
          python3-readme-renderer,
          python3-vcr
 Restrictions: allow-stderr,
+              isolation-container,
               needs-root
