@@ -6,8 +6,10 @@ postorius (1.3.3-1) unstable; urgency=medium
   * d/rules: Replace all glyphicons-halflings-regular font files with symlinks
     to the files from package fonts-glyphicons-halflings
   * d/tests: Fix tests, update test dependencies (Closes: #976097)
+  * d/p/0002-Remove-cloudflare-dependency-from-the-frontent.patch:
+    Remove cloudflare dependency from the frontend
 
- -- Jonas Meurer <jonas@freesources.org>  Sat, 16 Jan 2021 10:49:42 +0100
+ -- Jonas Meurer <jonas@freesources.org>  Sun, 17 Jan 2021 14:27:01 +0100
 
 postorius (1.3.2-2.1) unstable; urgency=medium
 
