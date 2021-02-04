@@ -23,7 +23,13 @@
                 <tbody>
                     {% for request in paginated_requests.object_list %}
                     <tr>
-                        <td>{{ request.email }}</td>
+                      <td>
+                          {% if request.display_name %}
+                              "{{ request.display_name }}" &lt;{{ request.email }}&gt;
+                          {% else %}
+                              {{ request.email }}
+                          {% endif %}
+                        </td>
                         <td>
                             <a href="{% url 'handle_subscription_request' list.list_id request.token 'accept' %}" class="btn btn-xs btn-success">{% trans 'Accept' %}</a>
                             <a href="{% url 'handle_subscription_request' list.list_id request.token 'reject' %}" class="btn btn-xs btn-danger">{% trans 'Reject' %}</a>

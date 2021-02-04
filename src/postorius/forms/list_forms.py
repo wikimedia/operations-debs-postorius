@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2017-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -27,6 +27,7 @@ from django.utils.translation import gettext_lazy as _
 from django_mailman3.lib.mailman import get_mailman_client
 
 from postorius.forms.fields import ListOfStringsField
+from postorius.forms.validators import validate_uuid_or_email
 from postorius.models import EmailTemplate, _email_template_help_text
 from postorius.utils import LANGUAGES
 
@@ -144,10 +145,13 @@ class ListSubscribe(forms.Form):
     """Form fields to join an existing list.
     """
 
-    email = forms.ChoiceField(
+    subscriber = forms.ChoiceField(
         label=_('Your email address'),
-        validators=[validate_email],
         widget=forms.Select(),
+        validators=[validate_uuid_or_email, ],
+        help_text=_(
+            'Subscribing via "Primary Address" will change subscription'
+            ' address when you change your primary address.'),
         error_messages={
             'required': _('Please enter an email address.'),
             'invalid': _('Please enter a valid email address.')})
@@ -155,10 +159,15 @@ class ListSubscribe(forms.Form):
     display_name = forms.CharField(
         label=_('Your name (optional)'), required=False)
 
-    def __init__(self, user_emails, *args, **kwargs):
+    def __init__(self, user_emails, user_id, primary_email, *args, **kwargs):
         super(ListSubscribe, self).__init__(*args, **kwargs)
-        self.fields['email'].choices = ((address, address)
-                                        for address in user_emails)
+        choices = list((address, address)
+                       for address in user_emails)
+        if primary_email and user_id:
+            choices.insert(
+                0,
+                (user_id, _('Primary Address ({})').format(primary_email)))
+        self.fields['subscriber'].choices = choices
 
 
 class ListAnonymousSubscribe(forms.Form):
@@ -395,6 +404,16 @@ class MessageAcceptanceForm(ListSettingsForm):
             'is matched against the list of explicitly accepted, held, '
             'rejected (bounced), and discarded addresses. '
             'If no match is found, then this action is taken.'))
+    emergency = forms.BooleanField(
+        widget=forms.RadioSelect(choices=((True, _('Yes')), (False, _('No')))),
+        required=False,
+        label=_('Emergency Moderation'),
+        help_text=_(
+            'When this option is enabled, all list traffic is emergency'
+            ' moderated, i.e. held for moderation. Turn this option on when'
+            ' your list is experiencing a flamewar and you want a cooling off'
+            ' period. '),
+    )
     max_message_size = forms.IntegerField(
         min_value=0,
         label=_('Maximum message size'),
@@ -846,6 +865,16 @@ class ListAutomaticResponsesForm(ListSettingsForm):
             'is most useful for transparently migrating lists from some other '
             'mailing list manager to Mailman.\n'
             'The text of Welcome message can be set via the Templates tab.'))
+    send_goodbye_message = forms.ChoiceField(
+        choices=((True, _('Yes')), (False, _('No'))),
+        widget=forms.RadioSelect,
+        required=False,
+        label=_('Send goodbye message'),
+        help_text=_(
+            'Send goodbye message to newly unsubscribed members? '
+            'Turn this off only if you plan on unsubscribing people manually '
+            'and don\'t want them to know that you did so.\n'
+            'The text of Goodbye message can be set via the Templates tab.'))
     admin_immed_notify = forms.BooleanField(
         widget=forms.RadioSelect(choices=((True, _('Yes')), (False, _('No')))),
         required=False,
@@ -934,7 +963,7 @@ class ListIdentityForm(ListSettingsForm):
         help_text=_('Flag indicating that posts to the list should be gated to'
                     ' the linked newsgroup.')
     )
-    linked_newgroup = forms.CharField(
+    linked_newsgroup = forms.CharField(
         label=_('Linked Newsgroup'),
         required=False,
         help_text=_(
@@ -1007,6 +1036,40 @@ class ListMassSubscription(forms.Form):
             'email address is valid.'),
         widget=forms.CheckboxInput()
         )
+
+    invitation = forms.BooleanField(
+        label=_('Invitation'),
+        initial=False,
+        required=False,
+        help_text=_(
+            'If checked, the other checkboxes are ignored and the users will '
+            'be sent an invitation to join the list and will be subscribed '
+            'upon acceptance thereof.'),
+        widget=forms.CheckboxInput()
+        )
+
+    send_welcome_message = forms.ChoiceField(
+        choices=((True, _('Yes')),
+                 (False, _('No')),
+                 ('default', _('List default'))),
+        widget=forms.RadioSelect,
+        initial='default',
+        required=False,
+        label=_('Send welcome message'),
+        help_text=_(
+            'If set to "Yes" or "No", List\'s default setting of '
+            'send_welcome_message will be ignored for these subscribers and a'
+            ' welcome message will be sent or not sent based on the choice.'),
+        )
+
+    def clean_send_welcome_message(self):
+        """Choose from True or False. Any other value is equivalent to None."""
+        data = self.cleaned_data['send_welcome_message']
+        if data in ('True', 'False'):
+            return data
+        # None implies this value is unset and isn't passed on to Core in API
+        # call.
+        return None
 
 
 class ListMassRemoval(forms.Form):
@@ -1098,15 +1161,22 @@ class MemberModeration(forms.Form):
 
 
 class ChangeSubscriptionForm(forms.Form):
-    email = forms.ChoiceField()
 
-    def __init__(self, user_emails, *args, **kwargs):
+    subscriber = forms.ChoiceField(
+        label=_('Select Email'),
+        required=False,
+        widget=forms.Select(),
+        validators=[validate_uuid_or_email, ],)
+
+    def __init__(self, user_emails, user_id, primary_email, *args, **kwargs):
         super(ChangeSubscriptionForm, self).__init__(*args, **kwargs)
-        self.fields['email'] = forms.ChoiceField(
-            label=_('Select Email'),
-            required=False,
-            widget=forms.Select(),
-            choices=((address, address) for address in user_emails))
+        choices = list((address, address)
+                       for address in user_emails)
+        if primary_email and user_id:
+            choices.insert(
+                0,
+                (user_id, _('Primary Address ({})').format(primary_email)))
+        self.fields['subscriber'].choices = choices
 
 
 class TemplateUpdateForm(forms.ModelForm):
@@ -1120,3 +1190,11 @@ class TemplateUpdateForm(forms.ModelForm):
     class Meta:
         model = EmailTemplate
         fields = ['data']
+
+
+class TokenConfirmForm(forms.Form):
+    """Form to confirm pending (un)subscription requests from User."""
+    token = forms.CharField(
+        required=True,
+        label="",
+        widget=forms.TextInput(attrs={'readonly': True, 'hidden': True}))

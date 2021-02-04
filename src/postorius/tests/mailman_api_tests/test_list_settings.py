@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2016-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -180,6 +180,7 @@ class ListSettingsTest(ViewTestCase):
              'autorespond_postings': 'none',
              'autorespond_requests': 'none',
              'send_welcome_message': True,
+             'send_goodbye_message': True,
              'autoresponse_grace_period': '20d'})
         self.assertRedirects(response, url)
         self.assertHasSuccessMessage(response)
@@ -361,3 +362,40 @@ class ListSettingsTest(ViewTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(mlist.requests), 2)
         self.assertEqual(mlist.requests[1].get('token_owner'), 'subscriber')
+
+        # Test mass subscribe an invitation.  Subscription policy doesn't
+        # matter, so just leave it as it was.
+        updated_values = {
+            'emails': 'john5@example.com',
+            'invitation': True
+        }
+        response = self.client.post(url, updated_values)
+        self.assertEqual(response.status_code, 200)
+        # And now there are 3 requests.
+        self.assertEqual(len(mlist.requests), 3)
+        self.assertEqual(mlist.requests[2].get('token_owner'), 'subscriber')
+
+    def test_set_list_of_strings_field_empty(self):
+        self.client.login(username='testsu', password='testpass')
+        m_list = List.objects.get(fqdn_listname='foo.example.com')
+        settings = m_list.settings
+        settings['accept_these_nonmembers'] = ['^bar*@example.[com|org]']
+        settings.save()
+
+        url = reverse('list_settings',
+                      args=('foo.example.com', 'message_acceptance'))
+        updated_values = {
+            'accept_these_nonmembers': [],
+            'require_explicit_destination': True,
+            'administrivia': True,
+            'default_member_action': 'defer',
+            'default_nonmember_action': 'hold',
+            'max_message_size': 40,
+            'max_num_recipients': 10,
+        }
+        response = self.client.post(url, updated_values)
+        self.assertEqual(response.status_code, 302)
+        self.assertHasSuccessMessage(response)
+        # Get a new list object to avoid caching
+        settings._reset_cache()
+        self.assertEqual(settings.get('accept_these_nonmembers'), [])

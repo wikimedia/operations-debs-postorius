@@ -90,7 +90,7 @@
                                     </label>
                                   </td>
                                   <td>
-                                    <a href="{% url 'list_member_options' list.list_id member.email %}">{% trans 'Member Options' %}</a>
+                                    <a href="{% url 'list_member_options' list.list_id member.email %}?role=member">{% trans 'Member Options' %}</a>
                                   </td>
                                 {% elif role == 'nonmember' %}
                                   <td>
@@ -102,7 +102,7 @@
                                     </label>
                                   </td>
                                   <td>
-                                    <a href="{% url 'list_member_options' list.list_id member.email %}">{% trans 'Non-member Options' %}</a>
+                                    <a href="{% url 'list_member_options' list.list_id member.email %}?role=nonmember">{% trans 'Non-member Options' %}</a>
                                   </td>
                                   <td><a href="{% url 'remove_role' list.list_id role member.email %}" class="btn btn-xs btn-danger">{% trans 'Delete' %}</a></td>
                                 {% else %}

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2016-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -16,9 +16,6 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 """Tests for delete lists"""
-
-from __future__ import absolute_import, print_function, unicode_literals
-
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.urls import reverse

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -23,6 +23,7 @@ from django.conf import settings
 from django.shortcuts import render
 from django.utils.translation import gettext as _
 
+from allauth.account.models import EmailAddress
 from mailmanclient import Client
 
 
@@ -57,6 +58,43 @@ def get_mailman_client():
 def with_empty_choice(choices):
     """Add an empty Choice for unset values in dropdown."""
     return [(None, '-----')] + list(choices)
+
+
+def set_preferred(user, mm_user):
+    """Set preferred address in Mailman Core.
+
+    :param user: The Django user mode to set preferred address.
+    :param mm_user: The Mailman User object to set preferred address for.
+    """
+    client = get_mailman_client()
+    primary_email = EmailAddress.objects.get_primary(user)
+    if primary_email is not None and primary_email.verified:
+        # First, make sure that the email address is verified in Core,
+        # otherwise, we can't set it as a primary address.
+        addr = client.get_address(primary_email.email)
+        if not addr.verified_on:
+            addr.verify()
+        mm_user.preferred_address = primary_email.email
+        return primary_email.email
+    return None
+
+
+def get_member_or_nonmember(mlist, email):
+    """Return either a Member or a Non-member with `email` in mlist.
+
+    :param mlist: MailingList object to get membership for.
+    :param email: Email address of the member or nonmember.
+    :returns: Member if found otherwise None.
+    """
+    try:
+        member = mlist.get_member(email)
+    except ValueError:
+        # Not a Member, try getting non-member.
+        try:
+            member = mlist.get_nonmember(email)
+        except ValueError:
+            member = None
+    return member
 
 
 LANGUAGES = (

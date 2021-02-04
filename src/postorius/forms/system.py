@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2020 by the Free Software Foundation, Inc.
+# Copyright (C) 2020-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -18,7 +18,7 @@
 #
 
 from django import forms
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 
 class AddBanForm(forms.Form):

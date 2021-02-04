@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2016-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2016-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -23,3 +23,6 @@ from django.apps import AppConfig
 class PostoriusConfig(AppConfig):
     name = 'postorius'
     verbose_name = "Postorius"
+
+    def ready(self):
+        import postorius.signals  # noqa: F401

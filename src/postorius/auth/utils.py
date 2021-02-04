@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -37,10 +37,12 @@ def user_is_in_list_roster(user, mailing_list, roster):
     """
     if not user.is_authenticated:
         return False
-    addresses = set(EmailAddress.objects.filter(
-        user=user, verified=True).values_list("email", flat=True))
+    addresses = set(email.lower() for email in
+                    EmailAddress.objects.filter(
+                        user=user, verified=True).values_list(
+                            "email", flat=True))
     roster_addresses = set(
-        [member.email for member in getattr(mailing_list, roster)]
+        [member.email.lower() for member in getattr(mailing_list, roster)]
     )
     if addresses & roster_addresses:
         return True  # At least one address is in the roster

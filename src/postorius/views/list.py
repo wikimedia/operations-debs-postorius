@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -37,7 +37,7 @@ from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
 
 from allauth.account.models import EmailAddress
-from django_mailman3.lib.mailman import get_mailman_client
+from django_mailman3.lib.mailman import get_mailman_client, get_mailman_user
 from django_mailman3.lib.paginator import MailmanPaginator, paginate
 from django_mailman3.models import MailDomain
 from django_mailman3.signals import (
@@ -53,8 +53,10 @@ from postorius.forms import (
     ListIdentityForm, ListMassRemoval, ListMassSubscription, ListNew,
     ListSubscribe, MemberForm, MemberModeration, MemberPolicyForm,
     MessageAcceptanceForm, MultipleChoiceForm, UserPreferences)
-from postorius.forms.list_forms import ACTION_CHOICES
-from postorius.models import Domain, List, Mailman404Error, Style
+from postorius.forms.list_forms import ACTION_CHOICES, TokenConfirmForm
+from postorius.models import (
+    Domain, List, Mailman404Error, Style, SubscriptionMode)
+from postorius.utils import get_member_or_nonmember, set_preferred
 from postorius.views.generic import MailingListView, bans_view
 
 
@@ -177,7 +179,7 @@ class ListMembersViews(ListOwnerMixin, MailingListView):
         if role not in self.allowed_roles:
             return redirect('list_members', list_id, 'member')
 
-        if role in ('member'):
+        if role in ('member', ):
             return self._member_post(request, role)
         else:
             return self._non_member_post(request, role)
@@ -188,16 +190,24 @@ class ListMembersViews(ListOwnerMixin, MailingListView):
 def list_member_options(request, list_id, email):
     template_name = 'postorius/lists/memberoptions.html'
     mm_list = List.objects.get_or_404(fqdn_listname=list_id)
+    # If the role is specified explicitly, use that, otherwise the value is
+    # None and is equivalent to the value not being specified and the lookup
+    # happens using only email. This can cause issues when the email is
+    # subscribed as both a Non-Member and Owner/Moderator returning the wrong
+    # Member object.
+    role = request.GET.get('role')
     try:
-        mm_member = mm_list.find_members(address=email)[0]
+        mm_member = mm_list.find_members(address=email, role=role)[0]
         member_prefs = mm_member.preferences
     except (ValueError, IndexError):
         raise Http404(_('Member does not exist'))
     except Mailman404Error:
         return render(request, template_name, {'nolists': 'true'})
+
     initial_moderation = dict([
         (key, getattr(mm_member, key)) for key in MemberModeration.base_fields
         ])
+
     if request.method == 'POST':
         if request.POST.get("formname") == 'preferences':
             preferences_form = UserPreferences(
@@ -251,6 +261,7 @@ class ListSummaryView(MailingListView):
         data = {'list': self.mailing_list,
                 'user_subscribed': False,
                 'subscribed_address': None,
+                'subscribed_preferred': False,
                 'public_archive': False,
                 'hyperkitty_enabled': False}
         if self.mailing_list.settings['archive_policy'] == 'public':
@@ -274,14 +285,25 @@ class ListSummaryView(MailingListView):
                     data['user_request_pending'] = True
                     break
                 try:
-                    self.mailing_list.get_member(address)
+                    member = self.mailing_list.get_member(address)
                 except ValueError:
                     pass
                 else:
                     data['user_subscribed'] = True
                     data['subscribed_address'] = address
+                    data['subscribed_preferred'] = bool(
+                        member.subscription_mode ==
+                        SubscriptionMode.as_user.name)
                     break  # no need to test more addresses
-            data['subscribe_form'] = ListSubscribe(user_emails)
+            mm_user = get_mailman_user(request.user)
+            primary_email = None
+            if mm_user.preferred_address is None:
+                primary_email = set_preferred(request.user, mm_user)
+            else:
+                primary_email = mm_user.preferred_address.email
+            data['subscribe_form'] = ListSubscribe(
+                user_emails, user_id=mm_user.user_id,
+                primary_email=primary_email)
         else:
             user_emails = None
             data['anonymous_subscription_form'] = ListAnonymousSubscribe()
@@ -292,18 +314,83 @@ class ChangeSubscriptionView(MailingListView):
     """Change mailing list subscription
     """
 
+    def _is_subscribed(self, member, subscriber):
+        """Check if the member is same as the subscriber."""
+        return (
+            (member.subscription_mode == SubscriptionMode.as_address.name and
+             member.email == subscriber) or
+            (member.subscription_mode == SubscriptionMode.as_user.name and
+             member.user.user_id == subscriber))
+
+    @staticmethod
+    def _is_email(subscriber):
+        """Is the subscriber an email address or uuid."""
+        return '@' in subscriber
+
+    def _change_subscription(self, member, subscriber):
+        """Switch subscriptions to a new email/user.
+
+        :param member: The currently subscriber Member.
+        :param subscriber: New email or user_id to switch subscription to.
+        """
+        # If the Membership is via preferred address and we are switching to an
+        # email or vice versa, we have to do the subscribe-unsubscribe dance.
+        # If the subscription is via an address, then we can simply PATCH the
+        # address in the Member resource.
+        if (member.subscription_mode == SubscriptionMode.as_address.name and
+                self._is_email(subscriber)):
+            member.address = subscriber
+            member.save()
+            return
+        # Keep a copy of the preferences so we can restore them after the
+        # Member switches addresses.
+        if member.preferences:
+            prefs = member.preferences
+        member.unsubscribe()
+        # Unless the subscriber is an an email and it is not-verified, we
+        # should get a Member resource here as response. We should never get to
+        # here with subscriber being an un-verified email.
+        new_member = self.mailing_list.subscribe(
+            subscriber,
+            # Since the email is already verified in Postorius.
+            pre_confirmed=True,
+            # Since this user was already a Member, simply switching Email
+            # addresses shouldn't require another approval.
+            pre_approved=True)
+        self._copy_preferences(new_member.preferences, prefs)
+
+    def _copy_preferences(self, member_pref, old_member_pref):
+        """Copy the preferences of the old member to new one.
+
+        :param member_pref: The new member's preference to copy preference to.
+        :param old_member_pref: The old_member's preferences to copy
+            preferences from.
+        """
+        # We can't simply switch the Preferences object, so we copy values from
+        # previous one to the new one.
+        for prop in old_member_pref._properties:
+            val = old_member_pref.get(prop)
+            if val:
+                member_pref[prop] = val
+        member_pref.save()
+
     @method_decorator(login_required)
     def post(self, request, list_id):
         try:
             user_emails = EmailAddress.objects.filter(
                 user=request.user, verified=True).order_by(
                 "email").values_list("email", flat=True)
-            form = ListSubscribe(user_emails, request.POST)
+            mm_user = get_mailman_user(request.user)
+            primary_email = None
+            if mm_user.preferred_address is not None:
+                primary_email = mm_user.preferred_address.email
+            form = ListSubscribe(
+                user_emails, mm_user.user_id, primary_email, request.POST)
             # Find the currently subscribed email
             old_email = None
             for address in user_emails:
                 try:
-                    self.mailing_list.get_member(address)
+                    member = self.mailing_list.get_member(address)
                 except ValueError:
                     pass
                 else:
@@ -311,25 +398,20 @@ class ChangeSubscriptionView(MailingListView):
                     break  # no need to test more addresses
             assert old_email is not None
             if form.is_valid():
-                email = form.cleaned_data['email']
-                if old_email == email:
+                subscriber = form.cleaned_data['subscriber']
+                if self._is_subscribed(member, subscriber):
                     messages.error(request, _('You are already subscribed'))
                 else:
-                    self.mailing_list.unsubscribe(old_email)
-                    # Since the action is done via the web UI, no email
-                    # confirmation is needed.
-                    response = self.mailing_list.subscribe(
-                        email, pre_confirmed=True)
-                    if (type(response) == dict and                # noqa: W504
-                            response.get('token_owner') == TokenOwner.moderator):  # noqa: E501
-                        messages.success(
-                            request, _('Your request to change the email for'
-                                       ' this subscription was submitted and'
-                                       ' is waiting for moderator approval.'))
-                    else:
-                        messages.success(request,
-                                         _('Subscription changed to %s') %
-                                         email)
+                    self._change_subscription(member, subscriber)
+                    # If the subscriber is user_id (i.e. not an email
+                    # address), Show 'Primary Address ()' in the success
+                    # message instead of weird user id.
+                    if not self._is_email(subscriber):
+                        subscriber = _(
+                            'Primary Address ({})').format(primary_email)
+                    messages.success(
+                        request,
+                        _('Subscription changed to %s').format(subscriber))
             else:
                 messages.error(request,
                                _('Something went wrong. Please try again.'))
@@ -353,11 +435,18 @@ class ListSubscribeView(MailingListView):
             user_emails = EmailAddress.objects.filter(
                 user=request.user, verified=True).order_by(
                 "email").values_list("email", flat=True)
-            form = ListSubscribe(user_emails, request.POST)
+            mm_user = get_mailman_user(request.user)
+            primary_email = None
+            if mm_user.preferred_address is not None:
+                primary_email = mm_user.preferred_address.email
+            form = ListSubscribe(
+                user_emails, mm_user.user_id, primary_email, request.POST)
             if form.is_valid():
-                email = request.POST.get('email')
+                subscriber = request.POST.get('subscriber')
+                display_name = request.POST.get('display_name')
                 response = self.mailing_list.subscribe(
-                    email, pre_verified=True, pre_confirmed=True)
+                    subscriber, display_name,
+                    pre_verified=True, pre_confirmed=True)
                 if (type(response) == dict and                   # noqa: W504
                         response.get('token_owner') == TokenOwner.moderator):
                     messages.success(
@@ -392,8 +481,10 @@ class ListAnonymousSubscribeView(MailingListView):
             form = ListAnonymousSubscribe(request.POST)
             if form.is_valid():
                 email = form.cleaned_data.get('email')
-                self.mailing_list.subscribe(email, pre_verified=False,
-                                            pre_confirmed=False)
+                display_name = form.cleaned_data.get('display_name')
+                self.mailing_list.subscribe(
+                    email, display_name,
+                    pre_verified=False, pre_confirmed=False)
                 messages.success(request, _('Please check your inbox for '
                                             'further instructions'))
             else:
@@ -437,7 +528,10 @@ def list_mass_subscribe(request, list_id):
                         display_name=display_name,
                         pre_verified=form.cleaned_data['pre_verified'],
                         pre_confirmed=form.cleaned_data['pre_confirmed'],
-                        pre_approved=form.cleaned_data['pre_approved'])
+                        pre_approved=form.cleaned_data['pre_approved'],
+                        invitation=form.cleaned_data['invitation'],
+                        send_welcome_message=form.cleaned_data[
+                            'send_welcome_message'])
                     messages.success(
                         request, _('The address %(address)s has been'
                                    ' subscribed to %(list)s.') %
@@ -471,20 +565,22 @@ class ListMassRemovalView(MailingListView):
         if not form.is_valid():
             messages.error(request, _('Please fill out the form correctly.'))
         else:
-            for address in form.cleaned_data['emails']:
+            for data in form.cleaned_data['emails']:
                 try:
+                    # Parse the data to get the address.
+                    address = email.utils.parseaddr(data)[1]
                     validate_email(address)
                     self.mailing_list.unsubscribe(address.lower())
                     messages.success(
                         request, _('The address %(address)s has been'
                                    ' unsubscribed from %(list)s.') %
-                        {'address': address,
+                        {'address': data,
                          'list': self.mailing_list.fqdn_listname})
                 except (HTTPError, ValueError) as e:
                     messages.error(request, e)
                 except ValidationError:
                     messages.error(request, _('The email address %s'
-                                              ' is not valid.') % address)
+                                              ' is not valid.') % data)
         return redirect('mass_removal', self.mailing_list.list_id)
 
 
@@ -562,18 +658,18 @@ def moderate_held_message(request, list_id):
 
     moderation_choices = dict(ACTION_CHOICES)
     if moderation_choice in moderation_choices:
-        try:
-            member = mailing_list.get_member(msg.sender)
+        member = get_member_or_nonmember(mailing_list, msg.sender)
+        if member is not None:
             member.moderation_action = moderation_choice
             member.save()
             messages.success(
                 request,
                 _('Moderation action for {} set to {}'.format(
                     member, moderation_choices[moderation_choice])))
-        except ValueError as e:
+        else:
             messages.error(
                 request,
-                _('Failed to set moderation action: {}'.format(e)))
+                _('Failed to set moderation action for {}'.format(msg.sender)))
     return redirect('list_held_messages', list_id)
 
 
@@ -836,8 +932,7 @@ def list_subscription_requests(request, list_id):
 def _list_subscriptions(request, list_id, token_owner, template, page_title):
     m_list = List.objects.get_or_404(fqdn_listname=list_id)
     requests = [req
-                for req in m_list.requests
-                if req['token_owner'] == token_owner]
+                for req in m_list.get_requests(token_owner=token_owner)]
     paginated_requests = paginate(
         requests,
         request.GET.get('page'),
@@ -940,7 +1035,20 @@ def list_settings(request, list_id=None, visible_section=None,
                     if key in form_class.mlist_properties:
                         setattr(m_list, key, form.cleaned_data[key])
                     else:
-                        list_settings[key] = form.cleaned_data[key]
+                        val = form.cleaned_data[key]
+                        # Empty list isn't really a valid value and Core
+                        # interprets empty string as empty value for
+                        # ListOfStringsField. We are doing it here instead of
+                        # ListOfStringsField.to_python() because output from
+                        # list of strings is expected to be a list and the NULL
+                        # value is hence an empty list. The serialization of
+                        # the empty list is for us empty string, hence we are
+                        # doing this here. Technically, it can be done outside
+                        # of this view, but there aren't any other use cases
+                        # where we'd want an empty list of strings.
+                        if val == []:
+                            val = ''
+                        list_settings[key] = val
                 list_settings.save()
                 messages.success(request, _('The settings have been updated.'))
                 mailinglist_modified.send(sender=List, list_id=m_list.list_id)
@@ -1103,3 +1211,67 @@ def list_header_matches(request, list_id):
         'list': m_list,
         'formset': formset,
         })
+
+
+def confirm_token(request, list_id):
+    """Confirm token sent via Mailman Core.
+
+    This view allows confirming tokens sent via Mailman Core for confirming
+    subscriptions or verifying email addresses. This is an un-authenticated
+    view and the authentication is done by assuming the secrecy of the token
+    sent.
+
+    :param request: The Django request object.
+    :param list_id: The current mailinglist id.
+
+    """
+    m_list = List.objects.get_or_404(fqdn_listname=list_id)
+    if request.method == 'POST':
+        form = TokenConfirmForm(request.POST)
+        # If the token is None or something, just raise 400 error.
+        if not form.is_valid():
+            raise HTTPError(request.path, 400, _('Invalid confirmation token'),
+                            None, None)
+        token = form.cleaned_data.get('token')
+        try:
+            pending_req = m_list.get_request(token)
+        except HTTPError as e:
+            if e.code == 404:
+                raise HTTPError(request.path, 404,
+                                _('Token expired or invalid.'), None, None)
+            raise
+        # Since we only accept the token there isn't any need for Form data. We
+        # just need a POST request at this URL to accept the token.
+        m_list.moderate_request(token, action='accept')
+        return redirect('list_summary', m_list.list_id)
+    # Get the token from url parameter.
+    token = request.GET.get('token')
+    try:
+        pending_req = m_list.get_request(token)
+    except HTTPError as e:
+        if e.code == 404:
+            raise HTTPError(request.path, 404, _('Token expired or invalid.'),
+                            None, None)
+        raise
+
+    # If this is a token pending moderator approval, they need to login and
+    # approve it from the pending requests page.
+    if pending_req.get('token_owner') == 'moderator':
+        return redirect('list_subscription_requests', m_list.list_id)
+
+    token_type = pending_req.get('type')
+    form = TokenConfirmForm(initial=dict(token=token))
+    # Show the display_name if it is not None or "".
+    if pending_req.get('display_name'):
+        addr = email.utils.formataddr((pending_req.get('display_name'),
+                                       pending_req.get('email')))
+    else:
+        addr = pending_req.get('email')
+
+    return render(request, 'postorius/lists/confirm_token.html', {
+        'mlist': m_list,
+        'addr': addr,
+        'token': token,
+        'type': token_type,
+        'form': form,
+    })

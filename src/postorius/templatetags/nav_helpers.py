@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -71,11 +71,9 @@ def nav_active_class(context, current, view_name):
 
 @register.filter
 def held_count(mlist):
-    return mlist.get_held_page().total_size
+    return mlist.get_held_count()
 
 
 @register.filter
 def pending_subscriptions(mlist):
-    return len(list(r
-               for r in mlist.requests
-               if r['token_owner'] == 'moderator'))
+    return mlist.get_requests_count(token_owner='moderator')

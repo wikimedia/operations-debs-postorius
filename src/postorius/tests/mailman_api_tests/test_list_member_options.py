@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -152,3 +152,22 @@ class ListMembersOptionsTest(ViewTestCase):
         nonmember = self.foo_list.find_members(
             address='nonmember@example.com')[0]
         self.assertIsNone(nonmember.moderation_action)
+
+    def test_nonmember_and_owner_with_same_email_action(self):
+        # Test that when an email address with both owner and non-member roles
+        # are subscribed that we are able to moderate the non-member using the
+        # list options view.
+        self.foo_list.add_role(
+            role='nonmember', address='aperson@example.com')
+        self.foo_list.add_role(
+            role='owner', address='aperson@example.com')
+        url = reverse('list_member_options',
+                      args=(self.foo_list.list_id,
+                            'aperson@example.com',)) + '?role=nonmember'
+        self.client.login(username='testsu', password='testpass')
+        response = self.client.get(url)
+        member = response.context.get('mm_member')
+        # Assert that the list options are rendered for the non-member object
+        # and not the owner object.
+        self.assertEqual(member.role, 'nonmember')
+        self.assertEqual(member.email, 'aperson@example.com')

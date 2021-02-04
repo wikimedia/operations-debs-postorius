@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -17,6 +17,7 @@
 
 
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 from django.urls import reverse
 
 from allauth.account.models import EmailAddress
@@ -83,3 +84,42 @@ class DomainCreationTest(ViewTestCase):
         response = self.client.post(reverse('domain_new'), post_data)
         self.assertEqual(response.status_code, 200)
         self.assertIsNotNone(response.context['form'].errors)
+
+    def test_new_domain_updates_site(self):
+        # Test that creating a brand new domain updates the associated Site if
+        # it is example.com
+        self.client.login(username='su', password='pwd')
+        site = Site.objects.get(pk=1)
+        self.assertEqual(site.domain, 'example.com')
+        self.assertEqual(site.name, 'example.com')
+        # Any domain other than example.com will update the Site object.
+        post_data = {'mail_host': 'otherthan.example.com',
+                     'site': '1',
+                     'description': 'A new Domain.'}
+        response = self.client.post(reverse('domain_new'), post_data)
+        self.assertEqual(response.status_code, 302)
+        self.assertHasSuccessMessage(response)
+        # Get the Site id 1, which was used above.
+        site = Site.objects.get(pk=1)
+        self.assertEqual(site.domain, 'otherthan.example.com')
+        self.assertEqual(site.name, 'A new Domain.')
+
+    def test_new_domain_does_not_update_site_when_custom(self):
+        # Test that when default Site isn't example.com, we don't change it.
+        self.client.login(username='su', password='pwd')
+        site = Site.objects.get(pk=1)
+        site.domain = 'otherthan.example.com'
+        site.name = 'Something other than Example.com'
+        site.save()
+        # Now, let's create a new Domain and check if the Site object is
+        # udpated.
+        post_data = {'mail_host': 'aexample.com',
+                     'site': '1',
+                     'description': 'A new Domain.'}
+        response = self.client.post(reverse('domain_new'), post_data)
+        self.assertEqual(response.status_code, 302)
+        self.assertHasSuccessMessage(response)
+        # Get the site  object from database.
+        site = Site.objects.get(pk=1)
+        self.assertEqual(site.domain, 'otherthan.example.com')
+        self.assertEqual(site.name, 'Something other than Example.com')

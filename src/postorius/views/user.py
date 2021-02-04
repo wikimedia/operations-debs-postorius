@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -31,11 +31,12 @@ from django.utils.translation import gettext as _
 from django.views.generic import FormView
 
 from allauth.account.models import EmailAddress
-from django_mailman3.lib.mailman import get_mailman_client
+from django_mailman3.lib.mailman import get_mailman_client, get_mailman_user
 
 from postorius.forms import (
     ChangeSubscriptionForm, UserPreferences, UserPreferencesFormset)
-from postorius.models import List, MailmanUser
+from postorius.models import List, MailmanUser, SubscriptionMode
+from postorius.utils import set_preferred
 from postorius.views.generic import MailmanClientMixin
 
 
@@ -200,6 +201,11 @@ class UserListOptionsView(UserPreferencesView):
             request, *args, **kwargs)
         self.mlist = List.objects.get_or_404(fqdn_listname=kwargs['list_id'])
         self.subscription = self._get_subscription()
+        if (self.subscription.subscription_mode ==
+                SubscriptionMode.as_user.name):
+            self.subscriber = self.subscription.user.user_id
+        else:
+            self.subscriber = self.subscription.email
 
     def _get_preferences(self):
         return self.subscription.preferences
@@ -210,8 +216,15 @@ class UserListOptionsView(UserPreferencesView):
         user_emails = EmailAddress.objects.filter(
             user=self.request.user, verified=True).order_by(
             "email").values_list("email", flat=True)
+        mm_user = get_mailman_user(self.request.user)
+        primary_email = None
+        if mm_user.preferred_address is None:
+            primary_email = set_preferred(self.request.user, mm_user)
+        else:
+            primary_email = mm_user.preferred_address.email
         data['change_subscription_form'] = ChangeSubscriptionForm(
-            user_emails, initial={'email': self.subscription.email})
+            user_emails, mm_user.user_id, primary_email,
+            initial={'subscriber': self.subscriber})
         return data
 
     def get_success_url(self):

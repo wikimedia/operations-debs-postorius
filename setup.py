@@ -1,4 +1,4 @@
-# Copyright (C) 2012-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -53,14 +53,12 @@ setup(
     package_dir={'': 'src'},
     include_package_data=True,
     install_requires=[
-        'django-mailman3>=1.3.3',
-        'Django>=1.11,<3.1',
-        'mailmanclient>=3.3.1',
+        'django-mailman3>=1.3.5',
+        'Django>=1.11,<3.2',
+        'mailmanclient>=3.3.2',
         'readme_renderer[md]',
     ],
     tests_require=[
-        "mock",
-        "vcrpy",
         "beautifulsoup4",
         "isort",
     ],

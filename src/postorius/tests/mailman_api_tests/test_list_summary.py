@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -20,6 +20,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 
 from allauth.account.models import EmailAddress
+from django_mailman3.lib.mailman import get_mailman_user
 
 from postorius.forms import ListAnonymousSubscribe
 from postorius.tests.utils import ViewTestCase
@@ -39,7 +40,7 @@ class ListSummaryPageTest(ViewTestCase):
         self.user = User.objects.create_user(
             'testuser', 'test@example.com', 'testpass')
         EmailAddress.objects.create(
-            user=self.user, email=self.user.email, verified=True)
+            user=self.user, email=self.user.email, verified=True, primary=True)
 
     def test_list_summary_logged_out(self):
         # Response must contain list obj and anonymous subscribe form.
@@ -194,3 +195,56 @@ def function:
         response = self.client.get(reverse('list_summary',
                                            args=('foo@example.com',)))
         self.assertContains(response, '<pre><code>def function:')
+
+    def test_list_summary_already_subscribed(self):
+        self.foo_list.subscribe(
+            'test@example.com',
+            pre_verified=True, pre_confirmed=True, pre_approved=True)
+        self.client.login(username='testuser', password='testpass')
+        response = self.client.get(reverse('list_summary',
+                                           args=('foo@example.com', )))
+        # Assert two parts separately due to sometimes being newlines and stuff
+        # in the response HTML.
+        self.assertContains(response,
+                            'You are subscribed to this list with the '
+                            'following address:')
+        self.assertContains(response, ' <em>test@example.com</em>')
+
+    def test_list_summary_already_subscribed_user(self):
+        mm_user = get_mailman_user(self.user)
+        mm_user.addresses[0].verify()
+        mm_user.preferred_address = self.user.email
+        self.foo_list.subscribe(
+            str(mm_user.user_id),
+            pre_verified=True, pre_confirmed=True, pre_approved=True)
+        self.client.login(username='testuser', password='testpass')
+        response = self.client.get(reverse('list_summary',
+                                           args=('foo@example.com', )))
+        # Assert two parts separately due to sometimes being newlines and stuff
+        # in the response HTML.
+        self.assertContains(response,
+                            'You are subscribed to this list with the '
+                            'following address:')
+        self.assertContains(response,
+                            ' <em>Primary Address (test@example.com)</em>')
+
+    def test_list_summary_sets_preferred_address(self):
+        # Test that preferred address is set.
+        mm_user = get_mailman_user(self.user)
+        self.assertIsNone(mm_user.preferred_address)
+        self.client.login(username='testuser', password='testpass')
+        self.client.get(reverse('list_summary',
+                                args=('foo@example.com', )))
+        self.assertEqual(mm_user.preferred_address.email, self.user.email)
+
+    def test_list_summary_not_verified_does_not_set_preferred(self):
+        # Test that the preferred address is *not* set if the primary_email is
+        # not verified.
+        primary_email = EmailAddress.objects.create(
+            user=self.user, email='another@example.com', verified=False)
+        primary_email.set_as_primary()
+        mm_user = get_mailman_user(self.user)
+        self.assertIsNone(mm_user.preferred_address)
+        self.client.get(reverse('list_summary',
+                                args=('foo@example.com', )))
+        self.assertIsNone(mm_user.preferred_address)

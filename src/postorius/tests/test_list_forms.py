@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2017-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -34,43 +34,66 @@ class TestListSubscribe(TestCase):
 
     def test_required_fields_only(self):
         user_emails = ['bob@example.com', 'anne@example.com']
-        form = ListSubscribe(user_emails, dict(email='bob@example.com'))
+        form = ListSubscribe(user_emails, None, None,
+                             dict(subscriber='bob@example.com'))
         self.assertTrue(form.is_valid())
 
     def test_email_is_only_from_choices(self):
         user_emails = ['bob@example.com', 'anne@example.com']
-        form = ListSubscribe(user_emails, dict(email='alice@example.com',
-                                               display_name='Alice'))
+        form = ListSubscribe(user_emails, None, None,
+                             dict(subscriber='alice@example.com',
+                                  display_name='Alice'))
         self.assertFalse(form.is_valid())
-        self.assertTrue('email' in form.errors)
-        self.assertTrue('Select a valid choice.' in form.errors['email'][0])
+        self.assertTrue('subscriber' in form.errors)
+        self.assertTrue('Select a valid choice.' in
+                        form.errors['subscriber'][0])
 
     def test_subscribe_works(self):
         user_emails = ['someone@example.com']
-        form = ListSubscribe(user_emails,
-                             {'email': 'someone@example.com',
+        form = ListSubscribe(user_emails, None, None,
+                             {'subscriber': 'someone@example.com',
                               'display_name': 'Someone'})
         self.assertTrue(form.is_valid())
 
     def test_subscribe_fails(self):
         user_emails = ['someone@example.com']
-        form = ListSubscribe(user_emails,
-                             {'email': 'notaemail',
+        form = ListSubscribe(user_emails, None, None,
+                             {'subscriber': 'notaemail',
                               'display_name': 'Someone'})
         self.assertFalse(form.is_valid())
-        self.assertTrue('email' in form.errors.keys())
-        self.assertEqual(form.errors['email'][0],
+        self.assertTrue('subscriber' in form.errors.keys())
+        self.assertEqual(form.errors['subscriber'][0],
                          'Select a valid choice.'
                          ' notaemail is not one of the available choices.')
 
     def test_subscribe_validates_email(self):
         user_emails = ['something']
-        form = ListSubscribe(user_emails,
-                             {'email': 'something',
+        form = ListSubscribe(user_emails, None, None,
+                             {'subscriber': 'something',
                               'display_name': 'Someone'})
         self.assertFalse(form.is_valid())
-        self.assertTrue('email' in form.errors.keys())
-        self.assertEqual(form.errors['email'][0],
+        self.assertTrue('subscriber' in form.errors.keys())
+        self.assertEqual(form.errors['subscriber'][0],
+                         'Please enter a valid email address.')
+
+    def test_subscribe_with_user_uuid(self):
+        user_emails = ['aperson@example.com']
+        form = ListSubscribe(user_emails,
+                             '00000000000000000000000000000004',
+                             'aperson@example.com',
+                             {'subscriber': '00000000000000000000000000000004'}
+                             )
+        self.assertEqual(form.is_valid(), True)
+
+    def test_subscribe_with_invalid_uuid(self):
+        # Test that invalid UUID returns errors.
+        user_emails = ['aperson@example.com']
+        form = ListSubscribe(user_emails,
+                             '4',
+                             'aperson@example.com',
+                             {'subscriber': '4'})
+        self.assertEqual(form.is_valid(), False)
+        self.assertEqual(form.errors['subscriber'][0],
                          'Please enter a valid email address.')
 
 
@@ -78,37 +101,62 @@ class TestChangeSubscription(TestCase):
 
     def test_subscription_changes_only_to_user_addresses(self):
         user_emails = ['one@example.com', 'two@example.com']
-        form = ChangeSubscriptionForm(user_emails, {'email': 'abcd@d.com'})
+        form = ChangeSubscriptionForm(user_emails, None, None,
+                                      {'subscriber': 'abcd@d.com'})
         self.assertFalse(form.is_valid())
-        self.assertTrue('email' in form.errors.keys())
-        self.assertEqual(form.errors['email'][0],
+        self.assertTrue('subscriber' in form.errors.keys())
+        self.assertEqual(form.errors['subscriber'][0],
                          'Select a valid choice. '
                          'abcd@d.com is not one of the available choices.')
 
     def test_subscription_works(self):
         user_emails = ['one@example.com', 'two@example.com']
-        form = ChangeSubscriptionForm(user_emails,
-                                      {'email': 'two@example.com'})
+        form = ChangeSubscriptionForm(user_emails, None, None,
+                                      {'subscriber': 'two@example.com'})
         self.assertTrue(form.is_valid())
 
     def test_subscription_form_labels(self):
         user_emails = ['one@example.com', 'two@example.com']
-        form = ChangeSubscriptionForm(user_emails, {})
+        form = ChangeSubscriptionForm(user_emails, None, None, {})
         self.assertTrue(form.is_valid())
-        self.assertEqual(form.fields['email'].label, 'Select Email')
+        self.assertEqual(form.fields['subscriber'].label, 'Select Email')
 
     def test_form_validity(self):
         form = ChangeSubscriptionForm(
             ['email@example.com', 'john@example.com', 'doe@example.com'],
-            {'email': 'email@example.com'})
+            None, None,
+            {'subscriber': 'email@example.com'})
         self.assertTrue(form.is_valid())
 
     def test_required_fields(self):
         # There is no required fields, so empty form should be valid.
         form = ChangeSubscriptionForm(
             ['email@example.com', 'john@example.com', 'doe@example.com'],
+            None, None,
             {})
         self.assertTrue(form.is_valid())
+
+    def test_change_subscription_with_user_uuid(self):
+        user_emails = ['aperson@example.com']
+        form = ChangeSubscriptionForm(
+            user_emails,
+            '00000000000000000000000000000004',
+            'aperson@example.com',
+            {'subscriber': '00000000000000000000000000000004'}
+        )
+        self.assertEqual(form.is_valid(), True)
+
+    def test_subscribe_with_invalid_uuid(self):
+        # Test that invalid UUID returns errors.
+        user_emails = ['aperson@example.com']
+        # UUIDs are 32bit and 4 is not a valid email.
+        form = ChangeSubscriptionForm(user_emails,
+                                      '4',
+                                      'aperson@example.com',
+                                      {'subscriber': '4'})
+        self.assertEqual(form.is_valid(), False)
+        self.assertEqual(form.errors['subscriber'][0],
+                         'Invalid: "4" should be either email or UUID')
 
 
 class TestListNew(TestCase):
@@ -352,8 +400,9 @@ class TestListAutomaticResponsesForm(TestCase):
               'autorespond_postings', 'autoresponse_postings_text',
               'autorespond_requests', 'autoresponse_request_text',
               'autoresponse_grace_period', 'send_welcome_message',
-              'welcome_message_uri', 'goodbye_message_uri',
-              'admin_immed_notify', 'admin_notify_mchanges')
+              'welcome_message_uri', 'send_goodbye_message',
+              'goodbye_message_uri', 'admin_immed_notify',
+              'admin_notify_mchanges')
 
     def prepare_formdata(self, values):
         return dict(((key, val) for key, val in zip(self.fields, values) if val is not None))   # noqa
@@ -375,6 +424,7 @@ class TestListAutomaticResponsesForm(TestCase):
                   'respond_and_continue', 'Autorespond text',
                   '2', 'True',
                   'http://example.com/welcome_text',
+                  'True',
                   'http://example.com/goodbye_message',
                   'True', 'False')
         formdata = self.prepare_formdata(values)

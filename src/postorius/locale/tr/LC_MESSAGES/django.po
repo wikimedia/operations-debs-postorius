@@ -1,13 +1,13 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# Oğuz Ersen <oguzersen@protonmail.com>, 2020.
+# Oğuz Ersen <oguzersen@protonmail.com>, 2020, 2021.
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-14 14:20-0700\n"
-"PO-Revision-Date: 2020-05-16 04:26+0000\n"
+"POT-Creation-Date: 2021-01-31 19:24-0800\n"
+"PO-Revision-Date: 2021-02-02 02:46+0000\n"
 "Last-Translator: Oğuz Ersen <oguzersen@protonmail.com>\n"
 "Language-Team: Turkish <https://hosted.weblate.org/projects/gnu-mailman/"
 "postorius/tr/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.1-dev\n"
+"X-Generator: Weblate 4.5-dev\n"
 
 #: forms/domain_forms.py:34
 #, python-format
@@ -29,7 +29,7 @@ msgstr ""
 "Sunucusuyla aynı veya farklı olabilir. Kullanılabilir web sunucularının "
 "listesini <a href=\"%s\">buradan</a> düzenleyebilirsiniz."
 
-#: forms/domain_forms.py:45 forms/list_forms.py:95
+#: forms/domain_forms.py:45 forms/list_forms.py:96
 #: templates/postorius/domain/index.html:21
 msgid "Mail Host"
 msgstr "E-posta Sunucusu"
@@ -50,7 +50,7 @@ msgstr ""
 "Posta listelerinizin etki alanı. Örneğin test@example.com gibi listeler "
 "istiyorsanız, buraya example.com yazın."
 
-#: forms/domain_forms.py:54 forms/list_forms.py:88 forms/list_forms.py:887
+#: forms/domain_forms.py:54 forms/list_forms.py:89 forms/list_forms.py:916
 #: templates/postorius/domain/index.html:22 templates/postorius/index.html:56
 msgid "Description"
 msgstr "Açıklama"
@@ -66,7 +66,7 @@ msgstr "Lütfen geçerli bir etki alanı adı girin veya hiçbir şey girmeyin."
 #: forms/domain_forms.py:61
 msgid "Normally empty.  Used only for unusual Postfix configs."
 msgstr ""
-"Normalde boş.  Sadece olağandışı Postfix yapılandırmaları için kullanılır."
+"Normalde boş.  Yalnızca olağan dışı Postfix yapılandırmaları için kullanılır."
 
 #: forms/domain_forms.py:64 templates/postorius/domain/index.html:24
 msgid "Web Host"
@@ -84,162 +84,174 @@ msgstr "Sahibin E-postası"
 msgid "Make at least one selection"
 msgstr "En az bir seçim yapın"
 
-#: forms/list_forms.py:35
-msgid "Hold for moderation"
-msgstr "Moderasyon için beklet"
-
 #: forms/list_forms.py:36
+msgid "Hold for moderation"
+msgstr "Denetim için beklet"
+
+#: forms/list_forms.py:37
 msgid "Reject (with notification)"
 msgstr "Reddet (bildirimle birlikte)"
 
-#: forms/list_forms.py:37
+#: forms/list_forms.py:38
 msgid "Discard (no notification)"
 msgstr "At (bildirim yok)"
 
-#: forms/list_forms.py:38
+#: forms/list_forms.py:39
 msgid "Accept immediately (bypass other rules)"
 msgstr "Hemen kabul et (diğer kuralları atla)"
 
-#: forms/list_forms.py:39
+#: forms/list_forms.py:40
 msgid "Default processing"
 msgstr "Öntanımlı işleme"
 
-#: forms/list_forms.py:43
+#: forms/list_forms.py:44
 msgid "Daily"
 msgstr "Günlük"
 
-#: forms/list_forms.py:44
+#: forms/list_forms.py:45
 msgid "Weekly"
 msgstr "Haftalık"
 
-#: forms/list_forms.py:45
+#: forms/list_forms.py:46
 msgid "Quarterly"
 msgstr "Üç aylık"
 
-#: forms/list_forms.py:46
+#: forms/list_forms.py:47
 msgid "Monthly"
 msgstr "Aylık"
 
-#: forms/list_forms.py:47
+#: forms/list_forms.py:48
 msgid "Yearly"
 msgstr "Yıllık"
 
-#: forms/list_forms.py:51
-msgid "Only mailinglist moderators"
-msgstr "Sadece posta listesi moderatörleri"
-
 #: forms/list_forms.py:52
-msgid "Only mailinglist members"
-msgstr "Sadece posta listesi üyeleri"
+msgid "Only mailinglist moderators"
+msgstr "Yalnızca posta listesi moderatörleri"
 
 #: forms/list_forms.py:53
+msgid "Only mailinglist members"
+msgstr "Yalnızca posta listesi üyeleri"
+
+#: forms/list_forms.py:54
 msgid "Anyone"
 msgstr "Herhangi biri"
 
-#: forms/list_forms.py:67 templates/postorius/user/subscriptions.html:22
+#: forms/list_forms.py:68 templates/postorius/user/subscriptions.html:22
 msgid "List Name"
 msgstr "Liste Adı"
 
-#: forms/list_forms.py:69
+#: forms/list_forms.py:70
 msgid "Please enter a name for your list."
 msgstr "Lütfen listeniz için bir ad girin."
 
-#: forms/list_forms.py:70
+#: forms/list_forms.py:71
 msgid "Please enter a valid list name."
 msgstr "Lütfen geçerli bir liste adı girin."
 
-#: forms/list_forms.py:73
+#: forms/list_forms.py:74
 msgid "Initial list owner address"
 msgstr "İlk liste sahibi adresi"
 
-#: forms/list_forms.py:75
+#: forms/list_forms.py:76
 msgid "Please enter the list owner's email address."
 msgstr "Lütfen liste sahibinin e-posta adresini girin."
 
-#: forms/list_forms.py:79
+#: forms/list_forms.py:80
 msgid "Advertise this list?"
-msgstr "Bu listenin reklamını yap?"
+msgstr "Bu liste tanıtılsın mı?"
 
-#: forms/list_forms.py:81
+#: forms/list_forms.py:82
 msgid "Please choose a list type."
 msgstr "Lütfen bir liste türü seçin."
 
-#: forms/list_forms.py:84
-msgid "Advertise this list in list index"
-msgstr "Bu listenin liste dizininde reklamını yap"
-
 #: forms/list_forms.py:85
+msgid "Advertise this list in list index"
+msgstr "Bu listeyi liste dizininde tanıt"
+
+#: forms/list_forms.py:86
 msgid "Hide this list in list index"
 msgstr "Bu listeyi liste dizininde gizle"
 
-#: forms/list_forms.py:98
+#: forms/list_forms.py:99
 msgid "Choose an existing Domain."
 msgstr "Var olan bir etki alanı seçin."
 
-#: forms/list_forms.py:99
+#: forms/list_forms.py:100
 msgid "Choose a valid Mail Host"
 msgstr "Geçerli bir Posta Ana Bilgisayarı seçin"
 
-#: forms/list_forms.py:102
+#: forms/list_forms.py:103
 msgid "List Style"
-msgstr "Liste Stili"
-
-#: forms/list_forms.py:105
-msgid "Choose a List Style."
-msgstr "Bir Liste Stili seçin."
+msgstr "Liste Tarzı"
 
 #: forms/list_forms.py:106
-msgid "Choose a valid List Style."
-msgstr "Geçerli bir Liste Stili seçin."
+msgid "Choose a List Style."
+msgstr "Bir Liste Tarzı seçin."
 
-#: forms/list_forms.py:109
+#: forms/list_forms.py:107
+msgid "Choose a valid List Style."
+msgstr "Geçerli bir Liste Tarzı seçin."
+
+#: forms/list_forms.py:110
 msgid "Site admin has not created any domains"
 msgstr "Site yöneticisi herhangi bir etki alanı oluşturmadı"
 
-#: forms/list_forms.py:122
+#: forms/list_forms.py:123
 msgid "Please enter a valid listname"
 msgstr "Lütfen geçerli bir liste adı girin"
 
-#: forms/list_forms.py:148 forms/list_forms.py:169
+#: forms/list_forms.py:149 forms/list_forms.py:178
 msgid "Your email address"
 msgstr "E-posta adresiniz"
 
-#: forms/list_forms.py:152 forms/list_forms.py:172 forms/member_forms.py:29
+#: forms/list_forms.py:153
+msgid ""
+"Subscribing via \"Primary Address\" will change subscription address when "
+"you change your primary address."
+msgstr ""
+"\"Birincil Adres\" yoluyla abone olmak, birincil adresinizi "
+"değiştirdiğinizde abonelik adresini değiştirecektir."
+
+#: forms/list_forms.py:156 forms/list_forms.py:181 forms/member_forms.py:29
 #: forms/system.py:36
 msgid "Please enter an email address."
 msgstr "Lütfen bir e-posta adresi girin."
 
-#: forms/list_forms.py:153 forms/list_forms.py:173 forms/member_forms.py:30
+#: forms/list_forms.py:157 forms/list_forms.py:182 forms/member_forms.py:30
 #: forms/system.py:37
 msgid "Please enter a valid email address."
 msgstr "Lütfen geçerli bir e-posta adresi girin."
 
-#: forms/list_forms.py:156 forms/list_forms.py:176
+#: forms/list_forms.py:160 forms/list_forms.py:185
 msgid "Your name (optional)"
 msgstr "Adınız (isteğe bağlı)"
 
-#: forms/list_forms.py:191
+#: forms/list_forms.py:169 forms/list_forms.py:1178 views/list.py:411
+msgid "Primary Address ({})"
+msgstr "Birincil Adres ({})"
+
+#: forms/list_forms.py:200
 msgid "Open"
 msgstr "Açık"
 
-#: forms/list_forms.py:192 templates/postorius/domain/template_delete.html:27
+#: forms/list_forms.py:201 templates/postorius/domain/template_delete.html:27
 #: templates/postorius/lists/template_delete.html:24
 msgid "Confirm"
 msgstr "Doğrula"
 
-#: forms/list_forms.py:193
+#: forms/list_forms.py:202
 msgid "Moderate"
 msgstr "Denetle"
 
-#: forms/list_forms.py:194
+#: forms/list_forms.py:203
 msgid "Confirm, then moderate"
 msgstr "Doğrula, ardından denetle"
 
-#: forms/list_forms.py:203
+#: forms/list_forms.py:212
 msgid "Subscription Policy"
 msgstr "Abonelik Politikası"
 
-#: forms/list_forms.py:205
+#: forms/list_forms.py:214
 msgid ""
 "Open: Subscriptions are added automatically\n"
 "Confirm: Subscribers need to confirm the subscription using an email sent to "
@@ -255,11 +267,11 @@ msgstr ""
 "Doğrula, ardından denetle: İlk önce abonelerin doğrulaması gerekir, ardından "
 "bir moderatörün yetkilendirmesi gerekir."
 
-#: forms/list_forms.py:214
+#: forms/list_forms.py:223
 msgid "Un-Subscription Policy"
 msgstr "Abonelik İptal Politikası"
 
-#: forms/list_forms.py:216
+#: forms/list_forms.py:225
 msgid ""
 "Open: Un-Subscriptions happen automatically\n"
 "Confirm: Subscribers need to confirm the un-subscription using an email sent "
@@ -276,44 +288,46 @@ msgstr ""
 "Doğrula, ardından denetle: İlk önce abonelerin doğrulaması gerekir, ardından "
 "bir moderatörün yetkilendirmesi gerekir."
 
-#: forms/list_forms.py:229 forms/list_forms.py:255 forms/list_forms.py:264
-#: forms/list_forms.py:350 forms/list_forms.py:358 forms/list_forms.py:503
-#: forms/list_forms.py:510 forms/list_forms.py:552 forms/list_forms.py:620
-#: forms/list_forms.py:655 forms/list_forms.py:668 forms/list_forms.py:676
-#: forms/list_forms.py:684 forms/list_forms.py:702 forms/list_forms.py:718
-#: forms/list_forms.py:829 forms/list_forms.py:838 forms/list_forms.py:850
-#: forms/list_forms.py:862 forms/list_forms.py:881 forms/list_forms.py:924
-#: forms/list_forms.py:931 forms/list_forms.py:952 forms/user_forms.py:48
+#: forms/list_forms.py:238 forms/list_forms.py:264 forms/list_forms.py:273
+#: forms/list_forms.py:359 forms/list_forms.py:367 forms/list_forms.py:408
+#: forms/list_forms.py:522 forms/list_forms.py:529 forms/list_forms.py:571
+#: forms/list_forms.py:639 forms/list_forms.py:674 forms/list_forms.py:687
+#: forms/list_forms.py:695 forms/list_forms.py:703 forms/list_forms.py:721
+#: forms/list_forms.py:737 forms/list_forms.py:848 forms/list_forms.py:857
+#: forms/list_forms.py:869 forms/list_forms.py:879 forms/list_forms.py:891
+#: forms/list_forms.py:910 forms/list_forms.py:953 forms/list_forms.py:960
+#: forms/list_forms.py:981 forms/list_forms.py:1052 forms/user_forms.py:48
 msgid "Yes"
 msgstr "Evet"
 
-#: forms/list_forms.py:229 forms/list_forms.py:255 forms/list_forms.py:264
-#: forms/list_forms.py:350 forms/list_forms.py:358 forms/list_forms.py:503
-#: forms/list_forms.py:510 forms/list_forms.py:552 forms/list_forms.py:620
-#: forms/list_forms.py:655 forms/list_forms.py:668 forms/list_forms.py:676
-#: forms/list_forms.py:684 forms/list_forms.py:702 forms/list_forms.py:718
-#: forms/list_forms.py:829 forms/list_forms.py:838 forms/list_forms.py:850
-#: forms/list_forms.py:862 forms/list_forms.py:881 forms/list_forms.py:924
-#: forms/list_forms.py:931 forms/list_forms.py:952 forms/user_forms.py:48
+#: forms/list_forms.py:238 forms/list_forms.py:264 forms/list_forms.py:273
+#: forms/list_forms.py:359 forms/list_forms.py:367 forms/list_forms.py:408
+#: forms/list_forms.py:522 forms/list_forms.py:529 forms/list_forms.py:571
+#: forms/list_forms.py:639 forms/list_forms.py:674 forms/list_forms.py:687
+#: forms/list_forms.py:695 forms/list_forms.py:703 forms/list_forms.py:721
+#: forms/list_forms.py:737 forms/list_forms.py:848 forms/list_forms.py:857
+#: forms/list_forms.py:869 forms/list_forms.py:879 forms/list_forms.py:891
+#: forms/list_forms.py:910 forms/list_forms.py:953 forms/list_forms.py:960
+#: forms/list_forms.py:981 forms/list_forms.py:1053 forms/user_forms.py:48
 msgid "No"
 msgstr "Hayır"
 
-#: forms/list_forms.py:231
+#: forms/list_forms.py:240
 msgid "Process Bounces"
 msgstr "Geri Dönmeleri İşle"
 
-#: forms/list_forms.py:233
+#: forms/list_forms.py:242
 msgid ""
 "Specifies whether or not this list should do automatic bounce processing."
 msgstr ""
 "Bu listenin geri dönmeleri otomatik olarak işlemesi gerekip gerekmediğini "
 "belirtir."
 
-#: forms/list_forms.py:238
+#: forms/list_forms.py:247
 msgid "Bounce score threshold"
 msgstr "Geri dönme puanı eşiği"
 
-#: forms/list_forms.py:241
+#: forms/list_forms.py:250
 msgid ""
 "This is the bounce score above which a member's subscription  will be "
 "automatically disabled. When the subscription is  re-enabled, their bounce "
@@ -323,25 +337,25 @@ msgstr ""
 "dönme puanıdır. Abonelik yeniden etkinleştirildiğinde,  geri dönme puanları "
 "sıfırlanır."
 
-#: forms/list_forms.py:246
+#: forms/list_forms.py:255
 msgid "Bounce info stale after"
 msgstr "Geri dönme bilgisi eskime süresi"
 
-#: forms/list_forms.py:249
+#: forms/list_forms.py:258
 msgid ""
 "The number of days after which a member's bounce information is considered "
 "stale. If no new bounces have been received in the interim, the bounce score "
 "is reset to zero. This value must be an integer. "
 msgstr ""
 "Bir üyenin geri dönme bilgilerinin eski olduğunun kabul edileceği gün "
-"sayısı. Bu aralıkta yeni bir geri dönüş alınmadıysa, geri dönme puanı "
+"sayısı. Bu aralıkta yeni bir geri dönme alınmadıysa, geri dönme puanı "
 "sıfırlanır. Bu değer bir tam sayı olmalıdır. "
 
-#: forms/list_forms.py:257
+#: forms/list_forms.py:266
 msgid "Notify owner on disable"
 msgstr "Devre dışı bırakıldığında sahibine bildir"
 
-#: forms/list_forms.py:259
+#: forms/list_forms.py:268
 msgid ""
 "This option controls whether or not the list owner is notified when a "
 "member's subscription is automatically disabled due to their bounce "
@@ -349,13 +363,13 @@ msgid ""
 msgstr ""
 "Bu seçenek, bir üyenin aboneliği geri dönme eşiğine ulaşıldığı için otomatik "
 "olarak devre dışı bırakıldığında liste sahibinin bilgilendirilip "
-"bildirilmeyeceğini kontrol eder. "
+"bildirilmeyeceğini denetler. "
 
-#: forms/list_forms.py:266
+#: forms/list_forms.py:275
 msgid "Notify owner on removal"
 msgstr "Kaldırma işleminde sahibine bildir"
 
-#: forms/list_forms.py:268
+#: forms/list_forms.py:277
 msgid ""
 "This option controls whether or not the list owner is notified when a member "
 "is removed from the list after their disabled notifications have been "
@@ -363,21 +377,21 @@ msgid ""
 msgstr ""
 "Bu seçenek, bir üye devre dışı bırakılma bildirimleri tükendikten sonra "
 "listeden kaldırıldığında liste sahibinin bilgilendirilip bildirilmeyeceğini "
-"kontrol eder. "
+"denetler. "
 
-#: forms/list_forms.py:275
+#: forms/list_forms.py:284
 msgid "Bounce disabled warnings interval"
 msgstr "Geri dönme nedeniyle devre dışı bırakma uyarıları arasındaki aralık"
 
-#: forms/list_forms.py:278
+#: forms/list_forms.py:287
 msgid "The number of days between each disabled notification."
 msgstr "Devre dışı bırakma bildirimleri arasındaki gün sayısı."
 
-#: forms/list_forms.py:282
+#: forms/list_forms.py:291
 msgid "Bounce disable warnings"
 msgstr "Geri dönmeden dolayı devre dışı bırakma uyarıları"
 
-#: forms/list_forms.py:285
+#: forms/list_forms.py:294
 msgid ""
 "The number of notices a disabled member will receive before their address is "
 "removed from the mailing list's roster. Set this to 0 to immediately remove "
@@ -389,35 +403,35 @@ msgstr ""
 "listeden hemen kaldırmak için bunu 0 olarak ayarlayın. Bu değer bir tamsayı "
 "olmalıdır. "
 
-#: forms/list_forms.py:299
+#: forms/list_forms.py:308
 msgid "Public archives"
 msgstr "Herkese açık arşivler"
 
-#: forms/list_forms.py:300
+#: forms/list_forms.py:309
 msgid "Private archives"
 msgstr "Özel arşivler"
 
-#: forms/list_forms.py:301
+#: forms/list_forms.py:310
 msgid "Do not archive this list"
 msgstr "Bu listeyi arşivleme"
 
-#: forms/list_forms.py:307
+#: forms/list_forms.py:316
 msgid "Archive policy"
 msgstr "Arşiv politikası"
 
-#: forms/list_forms.py:308
+#: forms/list_forms.py:317
 msgid "Policy for archiving messages for this list"
 msgstr "Bu liste için mesajları arşivleme politikası"
 
-#: forms/list_forms.py:313
+#: forms/list_forms.py:322
 msgid "Active archivers"
-msgstr "Aktif arşivciler"
+msgstr "Etkin arşivciler"
 
-#: forms/list_forms.py:338
+#: forms/list_forms.py:347
 msgid "Acceptable aliases"
 msgstr "Kabul edilebilir takma adlar"
 
-#: forms/list_forms.py:341
+#: forms/list_forms.py:350
 msgid ""
 "This is a list, one per line, of addresses and regexps matching addresses "
 "that are acceptable in To: or Cc: in lieu of the list posting address when "
@@ -436,24 +450,24 @@ msgstr ""
 "Eşleşme Python re.match() fonksiyonu ile yapılmaktadır, yani dizginin "
 "başlangıcına sabitlenmişlerdir."
 
-#: forms/list_forms.py:352
+#: forms/list_forms.py:361
 msgid "Require Explicit Destination"
-msgstr "Belirgin Hedef İste"
+msgstr "Açık Hedef Gerektir"
 
-#: forms/list_forms.py:354
+#: forms/list_forms.py:363
 msgid ""
 "This checks to ensure that the list posting address or an acceptable alias "
 "explicitly appears in a To: or Cc: header in the post."
 msgstr ""
 "Bu, liste gönderme adresinin veya kabul edilebilir bir takma adın "
-"gönderideki bir Kime: veya Bilgi: başlığında açıkça görünmesini sağlamak "
-"için kontrol eder."
+"gönderideki bir Kime: veya Bilgi: başlığında açıkça görünmesini sağlamayı "
+"denetler."
 
-#: forms/list_forms.py:360
+#: forms/list_forms.py:369
 msgid "Administrivia"
 msgstr "Yönetici işleri"
 
-#: forms/list_forms.py:362
+#: forms/list_forms.py:371
 msgid ""
 "Administrivia tests will check postings to see whether it's really meant as "
 "an administrative request (like subscribe, unsubscribe, etc), and will add "
@@ -461,19 +475,19 @@ msgid ""
 "the new request, in the process."
 msgstr ""
 "Yönetici işleri testleri, gönderilerin gerçekten bir yönetici işi isteği "
-"(abone olma, abonelikten çıkma, vb. gibi) anlamına gelip gelmediğini görmek "
-"için kontrol eder ve bunu yönetici istekleri kuyruğuna ekler, yeni isteği "
-"yöneticiye bildirir."
+"(abone olma, abonelikten çıkma, vb.) anlamına gelip gelmediğini görmek için "
+"denetler ve bunu yönetici istekleri kuyruğuna ekler, yeni isteği yöneticiye "
+"bildirir."
 
-#: forms/list_forms.py:369
+#: forms/list_forms.py:378
 msgid "Default action to take when a member posts to the list"
 msgstr "Bir üye listeye mesaj gönderdiğinde gerçekleştirilecek öntanımlı eylem"
 
-#: forms/list_forms.py:371
+#: forms/list_forms.py:380
 msgid "Please choose a default member action."
 msgstr "Lütfen öntanımlı bir üye eylemi seçin."
 
-#: forms/list_forms.py:375
+#: forms/list_forms.py:384
 msgid ""
 "Default action to take when a member posts to the list.\n"
 "Hold: This holds the message for approval by the list moderators.\n"
@@ -490,57 +504,71 @@ msgstr ""
 "Reddet: bu, mesajın yazarına bir geri dönme bildirimi göndererek mesajı "
 "otomatik olarak reddeder. Geri dönme bildiriminin metni sizin tarafınızdan "
 "yapılandırılabilir.\n"
-"At: bu, mesajın yazarına bildirim göndermeden sadece mesajı atar.\n"
-"Kabul et: başka kontroller yapmadan mesajı kabul eder.\n"
-"Öntanımlı işlem: ek kontroller yap ve mesajı kabul et."
+"At: bu, mesajın yazarına bildirim göndermeden yalnızca mesajı atar.\n"
+"Kabul et: başka denetimler yapmadan mesajı kabul eder.\n"
+"Öntanımlı işlem: ek denetimler yap ve mesajı kabul et."
 
-#: forms/list_forms.py:388
+#: forms/list_forms.py:397
 msgid "Default action to take when a non-member posts to the list"
 msgstr "Üye olmayan biri listeye mesaj gönderdiğinde yapılacak öntanımlı eylem"
 
-#: forms/list_forms.py:390
+#: forms/list_forms.py:399
 msgid "Please choose a default non-member action."
 msgstr "Lütfen öntanımlı bir üye olmayan eylemi seçin."
 
-#: forms/list_forms.py:394
+#: forms/list_forms.py:403
 msgid ""
 "When a post from a non-member is received, the message's sender is matched "
 "against the list of explicitly accepted, held, rejected (bounced), and "
 "discarded addresses. If no match is found, then this action is taken."
 msgstr ""
 "Üye olmayan birinden bir gönderi alındığında, mesajın göndereni açıkça kabul "
-"edilen, tutulan, reddedilen (geri dönen) ve atılan adreslerin listesiyle "
+"edilen, bekletilen, reddedilen (geri dönen) ve atılan adreslerin listesiyle "
 "eşleştirilir. Eşleşme bulunamazsa, bu eylem gerçekleştirilir."
 
-#: forms/list_forms.py:400
-msgid "Maximum message size"
-msgstr "Maksimum mesaj boyutu"
+#: forms/list_forms.py:410
+msgid "Emergency Moderation"
+msgstr "Acil Durum Denetimi"
 
-#: forms/list_forms.py:403
+#: forms/list_forms.py:412
+msgid ""
+"When this option is enabled, all list traffic is emergency moderated, i.e. "
+"held for moderation. Turn this option on when your list is experiencing a "
+"flamewar and you want a cooling off period. "
+msgstr ""
+"Bu seçenek etkinleştirildiğinde, tüm liste trafiği acil durum denetimine "
+"alınır, yani denetim için bekletilir. Listenizde öfkeli bir tartışma "
+"yaşandığında ve bir sakinleşme arası istediğinizde bu seçeneği açın. "
+
+#: forms/list_forms.py:419
+msgid "Maximum message size"
+msgstr "Azami mesaj boyutu"
+
+#: forms/list_forms.py:422
 msgid ""
 "The maximum allowed message size in KB. This can be used to prevent emails "
 "with large attachments. A size of 0 disables the check."
 msgstr ""
-"KB cinsinden izin verilen maksimum mesaj boyutu. Bu, büyük ekleri olan e-"
-"postaları önlemek için kullanılabilir. 0 boyutu kontrolü devre dışı bırakır."
+"KB cinsinden izin verilen azami mesaj boyutu. Bu, büyük ekleri olan e-"
+"postaları önlemek için kullanılabilir. 0 boyutu denetimi devre dışı bırakır."
 
-#: forms/list_forms.py:408
+#: forms/list_forms.py:427
 msgid "Maximum number of recipients"
-msgstr "Maksimum alıcı sayısı"
+msgstr "Azami alıcı sayısı"
 
-#: forms/list_forms.py:411
+#: forms/list_forms.py:430
 msgid ""
 "The maximum number of recipients for a message. This can be used to prevent "
 "mass mailings from being accepted. A value of 0 disables the check."
 msgstr ""
-"Bir mesaj için maksimum alıcı sayısı. Bu, toplu postaların kabul edilmesini "
-"önlemek için kullanılabilir. 0 değeri kontrolü devre dışı bırakır."
+"Bir mesaj için azami alıcı sayısı. Bu, toplu postaların kabul edilmesini "
+"önlemek için kullanılabilir. 0 değeri denetimi devre dışı bırakır."
 
-#: forms/list_forms.py:425
+#: forms/list_forms.py:444
 msgid "Accept these non-members"
 msgstr "Bu üye olmayanları kabul et"
 
-#: forms/list_forms.py:428
+#: forms/list_forms.py:447
 msgid ""
 "This is a list, one per line, of regexps matching addresses that are allowed "
 "to post to this mailing list without subscribing to the list. Entries are "
@@ -553,14 +581,14 @@ msgstr ""
 "verilen adreslerle eşleşen, her satırda bir tane olacak şekilde düzenli "
 "ifadelerin bir listesidir. Girdiler `^` ile başlayan düzenli ifadelerdir ve "
 "mesajdaki gönderen adresleriyle eşleştirilir. Düzenli ifade olmayan adresler "
-"buraya girilebilse de, adresi üye olmayan olarak eklemek ve moderasyonunu "
+"buraya girilebilse de, adresi üye olmayan olarak eklemek ve denetimini "
 "'Öntanımlı işlem' olarak ayarlamak tercih edilmektedir."
 
-#: forms/list_forms.py:438
+#: forms/list_forms.py:457
 msgid "Hold these non-members"
 msgstr "Bu üye olmayanları beklet"
 
-#: forms/list_forms.py:441
+#: forms/list_forms.py:460
 msgid ""
 "This is a list, one per line, of regexps matching nonmember addresses, posts "
 "from which are held automatically. Entries are regexps beginning with `^' "
@@ -572,14 +600,14 @@ msgstr ""
 "eşleşen, her satırda bir tane olacak şekilde düzenli ifadelerin bir "
 "listesidir. Girdiler `^` ile başlayan düzenli ifadelerdir ve mesajdaki "
 "gönderen adresleriyle eşleştirilir. Düzenli ifade olmayan adresler buraya "
-"girilebilse de, adresi üye olmayan olarak eklemek ve moderasyonunu 'Beklet' "
+"girilebilse de, adresi üye olmayan olarak eklemek ve denetimini 'Beklet' "
 "olarak ayarlamak tercih edilmektedir."
 
-#: forms/list_forms.py:450
+#: forms/list_forms.py:469
 msgid "Reject these non-members"
 msgstr "Bu üye olmayanları reddet"
 
-#: forms/list_forms.py:453
+#: forms/list_forms.py:472
 msgid ""
 "This is a list, one per line, of regexps matching nonmember addresses, posts "
 "from which are rejected with notice to the sender. Entries are regexps "
@@ -591,14 +619,14 @@ msgstr ""
 "olmayan adreslerle eşleşen, her satırda bir tane olacak şekilde düzenli "
 "ifadelerin bir listesidir. Girdiler `^` ile başlayan düzenli ifadelerdir ve "
 "mesajdaki gönderen adresleriyle eşleştirilir. Düzenli ifade olmayan adresler "
-"buraya girilebilse de, adresi üye olmayan olarak eklemek ve moderasyonunu "
+"buraya girilebilse de, adresi üye olmayan olarak eklemek ve denetimini "
 "'Reddet' olarak ayarlamak tercih edilmektedir."
 
-#: forms/list_forms.py:463
+#: forms/list_forms.py:482
 msgid "Discard these non-members"
 msgstr "Bu üye olmayanları at"
 
-#: forms/list_forms.py:466
+#: forms/list_forms.py:485
 msgid ""
 "This is a list, one per line, of regexps matching nonmember addresses, posts "
 "from which are discarded automatically. Entries are regexps beginning with "
@@ -610,38 +638,38 @@ msgstr ""
 "eşleşen, her satırda bir tane olacak şekilde düzenli ifadelerin bir "
 "listesidir. Girdiler `^` ile başlayan düzenli ifadelerdir ve mesajdaki "
 "gönderen adresleriyle eşleştirilir. Düzenli ifade olmayan adresler buraya "
-"girilebilse de, adresi üye olmayan olarak eklemek ve moderasyonunu 'At' "
-"olarak ayarlamak tercih edilmektedir."
+"girilebilse de, adresi üye olmayan olarak eklemek ve denetimini 'At' olarak "
+"ayarlamak tercih edilmektedir."
 
-#: forms/list_forms.py:488
+#: forms/list_forms.py:507
 msgid "Invalid alias regexp: {}: {}"
 msgstr "Geçersiz takma ad düzenli ifadesi: {}: {}"
 
-#: forms/list_forms.py:494
+#: forms/list_forms.py:513
 msgid "Invalid alias email: {}"
 msgstr "Geçersiz takma ad e-postası: {}"
 
-#: forms/list_forms.py:506
+#: forms/list_forms.py:525
 msgid "Enable Digests"
 msgstr "Özetleri Etkinleştir"
 
-#: forms/list_forms.py:507
+#: forms/list_forms.py:526
 msgid "Should Mailman enable digests for this MailingList?"
-msgstr "Mailman bu PostaListesi için özetleri etkinleştirmeli mi?"
+msgstr "Mailman bu posta listesi için özetleri etkinleştirmeli mi?"
 
-#: forms/list_forms.py:513
+#: forms/list_forms.py:532
 msgid "Send Digest Periodically"
 msgstr "Özeti Periyodik Olarak Gönder"
 
-#: forms/list_forms.py:514
+#: forms/list_forms.py:533
 msgid "Should Mailman send out digests periodically?"
 msgstr "Mailman özetleri düzenli aralıklarla göndermeli mi?"
 
-#: forms/list_forms.py:520
+#: forms/list_forms.py:539
 msgid "Digest Volume Frequency"
 msgstr "Özet Cilt Sıklığı"
 
-#: forms/list_forms.py:521
+#: forms/list_forms.py:540
 msgid ""
 "At what frequency should Mailman increment the digest volume number and "
 "reset the issue number?"
@@ -649,43 +677,43 @@ msgstr ""
 "Mailman özet cilt numarasını hangi sıklıkta artırmalı ve sayı numarasını "
 "sıfırlamalıdır?"
 
-#: forms/list_forms.py:525
+#: forms/list_forms.py:544
 msgid "Digest size threshold"
 msgstr "Özet boyutu eşiği"
 
-#: forms/list_forms.py:526
+#: forms/list_forms.py:545
 msgid "How big in Kb should a digest be before it gets sent out?"
 msgstr "Bir özet gönderilmeden önce kaç Kb büyüklüğe ulaşmalı?"
 
-#: forms/list_forms.py:535
+#: forms/list_forms.py:554
 msgid "DMARC mitigation action"
 msgstr "DMARC azaltma eylemi"
 
-#: forms/list_forms.py:539
+#: forms/list_forms.py:558
 msgid "Please choose a DMARC mitigation action."
 msgstr "Lütfen bir DMARC azaltma eylemi seçin."
 
-#: forms/list_forms.py:541
+#: forms/list_forms.py:560
 msgid "No DMARC mitigations"
 msgstr "DMARC azaltma yok"
 
-#: forms/list_forms.py:542
+#: forms/list_forms.py:561
 msgid "Replace From: with list address"
 msgstr "Kimden: alanını liste adresiyle değiştir"
 
-#: forms/list_forms.py:544
+#: forms/list_forms.py:563
 msgid "Wrap the message in an outer message From: the list."
 msgstr "Kimden: liste olacak şekilde mesajı başka bir mesajın içine koy."
 
-#: forms/list_forms.py:545
+#: forms/list_forms.py:564
 msgid "Reject the message"
 msgstr "Mesajı reddet"
 
-#: forms/list_forms.py:546
+#: forms/list_forms.py:565
 msgid "Discard the message"
 msgstr "Mesajı at"
 
-#: forms/list_forms.py:548
+#: forms/list_forms.py:567
 msgid ""
 "The action to apply to messages From: a domain publishing a DMARC policy of "
 "reject or quarantine or to all messages if DMARC Mitigate unconditionally is "
@@ -695,11 +723,11 @@ msgstr ""
 "bir etki alanı bulunan mesajlara veya DMARC Azaltma koşulsuz olarak Doğru "
 "ise tüm mesajlara uygulanacak eylem."
 
-#: forms/list_forms.py:555
+#: forms/list_forms.py:574
 msgid "DMARC Mitigate unconditionally"
 msgstr "Koşulsuz olarak DMARC Azaltma"
 
-#: forms/list_forms.py:557
+#: forms/list_forms.py:576
 msgid ""
 "If DMARC mitigation action is munge_from or wrap_message, should it apply to "
 "all messages regardless of the DMARC policy of the From: domain."
@@ -707,11 +735,11 @@ msgstr ""
 "DMARC azaltma eylemi munge_from veya wrap_message ise, Kimden: etki alanının "
 "DMARC politikasından bağımsız olarak tüm mesajlar için geçerli olmalıdır."
 
-#: forms/list_forms.py:561
+#: forms/list_forms.py:580
 msgid "DMARC rejection notice"
 msgstr "DMARC reddetme bildirimi"
 
-#: forms/list_forms.py:565
+#: forms/list_forms.py:584
 msgid ""
 "Text to replace the default reason in any rejection notice to be sent when "
 "DMARC mitigation action of reject applies."
@@ -719,11 +747,11 @@ msgstr ""
 "DMARC azaltma reddetme eylemi uygulandığında gönderilecek herhangi bir ret "
 "bildiriminde öntanımlı nedenin yerini alacak metin."
 
-#: forms/list_forms.py:568
+#: forms/list_forms.py:587
 msgid "DMARC wrapped message text"
 msgstr "DMARC sarılmış mesaj metni"
 
-#: forms/list_forms.py:572
+#: forms/list_forms.py:591
 msgid ""
 "Text to be added as a separate text/plain MIME part preceding the original "
 "message part in the wrapped message when DMARC mitigation action of wrap "
@@ -732,19 +760,19 @@ msgstr ""
 "DMARC azaltma mesajı sarmala eylemi uygulandığında sarılı mesajdaki orijinal "
 "mesaj bölümünden önce ayrı bir metin/düz MIME bölümü olarak eklenecek metin."
 
-#: forms/list_forms.py:578
+#: forms/list_forms.py:597
 msgid "None"
 msgstr "Yok"
 
-#: forms/list_forms.py:579
+#: forms/list_forms.py:598
 msgid "Individual"
 msgstr "Bireysel"
 
-#: forms/list_forms.py:580
+#: forms/list_forms.py:599
 msgid "Full"
 msgstr "Tam"
 
-#: forms/list_forms.py:584
+#: forms/list_forms.py:603
 msgid ""
 "\n"
 "    None: No personalization.\n"
@@ -763,28 +791,28 @@ msgstr ""
 "\n"
 "    Tam: Tüm 'bireysel' kişiselleştirme artı alıcı başlığı değişikliği "
 
-#: forms/list_forms.py:594 templates/postorius/lists/held_messages.html:29
-#: templates/postorius/lists/held_messages.html:107
-#: templates/postorius/lists/pending_confirmations.html:28
-#: templates/postorius/lists/subscription_requests.html:30
+#: forms/list_forms.py:613 templates/postorius/lists/held_messages.html:30
+#: templates/postorius/lists/held_messages.html:108
+#: templates/postorius/lists/pending_confirmations.html:34
+#: templates/postorius/lists/subscription_requests.html:36
 msgid "Discard"
 msgstr "At"
 
-#: forms/list_forms.py:595 templates/postorius/lists/held_messages.html:28
-#: templates/postorius/lists/held_messages.html:106
-#: templates/postorius/lists/subscription_requests.html:29
+#: forms/list_forms.py:614 templates/postorius/lists/held_messages.html:29
+#: templates/postorius/lists/held_messages.html:107
+#: templates/postorius/lists/subscription_requests.html:35
 msgid "Reject"
 msgstr "Reddet"
 
-#: forms/list_forms.py:596
+#: forms/list_forms.py:615
 msgid "Forward"
 msgstr "İlet"
 
-#: forms/list_forms.py:597
+#: forms/list_forms.py:616
 msgid "Preserve"
 msgstr "Sakla"
 
-#: forms/list_forms.py:600
+#: forms/list_forms.py:619
 msgid ""
 "Action to take on messages which have no content\n"
 "after filtering.\n"
@@ -800,15 +828,15 @@ msgstr ""
 " İlet = mesajı liste sahip(ler)ine ilet.\n"
 " Sakla = mesajı qfiles/bad konumuna kaydet.\n"
 
-#: forms/list_forms.py:617
+#: forms/list_forms.py:636
 msgid "Personalize"
 msgstr "Kişiselleştir"
 
-#: forms/list_forms.py:623
+#: forms/list_forms.py:642
 msgid "Filter content"
 msgstr "İçeriği filtrele"
 
-#: forms/list_forms.py:624
+#: forms/list_forms.py:643
 msgid ""
 "Should Mailman filter the content of list traffic according to the settings "
 "below?"
@@ -816,11 +844,11 @@ msgstr ""
 "Mailman, liste trafiğinin içeriğini aşağıdaki ayarlara göre filtrelemeli "
 "midir?"
 
-#: forms/list_forms.py:627
+#: forms/list_forms.py:646
 msgid "Filter types"
 msgstr "Filtrelenecek türler"
 
-#: forms/list_forms.py:630
+#: forms/list_forms.py:649
 msgid ""
 "MimeTypes to filter from the incoming posts. A list of common types can be "
 "found <a href=\"https://developer.mozilla.org/en-US/docs/Web/HTTP/"
@@ -830,19 +858,19 @@ msgstr ""
 "<a href=\"https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/"
 "MIME_types/Common_types\">burada</a> bulunabilir"
 
-#: forms/list_forms.py:635
+#: forms/list_forms.py:654
 msgid "Filter extensions"
 msgstr "Filtrelenecek uzantılar"
 
-#: forms/list_forms.py:638
+#: forms/list_forms.py:657
 msgid "Extensions to filter from the incoming posts."
 msgstr "Gelen gönderilerden filtrelenecek uzantılar."
 
-#: forms/list_forms.py:641
+#: forms/list_forms.py:660
 msgid "Pass types"
 msgstr "İzin verilecek türler"
 
-#: forms/list_forms.py:644
+#: forms/list_forms.py:663
 msgid ""
 "MimeTypes to allow in the incoming posts. A list of common types can be "
 "found <a href=\"https://developer.mozilla.org/en-US/docs/Web/HTTP/"
@@ -852,33 +880,33 @@ msgstr ""
 "<a href=\"https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/"
 "MIME_types/Common_types\">burada</a> bulunabilir"
 
-#: forms/list_forms.py:649
+#: forms/list_forms.py:668
 msgid "Pass extensions"
 msgstr "İzin verilecek uzantılar"
 
-#: forms/list_forms.py:652
+#: forms/list_forms.py:671
 msgid "Extensions to allow in the incoming posts."
 msgstr "Gelen gönderilerde izin verilecek uzantılar."
 
-#: forms/list_forms.py:658
+#: forms/list_forms.py:677
 msgid "Collapse alternatives"
 msgstr "Alternatifleri daralt"
 
-#: forms/list_forms.py:659
+#: forms/list_forms.py:678
 msgid ""
 "Should Mailman collapse multipart/alternative to its first part content?"
 msgstr ""
 "Mailman, çok kısımlı/alternatifi ilk kısmın içeriğine göre daraltmalı mıdır?"
 
-#: forms/list_forms.py:665
+#: forms/list_forms.py:684
 msgid "Filter Action"
 msgstr "Filtre Eylemi"
 
-#: forms/list_forms.py:671
+#: forms/list_forms.py:690
 msgid "Convert html to plaintext"
 msgstr "HTML'i düz metne dönüştür"
 
-#: forms/list_forms.py:672
+#: forms/list_forms.py:691
 msgid ""
 "Should Mailman convert text/html parts to plain text? This conversion "
 "happens after MIME attachments have been stripped."
@@ -886,23 +914,23 @@ msgstr ""
 "Mailman, text/html kısımlarını düz metne dönüştürmeli midir? Bu dönüştürme, "
 "MIME ekleri çıkarıldıktan sonra gerçekleşir."
 
-#: forms/list_forms.py:679
+#: forms/list_forms.py:698
 msgid "Anonymous list"
 msgstr "Anonim liste"
 
-#: forms/list_forms.py:680
+#: forms/list_forms.py:699
 msgid ""
 "Hide the sender of a message, replacing it with the list address (Removes "
 "From, Sender and Reply-To fields)"
 msgstr ""
 "Bir mesajın göndereni, onu liste adresi ile değiştirerek gizle (Kimden, "
-"Gönderen ve Cevapla alanlarını kaldırır)"
+"Gönderen ve Yanıtla alanlarını kaldırır)"
 
-#: forms/list_forms.py:687
+#: forms/list_forms.py:706
 msgid "Include RFC2369 headers"
 msgstr "RFC2369 başlıklarını dahil et"
 
-#: forms/list_forms.py:689
+#: forms/list_forms.py:708
 msgid ""
 "Yes is highly recommended. RFC 2369 defines a set of List-* headers that are "
 "normally added to every message sent to the list membership. These greatly "
@@ -927,23 +955,23 @@ msgstr ""
 "ancak bu önerilmez (ve aslında, bu başlıkları devre dışı bırakma yeteneğiniz "
 "nihayetinde kaybolabilir)."
 
-#: forms/list_forms.py:705
+#: forms/list_forms.py:724
 msgid "Include the list post header"
 msgstr "Listeye gönder başlığını dahil et"
 
-#: forms/list_forms.py:707
+#: forms/list_forms.py:726
 msgid ""
 "This can be set to no for announce lists that do not wish to include the "
 "List-Post header because posting to the list is discouraged."
 msgstr ""
 "Bu, listeye gönderme tavsiye edilmediği için Listeye-Gönder başlığını dahil "
-"etmek istemeyen anons listeleri için hayır olarak ayarlanabilir."
+"etmek istemeyen duyuru listeleri için hayır olarak ayarlanabilir."
 
-#: forms/list_forms.py:711
+#: forms/list_forms.py:730
 msgid "Explicit reply-to address"
 msgstr "Açık yanıtla adresi"
 
-#: forms/list_forms.py:714
+#: forms/list_forms.py:733
 msgid ""
 "This option allows admins to set an explicit Reply-to address. It is only "
 "used if the reply-to is set to use an explicitly set header"
@@ -952,7 +980,7 @@ msgstr ""
 "Yalnızca, yanıtla açıkça belirlenmiş bir başlık kullanacak şekilde "
 "ayarlanmışsa kullanılır"
 
-#: forms/list_forms.py:722
+#: forms/list_forms.py:741
 msgid ""
 "Should any existing Reply-To: header found in the original message be "
 "stripped? If so, this will be done regardless of whether an explict Reply-"
@@ -962,27 +990,27 @@ msgstr ""
 "Eğer öyleyse, bu açık bir Yanıtla: başlığının Mailman tarafından eklenip "
 "eklenmemesine bakılmaksızın yapılacaktır."
 
-#: forms/list_forms.py:726 forms/list_forms.py:733
+#: forms/list_forms.py:745 forms/list_forms.py:752
 msgid "Reply goes to list"
 msgstr "Yanıt listeye gider"
 
-#: forms/list_forms.py:730
+#: forms/list_forms.py:749
 msgid "Please choose a reply-to action."
 msgstr "Lütfen bir yanıtla eylemi seçin."
 
-#: forms/list_forms.py:732
+#: forms/list_forms.py:751
 msgid "No Munging"
 msgstr "Değiştirme Yok"
 
-#: forms/list_forms.py:734
+#: forms/list_forms.py:753
 msgid "Explicit Reply-to header set"
 msgstr "Açık şekilde Yanıtla başlığı ayarlandı"
 
-#: forms/list_forms.py:735
+#: forms/list_forms.py:754
 msgid "Explicit Reply-to set; no Cc added"
 msgstr "Açık şekilde Yanıtla ayarlandı; Bilgi eklenmedi"
 
-#: forms/list_forms.py:737
+#: forms/list_forms.py:756
 msgid ""
 "Where are replies to list messages directed? No Munging is strongly "
 "recommended for most mailing lists. \n"
@@ -1013,90 +1041,90 @@ msgstr ""
 "için Değiştirme Yok kesinlikle önerilir.\n"
 "Bu seçenek, Mailman’ın bu posta listesindeki mesajlarda Yanıtla: başlığına "
 "ne yaptığını denetler. Değiştirme Yok olarak ayarlandığında, Mailman "
-"tarafından Yanıtla başlığı eklenmez, ama orjinal mesajda varsa da "
+"tarafından Yanıtla başlığı eklenmez, ama orijinal mesajda varsa da "
 "çıkarılmaz . Bu değeri Listeye Yanıtla, Açık Şekilde Yanıtla ya da Yalnızca "
 "Yanıtla olarak ayarlamak, Mailman'in tüm mesajlara belirli bir Yanıtla: "
-"başlığı eklemesine neden olur, gerekirse orjinal mesajdaki başlık geçersiz "
+"başlığı eklemesine neden olur, gerekirse orijinal mesajdaki başlık geçersiz "
 "kılınır (Açık Şekilde Yanıtla, reply_to_address değerini ekler). Açık "
-"Şekilde Yanıtla ayarlandı; Bilgi eklenmedi, birilerinin liste adresine cevap "
-"göndermesini istemediğiniz sadece-anons listeleri için kullanışlıdır. "
+"Şekilde Yanıtla ayarlandı; Bilgi eklenmedi, birilerinin liste adresine yanıt "
+"göndermesini istemediğiniz yalnızca-duyuru listeleri için kullanışlıdır. "
 "Yanıtla: başlığını tanıtmamak veya geçersiz kılmamak için birçok neden "
 "vardır. Birincisi, bazı göndericilerin kendi dönüş adreslerini bildirmek "
 "için Yanıtla: ayarlarına bağlı olmalarıdır. Bir diğeri ise Yanıtla: kısmının "
-"değiştirilmesi, özel cevaplar göndermeyi çok daha zorlaştırmaktadır. Bu "
+"değiştirilmesi, özel yanıtlar göndermeyi çok daha zorlaştırmaktadır. Bu "
 "konuyla ilgili genel bir tartışma için <a href=\"http://marc.merlins.org/"
 "netrants/reply-to-harmful.html\">`Reply-To` Munging Considered Harmful</a> "
 "gönderisine bakın. Muhalif bir görüş için <a href=\"http://marc.merlins.org/"
 "netrants/reply-to-useful.html\">`Reply-To` Munging Considered Useful</a> "
 "gönderisine bakın. Bazı posta listeleri, tartışmalara ayrılan paralel bir "
 "liste ile mesaj gönderme ayrıcalıklarını sınırlandırmıştır. Örnekler, "
-"yazılım değişikliklerinin bir revizyon kontrol sistemi tarafından "
+"yazılım değişikliklerinin bir revizyon denetim sistemi tarafından "
 "yayınlandığı, ancak değişikliklerle ilgili tartışmaların geliştiricilerin "
 "posta listelerinde gerçekleştiği `yamalar` ya da `check-in` listeleridir. Bu "
 "tür posta listelerini desteklemek için Açık Şekilde Yanıtla'yı seçin ve "
 "Yanıtla: adresi seçeneğini paralel listeye işaret edecek şekilde ayarlayın."
 
-#: forms/list_forms.py:769
+#: forms/list_forms.py:788
 msgid "Pipeline"
 msgstr "İş hattı"
 
-#: forms/list_forms.py:774
+#: forms/list_forms.py:793
 msgid "Type of pipeline you want to use for this mailing list"
 msgstr "Bu posta listesi için kullanmak istediğiniz iş hattının türü"
 
-#: forms/list_forms.py:782
+#: forms/list_forms.py:801
 msgid "Respond and continue processing"
 msgstr "Yanıtla ve işleme devam et"
 
-#: forms/list_forms.py:783
+#: forms/list_forms.py:802
 msgid "Respond and discard message"
 msgstr "Yanıtla ve mesajı at"
 
-#: forms/list_forms.py:784
+#: forms/list_forms.py:803
 msgid "No automatic response"
 msgstr "Otomatik yanıt yok"
 
-#: forms/list_forms.py:788
+#: forms/list_forms.py:807
 msgid "Autorespond to list owner"
 msgstr "Liste sahibine otomatik yanıtla"
 
-#: forms/list_forms.py:789
+#: forms/list_forms.py:808
 msgid ""
 "Should Mailman send an auto-response to emails sent to the -owner address?"
 msgstr ""
 "Mailman, -owner (sahip) adresine gönderilen e-postalara otomatik yanıt "
 "göndermeli mi?"
 
-#: forms/list_forms.py:792
+#: forms/list_forms.py:811
 msgid "Autoresponse owner text"
 msgstr "Liste sahibine otomatik yanıtla metni"
 
-#: forms/list_forms.py:795
+#: forms/list_forms.py:814
 msgid "Auto-response text to send to -owner emails."
 msgstr "-owner (sahip) adresine gönderilen e-postalara otomatik yanıt metni."
 
-#: forms/list_forms.py:799
+#: forms/list_forms.py:818
 msgid "Autorespond postings"
 msgstr "Gönderileri otomatik yanıtla"
 
-#: forms/list_forms.py:800
+#: forms/list_forms.py:819
 msgid "Should Mailman send an auto-response to mailing list posters?"
 msgstr ""
 "Mailman, posta listesine gönderi atanlara otomatik yanıt göndermeli mi?"
 
-#: forms/list_forms.py:803
+#: forms/list_forms.py:822
 msgid "Autoresponse postings text"
 msgstr "Gönderileri otomatik yanıtlama metni"
 
-#: forms/list_forms.py:806
+#: forms/list_forms.py:825
 msgid "Auto-response text to send to mailing list posters."
 msgstr "Posta listesine gönderi atanlara gönderilecek otomatik yanıt metni."
 
-#: forms/list_forms.py:810
+#: forms/list_forms.py:829
 msgid "Autorespond requests"
 msgstr "İstekleri otomatik yanıtla"
 
-#: forms/list_forms.py:812
+#: forms/list_forms.py:831
 msgid ""
 "Should Mailman send an auto-response to emails sent to the -request address? "
 "If you choose yes, decide whether you want Mailman to discard the original "
@@ -1107,19 +1135,19 @@ msgstr ""
 "yoksa sisteme normal posta komutu olarak iletmesini mi istediğinizi "
 "belirleyin."
 
-#: forms/list_forms.py:817
+#: forms/list_forms.py:836
 msgid "Autoresponse request text"
 msgstr "İsteği otomatik yanıtlama metni"
 
-#: forms/list_forms.py:820
+#: forms/list_forms.py:839
 msgid "Auto-response text to send to -request emails."
 msgstr "-request (istek) e-postalarına gönderilecek otomatik yanıt metni."
 
-#: forms/list_forms.py:822
+#: forms/list_forms.py:841
 msgid "Autoresponse grace period"
 msgstr "Otomatik yanıtlama bekleme periyodu"
 
-#: forms/list_forms.py:824
+#: forms/list_forms.py:843
 msgid ""
 "Number of days between auto-responses to either the mailing list or -"
 "request/-owner address from the same poster. Set to zero (or negative) for "
@@ -1130,11 +1158,11 @@ msgstr ""
 "sayısı. Bekleme süresi olmaması için (örneğin, her mesajı otomatik "
 "yanıtlama) sıfır (veya negatif) olarak ayarlayın."
 
-#: forms/list_forms.py:832
+#: forms/list_forms.py:851
 msgid "Notify users of held messages"
 msgstr "Bekletilen mesajlardan kullanıcıları haberdar et"
 
-#: forms/list_forms.py:834
+#: forms/list_forms.py:853
 msgid ""
 "Should Mailman notify users about their messages held for approval. If you "
 "say 'No', no notifications will be sent to users about the pending approval "
@@ -1144,11 +1172,11 @@ msgstr ""
 "'Hayır' derseniz, kullanıcılara mesajlarının bekleyen onayları hakkında "
 "hiçbir bildirim gönderilmez."
 
-#: forms/list_forms.py:841
+#: forms/list_forms.py:860 forms/list_forms.py:1058
 msgid "Send welcome message"
 msgstr "Hoş geldiniz mesajı gönder"
 
-#: forms/list_forms.py:843
+#: forms/list_forms.py:862
 msgid ""
 "Send welcome message to newly subscribed members? Turn this off only if you "
 "plan on subscribing people manually and don't want them to know that you did "
@@ -1163,11 +1191,27 @@ msgstr ""
 "kullanışlıdır.\n"
 "Hoş geldiniz mesajının metni, Şablonlar sekmesinden ayarlanabilir."
 
-#: forms/list_forms.py:852
+#: forms/list_forms.py:872
+msgid "Send goodbye message"
+msgstr "Güle güle mesajı gönder"
+
+#: forms/list_forms.py:874
+msgid ""
+"Send goodbye message to newly unsubscribed members? Turn this off only if "
+"you plan on unsubscribing people manually and don't want them to know that "
+"you did so.\n"
+"The text of Goodbye message can be set via the Templates tab."
+msgstr ""
+"Yeni abonelikten çıkan üyelere güle güle mesajı gönderilsin mi? Bunu "
+"yalnızca insanları elle abonelikten çıkarmayı planlıyorsanız ve bunu "
+"bilmelerini istemiyorsanız kapatın.\n"
+"Güle güle mesajının metni, Şablonlar sekmesinden ayarlanabilir."
+
+#: forms/list_forms.py:881
 msgid "Admin immed notify"
 msgstr "Yöneticiye anında bildir"
 
-#: forms/list_forms.py:854
+#: forms/list_forms.py:883
 msgid ""
 "Should the list moderators get immediate notice of new requests, as well as "
 "daily notices about collected ones? List moderators (and list "
@@ -1183,35 +1227,35 @@ msgstr ""
 "hatırlatmalar gönderilir. Bu seçeneğin ayarlanması, yeni istekler olduğunda "
 "bildirimlerin ayrıca hemen gönderilmesine neden olur. "
 
-#: forms/list_forms.py:864
+#: forms/list_forms.py:893
 msgid "Notify admin of membership changes"
 msgstr "Üyelik değişikliklerini yöneticiye bildir"
 
-#: forms/list_forms.py:865
+#: forms/list_forms.py:894
 msgid "Should administrator get notices of subscribes and unsubscribes?"
-msgstr "Yönetici abone olma ve abonelikleri iptal etme bildirimleri almalı mı?"
+msgstr "Yönetici abone olma ve abonelikten çıkma bildirimleri almalı mı?"
 
-#: forms/list_forms.py:870
+#: forms/list_forms.py:899
 msgid "Not Moderated"
 msgstr "Denetlenmiyor"
 
-#: forms/list_forms.py:871
+#: forms/list_forms.py:900
 msgid "Moderated but allows for open posting"
 msgstr "Denetleniyor ancak açık gönderime izin verilir"
 
-#: forms/list_forms.py:872
+#: forms/list_forms.py:901
 msgid "Moderated"
 msgstr "Denetleniyor"
 
-#: forms/list_forms.py:883
+#: forms/list_forms.py:912
 msgid "Show list on index page"
 msgstr "Listeyi dizin sayfasında göster"
 
-#: forms/list_forms.py:884
+#: forms/list_forms.py:913
 msgid "Choose whether to include this list on the list of all lists"
 msgstr "Bu listenin tüm listelerin listesine eklenip eklenmeyeceğini seçin"
 
-#: forms/list_forms.py:890
+#: forms/list_forms.py:919
 msgid ""
 "This description is used when the mailing list is listed with other mailing "
 "lists, or in headers, and so forth. It should be as succinct as you can get "
@@ -1221,43 +1265,43 @@ msgstr ""
 "başlıklarda listelendiğinde kullanılır. Listenin ne hakkında olduğunu "
 "belirtmeli, ve olabildiği kadar kısa ve öz olmalıdır."
 
-#: forms/list_forms.py:896
+#: forms/list_forms.py:925
 msgid "Information"
 msgstr "Bilgi"
 
-#: forms/list_forms.py:897
+#: forms/list_forms.py:926
 msgid "A longer description of this mailing list."
 msgstr "Bu posta listesinin daha uzun bir açıklaması."
 
-#: forms/list_forms.py:901
+#: forms/list_forms.py:930
 msgid "Display name"
 msgstr "Görünen ad"
 
-#: forms/list_forms.py:903
+#: forms/list_forms.py:932
 msgid "Display name is the name shown in the web interface."
 msgstr "Görünen ad, web arayüzünde gösterilen addır."
 
-#: forms/list_forms.py:906
+#: forms/list_forms.py:935
 msgid "Subject prefix"
-msgstr "Konu öneki"
+msgstr "Konu ön eki"
 
-#: forms/list_forms.py:911
+#: forms/list_forms.py:940
 msgid "Preferred Language"
 msgstr "Tercih Edilen Dil"
 
-#: forms/list_forms.py:917
+#: forms/list_forms.py:946
 msgid "Members List Visibility"
 msgstr "Üye Listesi Görünürlüğü"
 
-#: forms/list_forms.py:921
+#: forms/list_forms.py:950
 msgid "Who is allowed to see members list for this MailingList?"
-msgstr "Bu PostaListesi için üye listesini kimler görebilir?"
+msgstr "Bu posta listesi için üye listesini kimler görebilir?"
 
-#: forms/list_forms.py:926
+#: forms/list_forms.py:955
 msgid "Gateway to mail"
 msgstr "E-postaya aktarma"
 
-#: forms/list_forms.py:927
+#: forms/list_forms.py:956
 msgid ""
 "Flag indicating that posts to the linked newsgroup should be gated to the "
 "list"
@@ -1265,11 +1309,11 @@ msgstr ""
 "Bağlantılı haber grubuna gönderilen mesajların listeye aktarılması "
 "gerektiğini belirten işaret"
 
-#: forms/list_forms.py:933
+#: forms/list_forms.py:962
 msgid "Gateway to news"
 msgstr "Haber grubuna aktarma"
 
-#: forms/list_forms.py:934
+#: forms/list_forms.py:963
 msgid ""
 "Flag indicating that posts to the list should be gated to the linked "
 "newsgroup."
@@ -1277,27 +1321,27 @@ msgstr ""
 "Listeye gönderilen mesajların haber grubuna aktarılması gerektiğini belirten "
 "işaret."
 
-#: forms/list_forms.py:938
+#: forms/list_forms.py:967
 msgid "Linked Newsgroup"
 msgstr "Bağlantılı Haber Grubu"
 
-#: forms/list_forms.py:941
+#: forms/list_forms.py:970
 msgid "The name of the linked newsgroup."
 msgstr "Bağlantılı haber grubunun adı."
 
-#: forms/list_forms.py:944
+#: forms/list_forms.py:973
 msgid "Newsgroup moderation"
-msgstr "Haber grubu yönetimi"
+msgstr "Haber grubu denetimi"
 
-#: forms/list_forms.py:948
+#: forms/list_forms.py:977
 msgid "The moderation policy for the linked newsgroup, if there is one."
-msgstr "Eğer varsa, bağlantılı haber grubu için denetleme politikası."
+msgstr "Eğer varsa, bağlantılı haber grubu için denetim politikası."
 
-#: forms/list_forms.py:954
+#: forms/list_forms.py:983
 msgid "NNTP Include subject prefix "
 msgstr "NNTP Include konu ön eki "
 
-#: forms/list_forms.py:955
+#: forms/list_forms.py:984
 msgid ""
 "Flag indicating whether the list's \"Subject Prefix\" should be included in "
 "posts gated to usenet."
@@ -1305,11 +1349,11 @@ msgstr ""
 "Usenet'e gönderilen mesajlara listenin \"Konu Ön Eki\"nin eklenip "
 "eklenmeyeceğini belirten işaret."
 
-#: forms/list_forms.py:970
+#: forms/list_forms.py:999
 msgid "Emails to mass subscribe"
 msgstr "Toplu abone olacak e-postalar"
 
-#: forms/list_forms.py:972
+#: forms/list_forms.py:1001
 msgid ""
 "The following formats are accepted:\n"
 "jdoe@example.com\n"
@@ -1327,101 +1371,123 @@ msgstr ""
 "jdoe@example.com (John Doe)\n"
 "Görünen adı adresle ilişkilendirmek için son üçü kullanın\n"
 
-#: forms/list_forms.py:983
+#: forms/list_forms.py:1012
 msgid "Pre confirm"
 msgstr "Ön doğrulama"
 
-#: forms/list_forms.py:987
+#: forms/list_forms.py:1016
 msgid "If checked, users will not have to confirm their subscription."
 msgstr ""
 "İşaretlenirse, kullanıcıların aboneliklerini doğrulamaları gerekmeyecektir."
 
-#: forms/list_forms.py:992
+#: forms/list_forms.py:1021
 msgid "Pre approved"
 msgstr "Önden onaylanmış"
 
-#: forms/list_forms.py:996
+#: forms/list_forms.py:1025
 msgid ""
 "If checked, moderators will not have to approve the subscription request."
 msgstr ""
 "İşaretlenirse, moderatörlerin abonelik talebini onaylamaları gerekmeyecektir."
 
-#: forms/list_forms.py:1002
+#: forms/list_forms.py:1031
 msgid "Pre Verified"
-msgstr "Önden Kanıtlanmış"
+msgstr "Önden Doğrulanmış"
 
-#: forms/list_forms.py:1006
+#: forms/list_forms.py:1035
 msgid ""
 "If checked, users will not have to verify that their email address is valid."
 msgstr ""
 "İşaretlenirse, kullanıcıların e-posta adreslerinin geçerli olduğunu "
-"kanıtlamaları gerekmeyecektir."
-
-#: forms/list_forms.py:1017
-msgid "Emails to Unsubscribe"
-msgstr "Abonelikten çıkacak e-postalar"
-
-#: forms/list_forms.py:1018
-msgid "Add one email address on each line"
-msgstr "Her satıra bir e-posta adresi ekleyin"
-
-#: forms/list_forms.py:1033
-msgid "Default antispam action"
-msgstr "Öntanımlı antispam eylemi"
-
-#: forms/list_forms.py:1037
-msgid "Header"
-msgstr "Başlık"
-
-#: forms/list_forms.py:1038
-msgid "Email header to filter on (case-insensitive)."
-msgstr "Filtrelenecek e-posta başlığı (büyük/küçük harf duyarlı)."
-
-#: forms/list_forms.py:1040
-msgid "Please enter a header."
-msgstr "Lütfen bir başlık girin."
+"doğrulamaları gerekmeyecektir."
 
 #: forms/list_forms.py:1041
-msgid "Please enter a valid header."
-msgstr "Lütfen geçerli bir başlık girin."
+msgid "Invitation"
+msgstr "Davet"
 
-#: forms/list_forms.py:1043
-msgid "Pattern"
-msgstr "Kalıp"
+#: forms/list_forms.py:1045
+msgid ""
+"If checked, the other checkboxes are ignored and the users will be sent an "
+"invitation to join the list and will be subscribed upon acceptance thereof."
+msgstr ""
+"İşaretlenirse, diğer onay kutuları yok sayılır ve kullanıcılara listeye "
+"katılmaları için bir davet gönderilir ve kabul ettiklerinde abone olurlar."
 
-#: forms/list_forms.py:1044
-msgid "Regular expression matching the header's value."
-msgstr "Başlığın değeriyle eşleşen düzenli ifade."
-
-#: forms/list_forms.py:1046
-msgid "Please enter a pattern."
-msgstr "Lütfen bir kalıp girin."
-
-#: forms/list_forms.py:1047
-msgid "Please enter a valid pattern."
-msgstr "Lütfen geçerli bir kalıp girin."
-
-#: forms/list_forms.py:1049 templates/postorius/domain/index.html:26
-msgid "Action"
-msgstr "Eylem"
-
-#: forms/list_forms.py:1050
-msgid "Please enter a valid action."
-msgstr "Lütfen geçerli bir eylem girin."
-
-#: forms/list_forms.py:1053
-msgid "Action to take when a header matches"
-msgstr "Bir başlık eşleştiğinde gerçekleştirilecek eylem"
-
-#: forms/list_forms.py:1082
-msgid "Moderation"
-msgstr "Moderasyon"
-
-#: forms/list_forms.py:1084
+#: forms/list_forms.py:1054 forms/list_forms.py:1147
 msgid "List default"
 msgstr "Liste öntanımlı değeri"
 
-#: forms/list_forms.py:1086
+#: forms/list_forms.py:1060
+msgid ""
+"If set to \"Yes\" or \"No\", List's default setting of send_welcome_message "
+"will be ignored for these subscribers and a welcome message will be sent or "
+"not sent based on the choice."
+msgstr ""
+"\"Evet\" veya \"Hayır\" olarak ayarlanırsa, listenin öntanımlı "
+"send_welcome_message ayarı bu aboneler için yok sayılacak ve seçime bağlı "
+"olarak bir hoş geldiniz mesajı gönderilecek veya gönderilmeyecektir."
+
+#: forms/list_forms.py:1080
+msgid "Emails to Unsubscribe"
+msgstr "Abonelikten çıkacak e-postalar"
+
+#: forms/list_forms.py:1081
+msgid "Add one email address on each line"
+msgstr "Her satıra bir e-posta adresi ekleyin"
+
+#: forms/list_forms.py:1096
+msgid "Default antispam action"
+msgstr "Öntanımlı antispam eylemi"
+
+#: forms/list_forms.py:1100
+msgid "Header"
+msgstr "Başlık"
+
+#: forms/list_forms.py:1101
+msgid "Email header to filter on (case-insensitive)."
+msgstr "Filtrelenecek e-posta başlığı (büyük/küçük harf duyarlı)."
+
+#: forms/list_forms.py:1103
+msgid "Please enter a header."
+msgstr "Lütfen bir başlık girin."
+
+#: forms/list_forms.py:1104
+msgid "Please enter a valid header."
+msgstr "Lütfen geçerli bir başlık girin."
+
+#: forms/list_forms.py:1106
+msgid "Pattern"
+msgstr "Kalıp"
+
+#: forms/list_forms.py:1107
+msgid "Regular expression matching the header's value."
+msgstr "Başlığın değeriyle eşleşen düzenli ifade."
+
+#: forms/list_forms.py:1109
+msgid "Please enter a pattern."
+msgstr "Lütfen bir kalıp girin."
+
+#: forms/list_forms.py:1110
+msgid "Please enter a valid pattern."
+msgstr "Lütfen geçerli bir kalıp girin."
+
+#: forms/list_forms.py:1112 templates/postorius/domain/index.html:26
+msgid "Action"
+msgstr "Eylem"
+
+#: forms/list_forms.py:1113
+msgid "Please enter a valid action."
+msgstr "Lütfen geçerli bir eylem girin."
+
+#: forms/list_forms.py:1116
+msgid "Action to take when a header matches"
+msgstr "Bir başlık eşleştiğinde gerçekleştirilecek eylem"
+
+#: forms/list_forms.py:1145
+msgid "Moderation"
+msgstr "Denetim"
+
+#: forms/list_forms.py:1149
 msgid ""
 "Default action to take when this member posts to the list. \n"
 "List default -- follow the list's default member action. \n"
@@ -1441,15 +1507,15 @@ msgstr ""
 "Reddet -- bu, mesajın yazarına bir geri dönme bildirimi göndererek mesajı "
 "otomatik olarak reddeder. Geri dönme bildiriminin metni sizin tarafınızdan "
 "yapılandırılabilir.\n"
-"At -- bu, mesajın yazarına bildirim göndermeden sadece mesajı atar.\n"
-"Kabul et -- başka kontroller yapmadan mesajı kabul eder.\n"
-"Öntanımlı işlem -- ek kontroller yap ve mesajı kabul et. \n"
+"At -- bu, mesajın yazarına bildirim göndermeden yalnızca mesajı atar.\n"
+"Kabul et -- başka denetimler yapmadan mesajı kabul eder.\n"
+"Öntanımlı işlem -- ek denetimler yap ve mesajı kabul et. \n"
 
-#: forms/list_forms.py:1106
+#: forms/list_forms.py:1166
 msgid "Select Email"
 msgstr "E-posta Seç"
 
-#: forms/list_forms.py:1114
+#: forms/list_forms.py:1184
 msgid "Data"
 msgstr "Veri"
 
@@ -1577,7 +1643,7 @@ msgstr ""
 
 #: forms/user_forms.py:108
 msgid "Receive list copies (possible duplicates)"
-msgstr "Liste kopyalarını (olası ikinci nüshalar) al"
+msgstr "Liste kopyalarını (olası yinelenenleri) al"
 
 #: forms/user_forms.py:110
 msgid ""
@@ -1604,7 +1670,12 @@ msgstr ""
 "posta listesinin tercih ettiği dil geçersiz kılınacaktır. Bu, e-posta "
 "bildirimleriniz vb. için hangi dilin kullanıldığını etkiler."
 
-#: models.py:45
+#: forms/validators.py:39
+#, python-brace-format
+msgid "Invalid: \"{0}\" should be either email or UUID"
+msgstr "Geçersiz: \"{0}\" e-posta adresi veya UUID olmalıdır"
+
+#: models.py:43
 msgid ""
 "Note: Do not add any secret content in templates as they are publicly "
 "accessible.\n"
@@ -1638,11 +1709,11 @@ msgstr ""
 "$language: Listenin tercih edilen dili için iki harfli dil kodu, örn. fr, "
 "en, de \n"
 
-#: models.py:258
+#: models.py:263
 msgid "Choose the template you want to customize."
 msgstr "Özelleştirmek istediğiniz şablonu seçin."
 
-#: models.py:265
+#: models.py:270
 msgid ""
 "Language for the template, this should be the list's preferred language."
 msgstr "Şablonun dili, bu listenin tercih edilen dili olmalıdır."
@@ -1692,8 +1763,8 @@ msgid ""
 "Sent to the list administrators to notify them when a member's delivery is "
 "disabled due to excessive bounces."
 msgstr ""
-"Bir üyenin teslimatı aşırı geri dönmeler nedeniyle devre dışı bırakıldığında "
-"bilgilendirmek için liste yöneticilerine gönderilir."
+"Bir üyenin teslimatı çok fazla geri dönme nedeniyle devre dışı "
+"bırakıldığında bilgilendirmek için liste yöneticilerine gönderilir."
 
 #: template_list.py:38
 msgid ""
@@ -1734,14 +1805,20 @@ msgstr "Abonelik doğrulama gerektiğinde abonelere gönderilecek mesaj."
 msgid ""
 "The message sent to subscribers when an unsubscription confirmation is "
 "required."
-msgstr "Abonelik iptali doğrulama gerektiğinde abonelere gönderilecek mesaj."
+msgstr ""
+"Abonelikten çıkmak için doğrulama gerektiğinde abonelere gönderilecek mesaj."
 
 #: template_list.py:54
+msgid "The message sent to subscribers when they are invited to join a list."
+msgstr ""
+"Bir listeye katılmaya davet edildiklerinde abonelere gönderilecek mesaj."
+
+#: template_list.py:56
 msgid "The notice sent to a member when they unsubscribe from a mailing list."
 msgstr ""
 "Posta listesi aboneliğinden çıktıklarında üyelere gönderilecek bildirim."
 
-#: template_list.py:56
+#: template_list.py:58
 msgid ""
 "The notice sent to a poster when their message is being held for moderator "
 "approval."
@@ -1749,15 +1826,15 @@ msgstr ""
 "Mesajları moderatör onayı için bekletildiğinde gönderi atanlara gönderilecek "
 "bildirim."
 
-#: template_list.py:58
+#: template_list.py:60
 msgid ""
 "Sent to a user when the maximum number of autoresponses has been reached for "
 "that day."
 msgstr ""
-"Bir kullanıcıya, o gün için maksimum otomatik yanıt sayısına ulaşıldığında "
+"Bir kullanıcıya, o gün için azami otomatik yanıt sayısına ulaşıldığında "
 "gönderilir."
 
-#: template_list.py:60
+#: template_list.py:62
 msgid ""
 "Notice sent to a poster when their message has been received by the mailing "
 "list."
@@ -1765,15 +1842,15 @@ msgstr ""
 "Mesajları posta listesi tarafından alındığı zaman gönderi atanlara "
 "gönderilen bildirim."
 
-#: template_list.py:62
+#: template_list.py:64
 msgid ""
 "A bounce probe sent to a member when their subscription has been disabled "
 "due to bounces."
 msgstr ""
-"Geri dönüşler nedeniyle aboneliği devre dışı bırakıldığında üyeye bir geri "
-"dönme sorgusu gönderilir."
+"Geri dönmeler nedeniyle aboneliği devre dışı bırakıldığında bir üyeye "
+"gönderilen geri dönme sorgusu."
 
-#: template_list.py:64
+#: template_list.py:66
 msgid ""
 "Notice sent to a poster when their message has been rejected by the list’s "
 "moderator."
@@ -1781,24 +1858,24 @@ msgstr ""
 "Mesajları listenin moderatörü tarafından reddedildiğinde gönderi atanlara "
 "gönderilecek bildirim."
 
-#: template_list.py:66
+#: template_list.py:68
 msgid ""
 "Notice sent to a poster when their message has been rejected automatically."
 msgstr ""
 "Mesajları otomatik olarak reddedildiğinde gönderi atanlara gönderilen "
 "bildirim."
 
-#: template_list.py:68
+#: template_list.py:70
 msgid ""
 "The notice sent to a member when they are subscribed to the mailing list."
 msgstr "Posta listesine abone olduklarında üyelere gönderilecek bildirim."
 
-#: template_list.py:70
+#: template_list.py:72
 msgid ""
 "The notice sent to a member when their membership has been disabled due to "
 "excessive bounces."
 msgstr ""
-"Aşırı geri dönüşler nedeniyle üyeliği devre dışı bırakıldığında üyeye "
+"Çok fazla geri dönme nedeniyle üyeliği devre dışı bırakıldığında üyeye "
 "gönderilen bildirim."
 
 #: templates/403.html:5
@@ -1827,7 +1904,7 @@ msgstr "İşleminiz gerçekleştirilirken bir hata oluştu."
 
 #: templates/postorius/bans.html:5 templates/postorius/bans.html:10
 msgid "Global Bans"
-msgstr "Global Yasaklamalar"
+msgstr "Genel Yasaklamalar"
 
 #: templates/postorius/base.html:32
 msgid "Mailman logo"
@@ -1850,7 +1927,7 @@ msgstr "Yasaklamalar"
 msgid "System Information"
 msgstr "Sistem Bilgileri"
 
-#: templates/postorius/base.html:63
+#: templates/postorius/base.html:63 templates/postorius/lists/summary.html:31
 msgid "Archives"
 msgstr "Arşivler"
 
@@ -1914,7 +1991,7 @@ msgstr ""
 "      "
 
 #: templates/postorius/domain/confirm_delete.html:33
-#: templates/postorius/domain/index.html:52
+#: templates/postorius/domain/index.html:59
 #: templates/postorius/domain/template_index.html:34
 #: templates/postorius/lists/confirm_delete.html:5
 #: templates/postorius/lists/members.html:107
@@ -1947,15 +2024,22 @@ msgstr "Etki Alanı Ekle"
 msgid "Owners"
 msgstr "Sahipleri"
 
-#: templates/postorius/domain/index.html:43
+#: templates/postorius/domain/index.html:38
+#: templates/postorius/domain/index.html:58
+#: templates/postorius/domain/template_index.html:33
+#: templates/postorius/lists/template_list.html:31
+msgid "Edit"
+msgstr "Düzenle"
+
+#: templates/postorius/domain/index.html:50
 msgid "remove"
 msgstr "kaldır"
 
-#: templates/postorius/domain/index.html:47
+#: templates/postorius/domain/index.html:54
 msgid "Add"
 msgstr "Ekle"
 
-#: templates/postorius/domain/index.html:50
+#: templates/postorius/domain/index.html:57
 #: templates/postorius/domain/template_add.html:6
 #: templates/postorius/domain/template_delete.html:6
 #: templates/postorius/domain/template_index.html:6
@@ -1967,12 +2051,6 @@ msgstr "Ekle"
 #: templates/postorius/menu/list_nav.html:45 templatetags/nav_helpers.py:38
 msgid "Templates"
 msgstr "Şablonlar"
-
-#: templates/postorius/domain/index.html:51
-#: templates/postorius/domain/template_index.html:33
-#: templates/postorius/lists/template_list.html:31
-msgid "Edit"
-msgstr "Düzenle"
 
 #: templates/postorius/domain/new.html:6
 msgid "Add domain"
@@ -2131,7 +2209,7 @@ msgstr "Kaldır"
 
 #: templates/postorius/lists/confirm_removeall_subscribers.html:6
 msgid "Unsubscribe all members"
-msgstr "Tüm üyelerin aboneliğini iptal et"
+msgstr "Tüm üyeleri abonelikten çıkar"
 
 #: templates/postorius/lists/confirm_removeall_subscribers.html:14
 #, python-format
@@ -2141,7 +2219,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"        Tüm üyelerin %(listname)s aboneliğini iptal etmek istediğinize emin "
+"        Tüm üyeleri %(listname)s aboneliğinden çıkarmak istediğinize emin "
 "misiniz?\n"
 "    "
 
@@ -2149,7 +2227,40 @@ msgstr ""
 #: templates/postorius/lists/mass_removal.html:17
 #: templates/postorius/lists/members.html:63
 msgid "Unsubscribe All"
-msgstr "Hepsinin aboneliğini iptal et"
+msgstr "Hepsini Abonelikten Çıkar"
+
+#: templates/postorius/lists/confirm_token.html:12
+#, python-format
+msgid ""
+"\n"
+"    Confirm subscription of %(addr)s to %(name)s(%(listid)s):\n"
+"    "
+msgstr ""
+"\n"
+"    %(addr)s için %(name)s(%(listid)s) aboneliğini doğrula:\n"
+"    "
+
+#: templates/postorius/lists/confirm_token.html:16
+#, python-format
+msgid ""
+"\n"
+"    Confirm unsubscription of %(addr)s from %(name)s(%(listid)s):\n"
+"    "
+msgstr ""
+"\n"
+"    %(addr)s için %(name)s(%(listid)s) aboneliğinden çıkmayı doğrula:\n"
+"    "
+
+#: templates/postorius/lists/confirm_token.html:20
+#, python-format
+msgid ""
+"\n"
+"    Confirm token %(token)s:\n"
+"    "
+msgstr ""
+"\n"
+"    %(token)s belirtecini doğrula:\n"
+"    "
 
 #: templates/postorius/lists/header_matches.html:7
 #: templates/postorius/menu/list_nav.html:58
@@ -2164,54 +2275,54 @@ msgstr "Değişiklikleri kaydet"
 msgid "Changes pending, click on the button to save them."
 msgstr "Bekleyen değişiklikler var, kaydetmek için düğmeye tıklayın."
 
-#: templates/postorius/lists/held_messages.html:9
+#: templates/postorius/lists/held_messages.html:10
 #: templates/postorius/menu/list_nav.html:28
 msgid "Held messages"
 msgstr "Bekletilen mesajlar"
 
-#: templates/postorius/lists/held_messages.html:25
+#: templates/postorius/lists/held_messages.html:26
 msgid "Perform action on selected messages"
 msgstr "Seçili mesajlar üzerinde işlem yap"
 
-#: templates/postorius/lists/held_messages.html:27
-#: templates/postorius/lists/held_messages.html:105
-#: templates/postorius/lists/subscription_requests.html:28
+#: templates/postorius/lists/held_messages.html:28
+#: templates/postorius/lists/held_messages.html:106
+#: templates/postorius/lists/subscription_requests.html:34
 msgid "Accept"
 msgstr "Kabul et"
 
-#: templates/postorius/lists/held_messages.html:37
+#: templates/postorius/lists/held_messages.html:38
 msgid "Subject"
 msgstr "Konu"
 
-#: templates/postorius/lists/held_messages.html:38
+#: templates/postorius/lists/held_messages.html:39
 msgid "Sender"
 msgstr "Gönderen"
 
-#: templates/postorius/lists/held_messages.html:39
-msgid "Reason"
-msgstr "Sebep"
-
 #: templates/postorius/lists/held_messages.html:40
+msgid "Reason"
+msgstr "Neden"
+
+#: templates/postorius/lists/held_messages.html:41
 msgid "Hold Date"
 msgstr "Bekleme Tarihi"
 
-#: templates/postorius/lists/held_messages.html:52
+#: templates/postorius/lists/held_messages.html:53
 msgid "No Subject"
 msgstr "Konu Yok"
 
-#: templates/postorius/lists/held_messages.html:80
+#: templates/postorius/lists/held_messages.html:81
 msgid "Attachments"
 msgstr "Ekler"
 
-#: templates/postorius/lists/held_messages.html:91
+#: templates/postorius/lists/held_messages.html:92
 msgid "Set member moderation"
 msgstr "Üye denetimini ayarla"
 
-#: templates/postorius/lists/held_messages.html:97
+#: templates/postorius/lists/held_messages.html:98
 msgid "Rejection reason:"
 msgstr "Reddetme nedeni:"
 
-#: templates/postorius/lists/held_messages.html:100
+#: templates/postorius/lists/held_messages.html:101
 msgid ""
 "Reason sent to the sender for message rejection. For other actions, this is "
 "ignored."
@@ -2219,21 +2330,21 @@ msgstr ""
 "Mesajının reddedilmesiyle ilgili göndericisine gönderilen neden. Diğer "
 "eylemler için bu dikkate alınmaz."
 
-#: templates/postorius/lists/held_messages.html:114
+#: templates/postorius/lists/held_messages.html:115
 msgid "Show Headers"
 msgstr "Başlıkları Göster"
 
-#: templates/postorius/lists/held_messages.html:122
+#: templates/postorius/lists/held_messages.html:123
 msgid "There are currently no held messages."
 msgstr "Şu anda bekletilen mesaj yok."
 
-#: templates/postorius/lists/held_messages.html:129
+#: templates/postorius/lists/held_messages.html:130
 msgid "Message could not be retrieved"
 msgstr "Mesaj alınamadı"
 
 #: templates/postorius/lists/mass_removal.html:14
 msgid "Unsubscribe users"
-msgstr "Kullanıcıların aboneliğini iptal et"
+msgstr "Kullanıcıları abonelikten çıkar"
 
 #: templates/postorius/lists/mass_subscribe.html:7
 #: templates/postorius/menu/list_nav.html:53
@@ -2296,13 +2407,13 @@ msgstr "E-Posta Adresi"
 msgid "Actions"
 msgstr "Eylemler"
 
-#: templates/postorius/lists/pending_confirmations.html:29
-#: templates/postorius/lists/subscription_requests.html:31
+#: templates/postorius/lists/pending_confirmations.html:35
+#: templates/postorius/lists/subscription_requests.html:37
 msgid "Ban"
 msgstr "Yasakla"
 
-#: templates/postorius/lists/pending_confirmations.html:38
-#: templates/postorius/lists/subscription_requests.html:40
+#: templates/postorius/lists/pending_confirmations.html:44
+#: templates/postorius/lists/subscription_requests.html:46
 msgid "There are currently no subscription requests for this list."
 msgstr "Şu anda bu liste için abonelik isteği yok."
 
@@ -2330,17 +2441,17 @@ msgstr ""
 msgid "You have to login to visit the archives of this list."
 msgstr "Bu listenin arşivlerini ziyaret etmek için giriş yapmalısınız."
 
-#: templates/postorius/lists/summary.html:32
+#: templates/postorius/lists/summary.html:33
 #, python-format
 msgid ""
 "\n"
-"            To see the prior postings to this list, visit\n"
-"            <a href=\"%(hyperkitty_list_url)s\">the archives</a>.\n"
+"            <a class=\"btn btn-primary\" href=\"%(hyperkitty_list_url)s"
+"\">Archives</a>\n"
 "          "
 msgstr ""
 "\n"
-"            Bu listeye önceden gönderilen mesajları görmek için,\n"
-"            <a href=\"%(hyperkitty_list_url)s\">arşivleri</a> ziyaret edin.\n"
+"            <a class=\"btn btn-primary\" href=\"%(hyperkitty_list_url)s"
+"\">Arşivler</a>\n"
 "          "
 
 #: templates/postorius/lists/summary.html:45
@@ -2352,22 +2463,17 @@ msgstr "Abone Olma / Abonelikten Çıkma"
 msgid "You are subscribed to this list with the following address:"
 msgstr "Bu listeye aşağıdaki adresle abone oldunuz:"
 
-#: templates/postorius/lists/summary.html:51
-#, python-format
-msgid ""
-"\n"
-"                You can manage your subscription on <a href="
-"\"%(user_list_options_url)s\">your list options page</a>\n"
-"              "
-msgstr ""
-"\n"
-"                Aboneliğinizi <a href=\"%(user_list_options_url)s\">liste "
-"seçenekleri sayfanızdan</a> yönetebilirsiniz\n"
-"              "
+#: templates/postorius/lists/summary.html:49
+msgid "Primary Address"
+msgstr "Birincil Adres"
 
-#: templates/postorius/lists/summary.html:59
+#: templates/postorius/lists/summary.html:55
+msgid "Manage Subscription"
+msgstr "Aboneliği Yönet"
+
+#: templates/postorius/lists/summary.html:60
 msgid "Unsubscribe"
-msgstr "Aboneliği iptal et"
+msgstr "Abonelikten çık"
 
 #: templates/postorius/lists/summary.html:63
 msgid ""
@@ -2512,7 +2618,7 @@ msgstr "Abonelikler"
 
 #: templates/postorius/menu/user_nav.html:8
 msgid "Global Mailman preferences"
-msgstr "Global Mailman tercihleri"
+msgstr "Genel Mailman tercihleri"
 
 #: templates/postorius/menu/user_nav.html:9
 msgid "Address-based preferences"
@@ -2559,7 +2665,7 @@ msgid ""
 "Any options showing as not set here have inherit at runtime from your global "
 "preferences (viewable on other tab)"
 msgstr ""
-"Burada ayarlanmamış olarak gösterilen tüm seçenekler, çalışma anında global "
+"Burada ayarlanmamış olarak gösterilen tüm seçenekler, çalışma anında genel "
 "tercihlerinizden devralınır (diğer sekmede görülebilir)"
 
 #: templates/postorius/user/address_preferences.html:62
@@ -2589,7 +2695,7 @@ msgid ""
 "Any options showing as not set inherit at runtime from your global or "
 "address specific preferences (viewable on other tabs)"
 msgstr ""
-"Burada ayarlanmamış olarak gösterilen tüm seçenekler, çalışma anında global "
+"Burada ayarlanmamış olarak gösterilen tüm seçenekler, çalışma anında genel "
 "veya adrese özel tercihlerinizden devralınır (diğer sekmede görülebilir)"
 
 #: templates/postorius/user/subscription_preferences.html:32
@@ -2666,9 +2772,9 @@ msgstr "Abonelik Ayarları"
 
 #: templatetags/nav_helpers.py:41
 msgid "Global Settings"
-msgstr "Global Ayarlar"
+msgstr "Genel Ayarlar"
 
-#: utils.py:37
+#: utils.py:38
 msgid "Mailman REST API not available. Please start Mailman core."
 msgstr "Mailman REST API'si kullanılamıyor. Lütfen Mailman core'u başlatın."
 
@@ -2681,9 +2787,9 @@ msgstr "Yeni etki alanı kaydedildi"
 msgid "Domain %s updated"
 msgstr "%s etki alanı güncellendi"
 
-#: views/domain.py:116 views/list.py:667
+#: views/domain.py:116 views/list.py:763
 msgid "Please check the errors below"
-msgstr "Lütfen aşağıdaki hataları kontrol edin"
+msgstr "Lütfen aşağıdaki hataları gözden geçirin"
 
 #: views/domain.py:140
 #, python-format
@@ -2701,17 +2807,17 @@ msgstr "{}, {}'in sahibi olarak eklendi"
 
 #: views/domain.py:192
 msgid "{} is not an owner for {}"
-msgstr "{}, {}'in sahibi değil"
+msgstr "{}, {} için bir sahip değil"
 
 #: views/domain.py:199
 msgid "Removed {} as an owner for {}"
-msgstr "{}, {}'in sahiplerinden kaldırıldı"
+msgstr "{}, {} için sahiplerden kaldırıldı"
 
 #: views/generic.py:104
 msgid "The email {} has been banned."
 msgstr "{} e-posta adresi yasaklandı."
 
-#: views/generic.py:108 views/generic.py:119 views/list.py:1088
+#: views/generic.py:108 views/generic.py:119 views/list.py:1196
 #, python-format
 msgid "An error occurred: %s"
 msgstr "Bir hata oluştu: %s"
@@ -2725,275 +2831,275 @@ msgstr "Geçersiz veri: %s"
 msgid "The email {} has been un-banned"
 msgstr "{} e-posta adresinin yasağı kaldırıldı"
 
-#: views/list.py:104
+#: views/list.py:106
 msgid "List {}s"
 msgstr "{} listele"
 
-#: views/list.py:118
+#: views/list.py:120
 msgid "Add {}"
 msgstr "{} ekle"
 
-#: views/list.py:121
+#: views/list.py:123
 msgid "No {}s were found matching the search."
 msgstr "Aramayla eşleşen {} bulunamadı."
 
-#: views/list.py:123
+#: views/list.py:125
 msgid "List has no {}s"
 msgstr "Listede {} yok"
 
-#: views/list.py:136
+#: views/list.py:138
 msgid "The selected members have been unsubscribed"
-msgstr "Seçilen üyelerin aboneliği iptal edildi"
+msgstr "Seçilen üyeler abonelikten çıkarıldı"
 
-#: views/list.py:154
+#: views/list.py:156
 #, python-brace-format
 msgid "{email} has been added with the role {role}"
 msgstr "{email}, {role} ile eklendi"
 
-#: views/list.py:195
+#: views/list.py:203
 msgid "Member does not exist"
 msgstr "Üye mevcut değil"
 
-#: views/list.py:211
+#: views/list.py:221
 msgid "The member's preferences have been updated."
 msgstr "Üyenin tercihleri güncellendi."
 
-#: views/list.py:220
+#: views/list.py:230
 msgid "No change to the member's moderation."
-msgstr "Üyenin moderasyonunda değişiklik yok."
+msgstr "Üyenin denetiminde değişiklik yok."
 
-#: views/list.py:232
+#: views/list.py:242
 msgid "The member's moderation settings have been updated."
-msgstr "Üyenin moderasyon ayarları güncellendi."
+msgstr "Üyenin denetim ayarları güncellendi."
 
-#: views/list.py:316
+#: views/list.py:403
 msgid "You are already subscribed"
 msgstr "Zaten abonesiniz"
 
-#: views/list.py:326
-msgid ""
-"Your request to change the email for this subscription was submitted and is "
-"waiting for moderator approval."
-msgstr ""
-"Bu abonelik için e-posta değiştirme isteğiniz gönderildi ve moderatör onayı "
-"bekliyor."
-
-#: views/list.py:331
+#: views/list.py:414
 #, python-format
 msgid "Subscription changed to %s"
 msgstr "Abonelik %s olarak değiştirildi"
 
-#: views/list.py:335 views/list.py:373 views/list.py:401
+#: views/list.py:417 views/list.py:462 views/list.py:492
 msgid "Something went wrong. Please try again."
 msgstr "Bir şeyler yanlış gitti. Lütfen tekrar deneyin."
 
-#: views/list.py:364
+#: views/list.py:453
 msgid ""
 "Your subscription request has been submitted and is waiting for moderator "
 "approval."
 msgstr "Abonelik isteğiniz gönderildi ve moderatör onayını bekliyor."
 
-#: views/list.py:369
+#: views/list.py:458
 #, python-format
 msgid "You are subscribed to %s."
 msgstr "%s'e abone oldunuz."
 
-#: views/list.py:397
+#: views/list.py:488
 msgid "Please check your inbox for further instructions"
-msgstr "Lütfen sonraki talimatlar için gelen kutunuzu kontrol edin"
+msgstr "Lütfen sonraki talimatlar için gelen kutunuza bakın"
 
-#: views/list.py:416
+#: views/list.py:507
 #, python-format
 msgid "%s has been unsubscribed from this list."
-msgstr "%s bu liste aboneliğinden ayrıldı."
+msgstr "%s bu liste aboneliğinden çıktı."
 
-#: views/list.py:442
+#: views/list.py:536
 #, python-format
 msgid "The address %(address)s has been subscribed to %(list)s."
 msgstr "%(address)s adresi %(list)s'e abone oldu."
 
-#: views/list.py:449 views/list.py:486
+#: views/list.py:543 views/list.py:582
 #, python-format
 msgid "The email address %s is not valid."
 msgstr "%s e-posta adresi geçerli değil."
 
-#: views/list.py:472
+#: views/list.py:566
 msgid "Please fill out the form correctly."
 msgstr "Lütfen formu doğru bir şekilde doldurun."
 
-#: views/list.py:479
+#: views/list.py:575
 #, python-format
 msgid "The address %(address)s has been unsubscribed from %(list)s."
-msgstr "%(address)s adresi %(list)s aboneliğinden ayrıldı."
+msgstr "%(address)s adresi %(list)s aboneliğinden çıktı."
 
-#: views/list.py:508
+#: views/list.py:604
 msgid "The selected messages were accepted"
 msgstr "Seçilen mesajlar kabul edildi"
 
-#: views/list.py:512
+#: views/list.py:608
 msgid "The selected messages were rejected"
 msgstr "Seçili mesajlar reddedildi"
 
-#: views/list.py:516
+#: views/list.py:612
 msgid "The selected messages were discarded"
 msgstr "Seçili mesajlar atıldı"
 
-#: views/list.py:518
+#: views/list.py:614
 msgid "Message could not be found"
 msgstr "Mesaj bulunamadı"
 
-#: views/list.py:547
+#: views/list.py:643
 msgid "The message was accepted"
 msgstr "Mesaj kabul edildi"
 
-#: views/list.py:550
+#: views/list.py:646
 msgid "The message was rejected"
 msgstr "Mesaj reddedildi"
 
-#: views/list.py:553
+#: views/list.py:649
 msgid "The message was discarded"
 msgstr "Mesaj atıldı"
 
-#: views/list.py:558
+#: views/list.py:654
 msgid "Held message was not found."
 msgstr "Bekletilen mesaj bulunamadı."
 
-#: views/list.py:571
+#: views/list.py:667
 msgid "Moderation action for {} set to {}"
-msgstr "{} İçin moderasyon eylemi {} olarak ayarlandı"
+msgstr "{} için denetim eylemi {} olarak ayarlandı"
 
-#: views/list.py:576
-msgid "Failed to set moderation action: {}"
-msgstr "Moderasyon eylemi ayarlanamadı: {}"
+#: views/list.py:672
+msgid "Failed to set moderation action for {}"
+msgstr "{} için denetim eylemi ayarlanamadı"
 
-#: views/list.py:628
+#: views/list.py:724
 msgid "Choose a Domain"
 msgstr "Bir Etki Alanı Seçin"
 
-#: views/list.py:649
+#: views/list.py:745
 msgid "List created"
 msgstr "Liste oluşturuldu"
 
-#: views/list.py:661
+#: views/list.py:757
 msgid "Mailing List already exists."
 msgstr "Posta Listesi zaten var."
 
-#: views/list.py:819
+#: views/list.py:915
 msgid "Subscriptions pending user confirmation"
 msgstr "Kullanıcı doğrulaması bekleyen abonelikler"
 
-#: views/list.py:832
+#: views/list.py:928
 msgid "Subscriptions pending approval"
 msgstr "Onay bekleyen abonelikler"
 
-#: views/list.py:864
+#: views/list.py:959
 msgid "The request has been accepted."
 msgstr "İstek kabul edildi."
 
-#: views/list.py:865
+#: views/list.py:960
 msgid "The request has been rejected."
 msgstr "İstek reddedildi."
 
-#: views/list.py:866
+#: views/list.py:961
 msgid "The request has been discarded."
 msgstr "İstek atıldı."
 
-#: views/list.py:867
+#: views/list.py:962
 msgid "The request has been defered."
 msgstr "İstek ertelendi."
 
-#: views/list.py:878
+#: views/list.py:973
 #, python-format
 msgid "The request was already moderated: %s"
 msgstr "İstek zaten denetlendi: %s"
 
-#: views/list.py:881
+#: views/list.py:976
 #, python-format
 msgid "The request could not be moderated: %s"
 msgstr "İstek denetlenemedi: %s"
 
-#: views/list.py:887
+#: views/list.py:982
 msgid "List Identity"
 msgstr "Liste Kimliği"
 
-#: views/list.py:888
+#: views/list.py:983
 msgid "Automatic Responses"
 msgstr "Otomatik Yanıtlar"
 
-#: views/list.py:889
+#: views/list.py:984
 msgid "Alter Messages"
 msgstr "Mesajları Değiştir"
 
-#: views/list.py:890
+#: views/list.py:985
 msgid "DMARC Mitigations"
 msgstr "DMARC Azaltmaları"
 
-#: views/list.py:891
+#: views/list.py:986
 msgid "Digest"
 msgstr "Özet"
 
-#: views/list.py:892
+#: views/list.py:987
 msgid "Message Acceptance"
 msgstr "Mesaj Kabulü"
 
-#: views/list.py:893
+#: views/list.py:988
 msgid "Archiving"
 msgstr "Arşivleme"
 
-#: views/list.py:894
+#: views/list.py:989
 msgid "Member Policy"
 msgstr "Üye Politikası"
 
-#: views/list.py:895
+#: views/list.py:990
 msgid "Bounce Processing"
 msgstr "Geri Dönme İşleme"
 
-#: views/list.py:945
+#: views/list.py:1053
 msgid "The settings have been updated."
 msgstr "Ayarlar güncellendi."
 
-#: views/list.py:950
+#: views/list.py:1058
 msgid "An error occurred: "
 msgstr "Bir hata oluştu: "
 
-#: views/list.py:974
+#: views/list.py:1082
 #, python-format
 msgid "The user %(email)s is not in the %(role)s group"
 msgstr "%(email)s kullanıcısı %(role)s grubunda değil"
 
-#: views/list.py:980
+#: views/list.py:1088
 msgid "Removing the last owner is impossible"
 msgstr "Son sahibi kaldırmak mümkün değil"
 
-#: views/list.py:994
+#: views/list.py:1102
 #, python-format
 msgid "The user could not be removed: %(msg)s"
 msgstr "Kullanıcı kaldırılamadı: %(msg)s"
 
-#: views/list.py:997
+#: views/list.py:1105
 #, python-format
 msgid "The user %(address)s has been removed from the %(role)s group."
 msgstr "%(address)s kullanıcısı %(role)s grubundan kaldırıldı."
 
-#: views/list.py:1015
+#: views/list.py:1123
 msgid "No member is subscribed to the list currently."
 msgstr "Şu anda listeye hiçbir üye abone değil."
 
-#: views/list.py:1025
+#: views/list.py:1133
 msgid "All members have been unsubscribed from the list."
 msgstr "Tüm üyeler liste aboneliğinden çıkarıldı."
 
-#: views/list.py:1090
+#: views/list.py:1198
 msgid "The header matches were successfully modified."
 msgstr "Başlık eşleşmeleri başarıyla değiştirildi."
 
-#: views/list.py:1097
+#: views/list.py:1205
 msgid "New header"
 msgstr "Yeni başlık"
 
-#: views/list.py:1098
+#: views/list.py:1206
 msgid "New pattern"
 msgstr "Yeni kalıp"
+
+#: views/list.py:1233
+msgid "Invalid confirmation token"
+msgstr "Geçersiz doğrulama belirteci"
+
+#: views/list.py:1241 views/list.py:1253
+msgid "Token expired or invalid."
+msgstr "Belirtecin süresi doldu veya geçersiz."
 
 #: views/rest.py:60
 msgid "Message does not exist"
@@ -3003,14 +3109,32 @@ msgstr "Mesaj mevcut değil"
 msgid "Attachment does not exist"
 msgstr "Ek mevcut değil"
 
-#: views/user.py:77
+#: views/user.py:78
 msgid "Your preferences have been updated."
 msgstr "Tercihleriniz güncellendi."
 
-#: views/user.py:79
+#: views/user.py:80
 msgid "Your preferences did not change."
 msgstr "Tercihleriniz değişmedi."
 
-#: views/user.py:195
+#: views/user.py:196
 msgid "Subscription does not exist"
 msgstr "Abonelik mevcut değil"
+
+#~ msgid ""
+#~ "\n"
+#~ "                You can manage your subscription on <a href="
+#~ "\"%(user_list_options_url)s\">your list options page</a>\n"
+#~ "              "
+#~ msgstr ""
+#~ "\n"
+#~ "                Aboneliğinizi <a href=\"%(user_list_options_url)s\">liste "
+#~ "seçenekleri sayfanızdan</a> yönetebilirsiniz\n"
+#~ "              "
+
+#~ msgid ""
+#~ "Your request to change the email for this subscription was submitted and "
+#~ "is waiting for moderator approval."
+#~ msgstr ""
+#~ "Bu abonelik için e-posta değiştirme isteğiniz gönderildi ve moderatör "
+#~ "onayı bekliyor."
