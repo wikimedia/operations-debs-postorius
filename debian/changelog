@@ -1,3 +1,10 @@
+postorius (1.3.4-1) unstable; urgency=medium
+
+  * New upstream release
+  * d/control, d/tests/control: Update (build-)dependencies
+
+ -- Jonas Meurer <jonas@freesources.org>  Fri, 05 Feb 2021 00:56:01 +0100
+
 postorius (1.3.3-1) unstable; urgency=medium
 
   * New upstream release
