@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2018-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2018-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -50,6 +50,8 @@ TEMPLATES_LIST = (
      _('The message sent to subscribers when a subscription confirmation is required.')),
     ('list:user:action:unsubscribe',
      _('The message sent to subscribers when an unsubscription confirmation is required.')),
+    ('list:user:action:invite',
+     _('The message sent to subscribers when they are invited to join a list.')),
     ('list:user:notice:goodbye',
      _('The notice sent to a member when they unsubscribe from a mailing list.')),
     ('list:user:notice:hold',

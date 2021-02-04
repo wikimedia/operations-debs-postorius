@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2017-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -16,14 +16,12 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 #
-
-from __future__ import absolute_import, unicode_literals
+from unittest.mock import patch
 
 from django.contrib.auth.models import User
 from django.test import TestCase
 
 from mailmanclient import Client
-from mock import patch
 
 
 def server_error(requset):

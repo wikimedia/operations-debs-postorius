@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -16,10 +16,8 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import (
-    absolute_import, division, print_function, unicode_literals)
-
 import logging
+from enum import Enum
 from urllib.error import HTTPError
 from urllib.parse import urljoin
 
@@ -57,6 +55,13 @@ _email_template_help_text = _(
     '$site_email: The email address to reach the owners of the site \n'
     '$language: The two letter language code for list\'s preferred language e.g. fr, en, de \n'  # noqa: E501
     )
+
+
+class SubscriptionMode(Enum):
+    """Valid values for Member.subscription_mode"""
+
+    as_address = 1
+    as_user = 2
 
 
 @receiver(post_save, sender=User)

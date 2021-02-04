@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load nav_helpers %}
 {% load date_helpers %}
+{% load tz %}
 {% load pagination %}
 {% load static %}
 
@@ -55,7 +56,7 @@
                     </td>
                     <td>{{ msg.sender }}</td>
                     <td>{{ msg.reason }}</td>
-                    <td>{{ msg.hold_date|datetime_parse|date:"DATETIME_FORMAT" }}</td>
+                    <td>{{ msg.hold_date|datetime_parse|localtime|date:"DATETIME_FORMAT"}}</td>
                   </tr>
                 {% endfor %}
               </tbody>

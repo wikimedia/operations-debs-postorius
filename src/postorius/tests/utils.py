@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2012-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -16,6 +16,7 @@
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+from unittest.mock import MagicMock
 
 from django.conf import settings
 from django.contrib import messages
@@ -24,7 +25,6 @@ from django.urls import reverse
 
 from django_mailman3.lib.mailman import get_mailman_client
 from django_mailman3.tests.utils import get_flash_messages
-from mock import MagicMock
 from six import PY3, binary_type, text_type
 from six.moves.urllib_parse import (
     parse_qsl, quote, urlencode, urlparse, urlunparse)
@@ -141,9 +141,9 @@ class ViewTestCase(TransactionTestCase):
         for u in self.mm_client.users:
             u.delete()
 
-    def assertHasSuccessMessage(self, response):
+    def assertHasSuccessMessage(self, response, count=1):
         msgs = get_flash_messages(response)
-        self.assertEqual(len(msgs), 1)
+        self.assertEqual(len(msgs), count)
         self.assertEqual(
             msgs[0].level, messages.SUCCESS,
             "%s: %s" % (messages.DEFAULT_TAGS[msgs[0].level], msgs[0].message))

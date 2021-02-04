@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 1998-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 1998-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -70,6 +70,8 @@ list_patterns = [
         name='list_settings'),
     url(r'^unsubscribe_all$', list_views.remove_all_subscribers,
         name='unsubscribe_all'),
+    url(r'^confirm/$', list_views.confirm_token,
+        name='confirm_token'),
     url(r'^templates$',
         template_views.ListTemplateIndexView.as_view(),
         name='list_template_list'),

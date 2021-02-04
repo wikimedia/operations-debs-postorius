@@ -137,7 +137,7 @@ Accessing the Mailman API
 Postorius uses mailmanclient to connect to Mailman's REST API. In order to
 directly use the client, ``cd`` to the ``example_project`` folder and execute
 ``python manage.py mmclient``. This will open a python shell (IPython, if
-that's available) and provide you with a client object connected to to your
+that's available) and provide you with a client object connected to your
 local Mailman API server (it uses the credentials from your settings.py).
 
 A quick example:

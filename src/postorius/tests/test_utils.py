@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2017-2019 by the Free Software Foundation, Inc.
+# Copyright (C) 2017-2021 by the Free Software Foundation, Inc.
 #
 # This file is part of Postorius.
 #
@@ -16,9 +16,6 @@
 # You should have received a copy of the GNU General Public License along with
 # Postorius.  If not, see <http://www.gnu.org/licenses/>.
 #
-
-from __future__ import absolute_import, unicode_literals
-
 from django.test import RequestFactory, TestCase
 
 from postorius.utils import render_api_error
