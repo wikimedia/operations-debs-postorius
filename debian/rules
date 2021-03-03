@@ -36,6 +36,9 @@ override_dh_python3:
 		find debian/python3-django-postorius -name "glyphicons-halflings-regular.$$type" -type f -exec \
 			ln -sf /usr/share/fonts-glyphicons/glyphicons-halflings-regular.$$type {} \; ; \
 	done
+	#
+	# Compile django LC messages
+	cd debian/python3-django-postorius/usr/lib/python3/dist-packages/postorius && django-admin compilemessages
 
 override_dh_installchangelogs:
 	dh_installchangelogs src/postorius/doc/news.rst
