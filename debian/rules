@@ -27,7 +27,7 @@ override_dh_python3:
 	find debian/python3-django-postorius -name 'jquery-1.11.3.min.js' -type f -exec \
 		ln -sf /usr/share/javascript/jquery/jquery.min.js {} \;
 	find debian/python3-django-postorius -name 'bootstrap.min.js' -type f -exec \
-		ln -sf /usr/share/javascript/bootstrap/js/bootstrap.min.js {} \;
+		ln -sf /usr/share/javascript/bootstrap4/js/bootstrap.min.js {} \;
 	find debian/python3-django-postorius -name 'html5shiv.min.js' -type f -exec \
 		ln -sf /usr/share/nodejs/html5shiv/dist/html5shiv.min.js {} \;
 	find debian/python3-django-postorius -name 'html5shiv.js' -type f -exec \
