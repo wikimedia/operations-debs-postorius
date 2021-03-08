@@ -1,6 +1,6 @@
 postorius (1.3.4-2) unstable; urgency=medium
 
-  * Use bootstrap4 instead of bootstrap3.
+  * Use bootstrap4 instead of bootstrap3. (Closes: #983895)
   * Compile the LC_MESSAGES via django-admin at build time
 
  -- Pierre-Elliott Bécue <peb@debian.org>  Wed, 03 Mar 2021 16:13:23 +0100
