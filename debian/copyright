@@ -28,7 +28,7 @@ License: GPL-2
 
 Files: debian/missing-sources/bootstrap.js
        src/postorius/static/postorius/libs/bootstrap/*
-Copyright: © 2011-2015 Twitter, Inc.
+Copyright: © 2011-2018 The Bootstrap Authors
 License: Expat
 
 Files: debian/missing-sources/jquery-1.11.3.js
